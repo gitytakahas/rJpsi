@@ -9,7 +9,9 @@ https://github.com/UZHCMS/EXOVVNtuplizerRunII/tree/BcMu_10210_NoLepProducers
 
 1. Make a flat ntuples 
 
-cd flatter;
+> export RJPSI=$PWD
+
+> cd $RJPSI/flatter
 
 Inspect runTauDisplay_BcJpsiTauNu and see what is doing here. 
 When you want to run on a single file, do, 
@@ -22,7 +24,7 @@ When you want to run on a single file, do,
 -f option: input files. you can specify multiple files by comma separated way file1.root,file2.root,... (no space between "," and the next file)
 
 
-If you are confident, you can now submit the job through T3. How to do it? You can see, for instance, 
+If you are confident, you can submit jobs through T3 batch. How to do it? You can see, for instance, 
 
 > sh do.sh 
 
@@ -31,10 +33,12 @@ In this script, the output of the job submission will be directed to "/pnfs/psi.
 
 2. Update ntuples 
 
-> cd updateTuple;
+> cd $RJPSI/updateTuple;
+
+Here, we do, 
 
 (1) Hadd flat-ntuples produced in the previous step
-(2) split the flat-ntuples into 20% and 80%. the former will be used for building analysis BDT, the latter is used for the actual analysis (e.g. building templates)
+(2) split the flat-ntuples into 20% (for training analysis-BDT) and 80% (for the analysis).
 
 > sh do.sh
 
@@ -58,14 +62,15 @@ this will produce the final tree at the directory, updateTuple/final_root_pt for
 5. plotting 
 
 If you don't have it yet, copy, 
+
 > cp /t3home/ytakahas/.rootrc ~/.rootrc
-
 > cp /t3home/ytakahas/rootlogon.C ~/
-
 > mkdir ~/tool
 > cp -r /t3home/ytakahas/tool ~/tool 
 
-cd $RJPSI/anal
+Then plotting, 
+
+> cd $RJPSI/anal
 python draw.py 
 
-the list of variables to be plotted is defined in varConfig.py 
+the list of variables to be plotted is defined in varConfig.py.
