@@ -37,7 +37,7 @@ In this script, the output of the job submission will be directed to "/pnfs/psi.
 
 Here, we do, 
 
-(1) Hadd flat-ntuples produced in the previous step
+(1) Hadd flat-ntuples produced in the previous step ---> This take some time, especially for data !! be patient !!
 (2) split the flat-ntuples into 20% (for training analysis-BDT) and 80% (for the analysis).
 
 > sh do.sh
@@ -50,16 +50,28 @@ Here, we do,
 > sh do.sh 
 
 
+Once finish, your MVA is ready. Inspect Plots_*/* to see the performance.
+
+
 4. add analysis MVA, build in the previous step, and produce the final ROOT files
 
-> cd ../
-> cd updateTuple; 
+> cd $RJPSI/updateTuple; 
 > sh application.sh 
 
-this will produce the final tree at the directory, updateTuple/final_root_pt for instance. 
+
+This takes some time, especially for the data (1 hour or so). Be Patient!!
+(I also developed the batch submission but for some reason there are non-negligible failure rate so I gave up ...)
+
+
+In the application step,, the timestamp of the input files will be printed out. Keep an eye on it if it is reasonable.
+You should also make sure the "features" as defined in the application.py should match to that of the $RJPSI/mva/TrainModel_XGB.py
+
+this will produce the final tree at the directory, $RJPSI/updateTuple/final_root_* for instance. 
 
 
 5. plotting 
+
+> cd $RJPSI/anal
 
 If you don't have it yet, copy, 
 
@@ -68,9 +80,8 @@ If you don't have it yet, copy,
 > mkdir ~/tool
 > cp -r /t3home/ytakahas/tool ~/tool 
 
-Then plotting, 
+Then inspect draw.py what is going to be plotted, and then do, 
 
-> cd $RJPSI/anal
-python draw.py 
+> python draw.py 
 
 the list of variables to be plotted is defined in varConfig.py.

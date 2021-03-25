@@ -62,6 +62,7 @@ void addvariable(TString filename, TString output, TString wfile, TString tdir, 
   Bool_t b_isveto;
   //  Bool_t b_tau_isRight;
   Double_t b_rhomass1, b_rhomass2; 
+  Double_t b_bkgBweight;
   Int_t b_tau_index;
 
   TString output_;
@@ -92,6 +93,10 @@ void addvariable(TString filename, TString output, TString wfile, TString tdir, 
     //    lTree->SetBranchAddress( "tau_isRight", &b_tau_isRight);
   }
 
+  if(isBG){
+    lTree->SetBranchAddress( "genWeightBkgB", &b_bkgBweight);
+  }
+
   TFile *lOFile = new TFile(output_,"RECREATE");
   TTree *lOTree = lTree->CloneTree(0);
    
@@ -115,8 +120,10 @@ void addvariable(TString filename, TString output, TString wfile, TString tdir, 
 
       //      if(b_rhomass1 > 1.2 || b_rhomass2 > 1.2) continue;
 
+      //      std::cout << b_bkgBweight << std::endl;
+
       Float_t histw = hist->GetBinContent(hist->GetXaxis()->FindBin(TMath::Abs(b_eta)), hist->GetYaxis()->FindBin(b_pt));
-      lweight = histw*b_puweight;
+      lweight = histw*b_puweight*b_bkgBweight;
 
     }else if(isSignal_truth){
       //      std::cout << "hammer = " << b_hammer << std::endl;

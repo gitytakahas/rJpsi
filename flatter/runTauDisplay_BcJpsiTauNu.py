@@ -75,7 +75,7 @@ parser.add_option("-o", "--out", default='Myroot.root', type="string", help="out
 parser.add_option("-p", "--priority", default='pt', type="string", help="priority", dest="priority")
 parser.add_option("-t", "--type", default='bg', type="string", help="type", dest="type")
 parser.add_option("-y", "--year", default='UL2017', type="string", help="year", dest="year")
-parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/BcToJPsiMuMu_legacy_mc_2018_20210322/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1_ext1-v2/210322_075423/0000/flatTuple_7.root', type="string", help="file", dest="file")
+parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/HbToJPsiMuMu_2018_20210324/HbToJPsiMuMu_TuneCP5_13TeV-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v1/210324_133149/0000/flatTuple_9.root', type="string", help="file", dest="file")
 
 
 
@@ -98,7 +98,7 @@ for inputfile in files:
     chain.AddFile(inputfile)
 
     _file = TFile.Open(inputfile)
-    _hist = _file.Get('ntuplizer/cutflow_perevt')
+    _hist = _file.Get('ntuplizer/cutflow')
 
     if out.hist == None:
         print('cutflow histo created')
@@ -250,6 +250,8 @@ for evt in xrange(Nevt):
         for itau in range(len(chain.JpsiTau_tau_pt)):
             if chain.JpsiTau_tau_vprob[itau] < 0.1: continue
             if chain.JpsiTau_tau_fls3d[itau] < 3.: continue
+
+            # you can add tau mass here
 
             tindex_ = itau
             break

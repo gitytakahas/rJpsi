@@ -84,7 +84,7 @@ print('# of bkg =', chain_bg.GetEntries())
 #bkg = sproducer('bkg', '1.', chain_bg, 'puweight')
 
 sig = sproducer('sig', 'tau_isRight_3prong==1', chain_sig, 'puweight')
-bkg = sproducer('bkg', '1.', chain_bg, 'puweight')
+bkg = sproducer('bkg', '1.', chain_bg, 'puweight*genWeightBkgB')
 
 #weight = TH2F('weight', 'weight', 20,0, 2.5, 20, 2, 30)
 weight = copy.deepcopy(sig)

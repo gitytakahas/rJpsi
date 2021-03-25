@@ -1,5 +1,7 @@
 today=`date "+%Y%m%d%H%M"`
 
+
+# Specify here the output file types 
 name="pt"
 #name="multiple"
 
@@ -51,7 +53,7 @@ done
 for dir in $sig_inclusive_ul_all_2018 $bkg_ul_2018
 do
     echo "splitting into two ...", $dir
-    sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_anal.root ${dir}/Myroot_training.root 0.2
+    sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.2
 done
 
 
@@ -74,10 +76,10 @@ python create_weights.py --sig_file ${sig_inclusive_ul_all_2018}/Myroot_training
 ##############################################
 
 sh updateTuple.sh ${bkg_ul_2018}/Myroot_training.root ${bkg_ul_2018}/Myroot_training_updated.root $PWD/weight_${name}/weight.root -1 -1
-sh updateTuple.sh ${bkg_ul_2018}/Myroot_anal.root ${bkg_ul_2018}/Myroot_anal_updated.root $PWD/weight_${name}/weight.root -1 -1
+sh updateTuple.sh ${bkg_ul_2018}/Myroot_analysis.root ${bkg_ul_2018}/Myroot_analysis_updated.root $PWD/weight_${name}/weight.root -1 -1
 
 sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_training.root ${sig_inclusive_ul_all_2018}/Myroot_training_updated.root $PWD/weight_${name}/weight.root ${sig_inclusive_ul_all_2018} -1
-sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_anal.root ${sig_inclusive_ul_all_2018}/Myroot_anal_updated.root $PWD/weight_${name}/weight.root ${sig_inclusive_ul_all_2018} -1
+sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_analysis.root ${sig_inclusive_ul_all_2018}/Myroot_analysis_updated.root $PWD/weight_${name}/weight.root ${sig_inclusive_ul_all_2018} -1
 
 
 

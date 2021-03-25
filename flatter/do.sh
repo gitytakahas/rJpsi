@@ -2,26 +2,47 @@
 # This is the flatter script
 ####################
 
+# 
+# Location where output files will be stored
+#
 pnfs="/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/"
 
+
+#
+# analysis to be run runTauDisplay_XXX.py
+# XXX is the name here. 
+#
 analysis="BcJpsiTauNu"
 
 
-sigmc="BcToJPsiMuMu_legacy_mc_2018_20210322"
-bgmc="HbToJPsiMuMu_legacy_2018_20210322"
-dataset="Charmonium_Data_legacy_2018_20210321"
+#
+# Write here the "top directory" name of the Ntuplizer files
+# The rest of files under this directory will be processed
+# 
+# You can get it by doing 
+# uberftp -ls gsiftp://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/
+# 
+sigmc="BcToJPsiMuMu_2018_20210324"
+bgmc="HbToJPsiMuMu_2018_20210324"
+dataset="Charmonium_2018_20210324"
 
 
+priority="pt"
 nchunk_sig=10
 nchunk_bg=10
 nchunk_data=5
-priority="pt"
 
 
+
+# uncomment here in case of "multpile" options
 #nchunk_sig=5
 #nchunk_bg=3
 #nchunk_data=3
 #priority="multiple"
+
+
+
+
 
 outdir="job_${priority}"
 
