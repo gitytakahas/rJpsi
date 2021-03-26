@@ -4,8 +4,11 @@ To use this package, I assume Ntuples already exist (Yuta takes care this part)
 
 https://github.com/UZHCMS/EXOVVNtuplizerRunII/tree/BcMu_10210_NoLepProducers
 
-You can check them at 
+You can check ntuplizer outputs at 
 > uberftp -ls gsiftp://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/
+
+BEAWARE:
+In some places, you have to change by hand (e.g. output directory), which is currently set to my environment!!
 
 
 0. Setup package
@@ -19,7 +22,6 @@ You can check them at
 1. Make a flat ntuples 
 
 > export RJPSI=$PWD
-
 > cd $RJPSI/flatter
 
 Inspect runTauDisplay_BcJpsiTauNu and see what is doing here. 
@@ -28,8 +30,11 @@ When you want to run on a single file, do,
 > python runTauDisplay_BcJpsiTauNu.py <-o outputfilename> <-p priority><-t type><-y year><-f inputfile>
 
 -p option: you can choose either "pt" or "multiple". "pt" option will pick up the highest in pT that satisfies vertex prob > 10% and flight significance > 3 sigma (this can be changed). "multiple" option will pick up all the triplets per event
+
 -t option: can be "data", "bg", "signal"
+
 -y option: year. will be used for the pileup reweighting
+
 -f option: input files. you can specify multiple files by comma separated way file1.root,file2.root,... (no space between "," and the next file)
 
 
