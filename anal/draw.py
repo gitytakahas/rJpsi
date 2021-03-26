@@ -222,7 +222,7 @@ cut = '&&'.join([cut, phiveto])
 
 print 'cut = ', cut
 
-prefix = '/work/ytakahas/work/analysis/CMSSW_10_2_10/src/RJpsi/updateTuple/final_root_pt_v2/'
+prefix = '../updateTuple/final_root_pt/'
 #prefix_pnfs ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_multiple/'
 #prefix_pnfs ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_v2/'
 #prefix_pnfs ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_dnn/'

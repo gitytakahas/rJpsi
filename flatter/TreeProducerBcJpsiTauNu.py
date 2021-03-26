@@ -47,6 +47,7 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
         self.addBranch('tau_rhomass1',                  'f')
         self.addBranch('tau_rhomass2',                  'f')
         self.addBranch('tau_rhomass_ss',                  'f')
+        self.addBranch('tau_rhomass',                  'f')
         self.addBranch('tau_psimass1',                  'f')
         self.addBranch('tau_psimass2',                  'f')
 

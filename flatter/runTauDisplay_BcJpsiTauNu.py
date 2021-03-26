@@ -6,6 +6,7 @@ from TreeProducerBcJpsiTauNu import *
 from correction.PileupTool import *
 from DeltaR import deltaR
 import copy
+import random
 
 # from https://github.com/scikit-hep/particle/
 # installed via 
@@ -160,6 +161,7 @@ chain.SetBranchStatus('JpsiTau_tau_mass', 1)
 chain.SetBranchStatus('JpsiTau_tau_q', 1)
 chain.SetBranchStatus('JpsiTau_tau_rhomass1', 1)
 chain.SetBranchStatus('JpsiTau_tau_rhomass2', 1)
+chain.SetBranchStatus('JpsiTau_tau_rhomass_ss', 1)
 chain.SetBranchStatus('JpsiTau_tau_vprob', 1)
 chain.SetBranchStatus('JpsiTau_tau_fls3d*', 1)
 chain.SetBranchStatus('JpsiTau_tau_fl3d*', 1)
@@ -251,7 +253,7 @@ for evt in xrange(Nevt):
             if chain.JpsiTau_tau_vprob[itau] < 0.1: continue
             if chain.JpsiTau_tau_fls3d[itau] < 3.: continue
 
-            # you can add tau mass here
+            # you can add tau mass cuts here
 
             tindex_ = itau
             break
@@ -602,18 +604,21 @@ for evt in xrange(Nevt):
             tlvs_psi_kk.append((tlv_jpsi + tlv2_k + tlv3_k).M())
 
 
-        rhomass_ss = -1.
+#        rhomass_ss = -1.
+#
+#        if pi1_q*pi2_q == 1:
+#            rhomass_ss = (tlv1 + tlv2).M()
+#
+#        if pi1_q*pi3_q == 1:
+#            rhomass_ss = (tlv1 + tlv3).M()
+#
+#        if pi2_q*pi3_q == 1:
+#            rhomass_ss = (tlv2 + tlv3).M()
 
-        if pi1_q*pi2_q == 1:
-            rhomass_ss = (tlv1 + tlv2).M()
+        out.tau_rhomass_ss[0] = chain.JpsiTau_tau_rhomass_ss[tindex]
 
-        if pi1_q*pi3_q == 1:
-            rhomass_ss = (tlv1 + tlv3).M()
-
-        if pi2_q*pi3_q == 1:
-            rhomass_ss = (tlv2 + tlv3).M()
-
-        out.tau_rhomass_ss[0] = rhomass_ss
+#        print 'check', rhomass_ss, 
+        out.tau_rhomass[0] = random.choice([out.tau_rhomass1[0], out.tau_rhomass2[0]])
 
 
         if not (len(m_kp)!=2 or len(m_pk)!=2 or len(m_kk)!=2):
