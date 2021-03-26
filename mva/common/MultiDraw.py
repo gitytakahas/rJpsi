@@ -145,7 +145,7 @@ def MultiDraw(self, Formulae, CommonWeight="1"):
     except ImportError:
         # gROOT.ProcessLine(".L %sMultiDraw.cxx+O" % "./")
         if "/sMultiDraw_cc.so" not in gSystem.GetLibraries(): 
-            gROOT.ProcessLine(".L /t3home/ytakahas/tool//MultiDraw.cc+");
+            gROOT.ProcessLine(".L ~/tool//MultiDraw.cc+");
         from ROOT import MultiDraw as _MultiDraw
 
     from time import time

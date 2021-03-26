@@ -60,7 +60,7 @@ training_branches = sorted(features)
 ntree_limit = 800
 _model = xgb.Booster({'nthread': 6})
 
-mpath='/work/ytakahas/work/analysis/CMSSW_10_2_10/src/rJpsi/mva/model_' + args.model + '/xgb_fulldata_None.model'
+mpath='../mva/model_' + args.model + '/xgb_fulldata_None.model'
 os.system('ls -lart ' + mpath)
 print('model path = ', mpath)
 #_model.load_model('/work/ytakahas/work/analysis/CMSSW_10_2_10/src/BcJpsiTauNu/mva/model_' + args.model + '/xgb_fulldata_None.model')

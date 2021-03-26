@@ -19,7 +19,7 @@ gStyle.SetOptTitle(0)
 gStyle.SetOptStat(0)
 
 
-gROOT.ProcessLine(".L /t3home/ytakahas/tool//MultiDraw.cc+");
+gROOT.ProcessLine(".L ~/tool//MultiDraw.cc+");
 
 from optparse import OptionParser, OptionValueError
 usage = "usage: python compare.py" 

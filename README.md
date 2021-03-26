@@ -1,13 +1,20 @@
 Analysis flow: https://docs.google.com/presentation/d/1oV9VAjN-gjE4RI6PWifJsd0fmfeRklfViCrAe6K3imk/edit#slide=id.gca82e4db1e_0_0
 
-cmsrel CMSSW_10_2_10
-cd CMSSW_10_2_10/src
-git clone https://github.com/gitytakahas/rJpsi.git
-
-
-0. First, produce the Ntuples based on the instruction at 
+To use this package, I assume Ntuples already exist (Yuta takes care this part)
 
 https://github.com/UZHCMS/EXOVVNtuplizerRunII/tree/BcMu_10210_NoLepProducers
+
+You can check them at 
+> uberftp -ls gsiftp://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/
+
+
+0. Setup package
+
+> cmsrel CMSSW_10_2_10
+> cd CMSSW_10_2_10/src
+> cmsenv
+
+> git clone https://github.com/gitytakahas/rJpsi.git
 
 1. Make a flat ntuples 
 
