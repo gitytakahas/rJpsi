@@ -12,7 +12,7 @@ import random
 # installed via 
 # >>> pip install particle --user
 ### 
-from particle import Particle
+#from particle import Particle
 
 #gROOT.SetBatch(True)
 
@@ -54,16 +54,16 @@ def returnMass2(tlvs, m1, m2):
 
     return tautlv.M()
 
-def returnName(pid):
-    
-    addstr = None
-    
-    try:
-        addstr = Particle.from_pdgid(pid).name    
-    except:
-        addstr = 'None'
-
-    return addstr
+#def returnName(pid):
+#    
+#    addstr = None
+#    
+#    try:
+#        addstr = Particle.from_pdgid(pid).name    
+#    except:
+#        addstr = 'None'
+#
+#    return addstr
         
 
 
