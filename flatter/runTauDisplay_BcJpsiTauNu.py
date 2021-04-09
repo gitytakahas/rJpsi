@@ -76,7 +76,7 @@ parser.add_option("-o", "--out", default='Myroot.root', type="string", help="out
 parser.add_option("-p", "--priority", default='pt', type="string", help="priority", dest="priority")
 parser.add_option("-t", "--type", default='bg', type="string", help="type", dest="type")
 parser.add_option("-y", "--year", default='UL2017', type="string", help="year", dest="year")
-parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/HbToJPsiMuMu_2018_20210324/HbToJPsiMuMu_TuneCP5_13TeV-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v1/210324_133149/0000/flatTuple_9.root', type="string", help="file", dest="file")
+parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/BcToJPsiMuMu_legacy_2018_20210331/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v2/210331_105636/0000/flatTuple_99.root', type="string", help="file", dest="file")
 
 
 
@@ -194,6 +194,8 @@ if options.type!='data':
     chain.SetBranchStatus('JpsiTau_hammer_*', 1)
     chain.SetBranchStatus('nPuVtxTrue', 1)
     chain.SetBranchStatus('JpsiTau_st_gentau*',1)
+    chain.SetBranchStatus('JpsiTau_st_n_occurance',1)
+    chain.SetBranchStatus('JpsiTau_st_decayid',1)
 
     putool = PileupWeightTool(options.year, 'central')
 
@@ -693,11 +695,12 @@ for evt in xrange(Nevt):
         out.B_ptback_simple[0] = chain.JpsiTau_B_ptback_simple[tindex]
 
 
-#        out.perEVT_old[0] = chain.JpsiTau_perEVT_old
-        out.perEVT_otherB[0] = chain.JpsiTau_perEVT_otherB
-        out.perEVT_sig[0] = chain.JpsiTau_perEVT_sig
-        out.perEVT_leptonic[0] = chain.JpsiTau_perEVT_leptonic
-        out.perEVT_1prong[0] = chain.JpsiTau_perEVT_1prong
+        out.perEVT_data[0] = chain.JpsiTau_perEVT_data
+        out.perEVT_mc[0] = chain.JpsiTau_perEVT_mc
+#        out.perEVT_otherB[0] = chain.JpsiTau_perEVT_otherB
+#        out.perEVT_sig[0] = chain.JpsiTau_perEVT_sig
+#        out.perEVT_leptonic[0] = chain.JpsiTau_perEVT_leptonic
+#        out.perEVT_1prong[0] = chain.JpsiTau_perEVT_1prong
 
         out.evt[0] = chain.EVENT_event
         out.lumi[0] = chain.EVENT_lumiBlock
@@ -903,6 +906,8 @@ for evt in xrange(Nevt):
             out.q2_gen[0] = chain.JpsiTau_q2_gen
             out.B_pt_gen[0] = chain.JpsiTau_B_pt_gen
 
+            out.n_occurance[0] = chain.JpsiTau_st_n_occurance
+            out.decayid[0] = chain.JpsiTau_st_decayid
 
             if options.type == 'bg':
                 out.genWeightBkgB[0] = chain.genWeightBkgB

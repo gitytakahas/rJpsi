@@ -216,15 +216,15 @@ rhomass2 = "tau_rhomass2 > 0.65 && tau_rhomass2 < 0.85"
 #cut =  'tau_vprob > 0.1 && tau_fls3d > 3. && xgbs > 10.' #xgbscut
 #cut = 'xgbs > 8.'
 #cut = 'tau_sumofdnn > 2.5 && tau_q==1'
-cut = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && xgbs > 9. && (pi1_trigMatch==1 || pi2_trigMatch==1 || pi3_trigMatch==1)'
+cut = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && xgbs > 9.5 && (pi1_trigMatch==1 || pi2_trigMatch==1 || pi3_trigMatch==1)'
 
 cut = '&&'.join([cut, phiveto])
 
 print 'cut = ', cut
 
-prefix = '../updateTuple/final_root_pt/'
+#prefix = '../updateTuple/final_root_pt_save/'
 #prefix_pnfs ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_multiple/'
-#prefix_pnfs ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_v2/'
+prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_save/'
 #prefix_pnfs ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_dnn/'
 
 #taumass_sr = '&&'.join([rhomass1, rhomass2])
@@ -239,10 +239,12 @@ prefix = '../updateTuple/final_root_pt/'
 #ddir['sig'] = {'file':prefix_pnfs + 'BcJpsiTau_inclusive_ul_all_2018/Myroot.root', 'acut':cut, 'weight':'0.115', 'lname':'sig'}
 #ddir['sig_truth'] = {'file':prefix_pnfs + 'BcJpsiTau_inclusive_ul_all_2018/Myroot.root', 'acut':cut + '&& tau_isRight_3prong', 'weight':'0.115', 'lname':'truth'}
 
-ddir['data'] = {'file':prefix + 'data.root', 'acut':cut, 'weight':'1', 'lname':'data', 'scale':1}
-ddir['bg_ul'] = {'file':prefix + 'bkg.root', 'acut':cut, 'weight':'puweight', 'lname':'bg_ul', 'scale':7/0.8}
-ddir['sig'] = {'file':prefix + 'signal.root', 'acut':cut, 'weight':'puweight', 'lname':'sig', 'scale':0.45/(3.*0.8)}
-ddir['sig_truth'] = {'file':prefix + 'signal.root', 'acut':cut + '&& tau_isRight_3prong==1', 'weight':'puweight', 'lname':'truth', 'scale':ddir['sig']['scale']}
+ddir['data'] = {'file':prefix + '/Data_2018/data.root', 'acut':cut, 'weight':'1', 'lname':'data', 'scale':1}
+ddir['bg_ul'] = {'file':prefix + '/BcJpsiX_ul_2018/bkg.root', 'acut':cut, 'weight':'puweight', 'lname':'bg_ul', 'scale':7/0.8}
+ddir['sig'] = {'file':prefix + '/BcJpsiTau_inclusive_ul_all_2018/signal.root', 'acut':cut, 'weight':'puweight', 'lname':'sig', 'scale':0.45/(3.*0.8)}
+#ddir['sig_3p'] = {'file':prefix + 'signal.root', 'acut':cut + '&& tau_isRight_3prong==1 && tau_isRight_3prong_pi0==0', 'weight':'puweight', 'lname':'truth', 'scale':ddir['sig_3p']['scale']}
+#ddir['sig_3pp'] = {'file':prefix + 'signal.root', 'acut':cut + '&& tau_isRight_3prong==1 && tau_isRight_3prong_pi0==1', 'weight':'puweight', 'lname':'truth', 'scale':ddir['sig_3p']['scale']}
+#ddir['sig_others'] = {'file':prefix + 'signal.root', 'acut':cut + '&& tau_isRight_3prong==0', 'weight':'puweight', 'lname':'truth', 'scale':ddir['sig_3p']['scale']}
 
 #ddir['data'] = {'file':prefix + 'Myroot_data_2018_0.root', 'acut':cut, 'weight':'1', 'lname':'data', 'scale':1}
 #ddir['bg_ul'] = {'file':prefix + 'Myroot_bkg_ul_2018_0.root', 'acut':cut, 'weight':'puweight', 'lname':'bg_ul', 'scale':7/0.8}
@@ -254,7 +256,7 @@ ddir['sig_truth'] = {'file':prefix + 'signal.root', 'acut':cut + '&& tau_isRight
 
 
 
-finaldiscriminant = 'xgbs'
+finaldiscriminant = 'tau_rhomass1'
 
 isquick = False
 if isquick:
@@ -308,7 +310,8 @@ for vkey, ivar in vardir.items():
     for type, ivar2 in ddir.items():
 
 #        print(vkey, type)
-        
+
+        multihists[type + '_' + vkey].Scale(Double(ivar2['scale']))        
 
         if vkey in [finaldiscriminant]: 
 
@@ -316,9 +319,8 @@ for vkey, ivar in vardir.items():
             writes[type +'_'+vkey] = __hist
 
         if type.find('ff')==-1: 
-            print multihists[type + '_' + vkey].GetName(), multihists[type + '_' + vkey].GetEntries(), multihists[type + '_' + vkey].GetSumOfWeights(), Double(ivar2['scale'])
+#            print multihists[type + '_' + vkey].GetName(), multihists[type + '_' + vkey].GetEntries(), multihists[type + '_' + vkey].GetSumOfWeights(), Double(ivar2['scale'])
 
-            multihists[type + '_' + vkey].Scale(Double(ivar2['scale']))
             hists.append(copy.deepcopy(multihists[type + '_' + vkey]))
             titles.append(ivar2['lname'] + ' (' + str(int(multihists[type + '_' + vkey].GetSumOfWeights())) + ', ' + str(int(multihists[type + '_' + vkey].GetEntries())) + ')')
 
@@ -457,13 +459,13 @@ for name, hist in writes.items():
 
     print hist.GetName()
 
-    if hist.GetName().find('data')!=-1:
-#        print writes['cr_' + finaldiscriminant], writes['data_sr_' + finaldiscriminant].GetSumOfWeights()
-        h_bg = copy.deepcopy(writes['data_' + finaldiscriminant])
-        h_bg.Add(copy.deepcopy(writes['sig_' + finaldiscriminant]), -1)
-        h_bg.SetTitle('bg')
-        h_bg.SetName('bg')
-        h_bg.Write()
+#    if hist.GetName().find('data')!=-1:
+##        print writes['cr_' + finaldiscriminant], writes['data_sr_' + finaldiscriminant].GetSumOfWeights()
+#        h_bg = copy.deepcopy(writes['data_' + finaldiscriminant])
+#        h_bg.Add(copy.deepcopy(writes['sig_' + finaldiscriminant]), -1)
+#        h_bg.SetTitle('bg')
+#        h_bg.SetName('bg')
+#        h_bg.Write()
         
 
     if hist.GetName().find('data')!=-1: 

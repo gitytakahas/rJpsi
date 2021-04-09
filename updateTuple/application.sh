@@ -19,9 +19,9 @@ data_ul_2018="${prefix}/Data_2018"
 
 oname="${name}"
 
-python application.py --file ${bkg_ul_2018}/Myroot_analysis.root --prefix bkg_ul_2018 --model ${oname} --outdir $PWD/final_root_${oname}
-python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis.root --prefix sig_ul --model ${oname} --outdir $PWD/final_root_${oname}
-python application.py --file ${data_ul_2018}/Myroot.root --prefix data_2018 --model ${oname} --outdir $PWD/final_root_${oname}
+#python application.py --file ${bkg_ul_2018}/Myroot_analysis.root --prefix bkg_ul_2018 --model ${oname} --outdir $PWD/final_root_${oname}_v2
+#python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis.root --prefix sig_ul --model ${oname} --outdir $PWD/final_root_${oname}_v2
+#python application.py --file ${data_ul_2018}/Myroot.root --prefix data_2018 --model ${oname} --outdir $PWD/final_root_${oname}_v2
 
 
 ##############################################
@@ -34,14 +34,14 @@ python application.py --file ${data_ul_2018}/Myroot.root --prefix data_2018 --mo
 for prio in ${name}
 do
     echo ${prio}
-    cd $PWD/final_root_${prio}
-#    hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/Data_2018/Myroot_data_2018.root Myroot_data_2018_*
-#    hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/BcJpsiTau_ul_all_2018/Myroot_sig_2018.root  Myroot_sig_new_-1_*.root 
-#    hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/BcJpsiX_rereco_2018/Myroot_bkg_rereco_2018.root Myroot_bkg_rereco_2018_*.root
+    cd $PWD/final_root_${prio}_v2
+    hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/Data_2018/data_v2.root Myroot_data_2018_*
+    hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/BcJpsiTau_inclusive_ul_all_2018/signal_v2.root  Myroot_sig_ul_*.root 
+    hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/BcJpsiX_ul_2018/bkg_v2.root Myroot_bkg_ul_2018_*.root
 
-    hadd -f data.root Myroot_data_2018_*.root
-    hadd -f signal.root  Myroot_sig_ul_*.root
-    hadd -f bkg.root Myroot_bkg_ul_2018_*.root
+#    hadd -f data.root Myroot_data_2018_*.root
+#    hadd -f signal.root  Myroot_sig_ul_*.root
+#    hadd -f bkg.root Myroot_bkg_ul_2018_*.root
     cd -;
 done
 

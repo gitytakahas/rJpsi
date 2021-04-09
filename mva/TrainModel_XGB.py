@@ -273,8 +273,7 @@ if __name__ == '__main__':
 #    features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7', 'tau_iso_ntracks_0p7', 'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'dr_jpsi_tau', 'tau_fls3d', 'tau_vprob', 'tau_sumofdnn', 'tau_sumofdnn_1prong', 'tau_sumofdnn_otherB', 'tau_sumofdnn_pu', 'ncand', 'estar']
 
 #    features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7', 'tau_iso_ntracks_0p7', 'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'tau_fls3d', 'tau_vprob', 'tau_fls3d_wjpsi', 'ncand', 'estar']
-#    features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7',  'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'tau_fls3d', 'tau_vprob', 'tau_fls3d_wjpsi',  'tau_sumofdnn','tau_sumofdnn_1prong', 'tau_sumofdnn_otherB', 'tau_sumofdnn_pu', 'ncand', 'estar']
-    features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7',  'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'tau_fls3d', 'tau_vprob', 'tau_fls3d_wjpsi',  'tau_sumofdnn', 'ncand', 'estar']
+    features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7',  'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'tau_fls3d', 'tau_vprob', 'tau_fls3d_wjpsi',  'tau_sumofdnn','tau_sumofdnn_1prong', 'tau_sumofdnn_otherB', 'tau_sumofdnn_pu', 'ncand', 'estar']
 #    features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7',  'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'tau_fls3d', 'tau_vprob', 'tau_fls3d_wjpsi',  'tau_sumofdnn', 'ncand', 'estar']
 
 

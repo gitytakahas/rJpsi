@@ -1,6 +1,10 @@
 *.pyc
+*.pdf
+*.gif
+*.root
 .*.swp
 .#*
 #*#
 *~
 *.eps
+*.so

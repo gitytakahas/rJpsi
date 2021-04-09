@@ -33,7 +33,8 @@ void pick(TString filename, TString output, TString output_training, TString fra
   //  TFile *wFile = new TFile("weights/weight.root");
   //  TH2F *hist = (TH2F*) gROOT->FindObject("ratio");
 
-  TFile *lFile = new TFile(filename);
+  TFile *lFile = new TFile();
+  lFile = TFile::Open(filename);
   TTree *lTree = (TTree*) lFile->FindObjectAny("tree");
 
   Int_t nentries = lTree->GetEntriesFast();

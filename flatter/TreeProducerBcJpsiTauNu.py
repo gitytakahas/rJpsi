@@ -192,12 +192,14 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
 #        self.addBranch('ptmiss_vis',                  'f')
 #        self.addBranch('mm2_vis',                  'f')
 
+        self.addBranch('perEVT_mc',                  'f')
+        self.addBranch('perEVT_data',                  'f')
 
 #        self.addBranch('perEVT_old',                  'f')
-        self.addBranch('perEVT_otherB',                  'f')
-        self.addBranch('perEVT_sig',                  'f')
-        self.addBranch('perEVT_leptonic',                  'f')
-        self.addBranch('perEVT_1prong',                  'f')
+#        self.addBranch('perEVT_otherB',                  'f')
+#        self.addBranch('perEVT_sig',                  'f')
+#        self.addBranch('perEVT_leptonic',                  'f')
+#        self.addBranch('perEVT_1prong',                  'f')
 
 #        if dataType=='bg':
         self.addBranch('nkaon',                  'i')
@@ -222,6 +224,8 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
             self.addBranch('tau_genpt',                  'f')
             self.addBranch('tau_geneta',                  'f')
             self.addBranch('tau_genphi',                  'f')
+            self.addBranch('n_occurance',                  'i')
+            self.addBranch('decayid',                  'i')
 
             if dataType in ['signal', 'truth']:
                 self.addBranch('hammer_ebe',                  'f')

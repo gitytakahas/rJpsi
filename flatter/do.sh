@@ -22,9 +22,9 @@ analysis="BcJpsiTauNu"
 # You can get it by doing 
 # uberftp -ls gsiftp://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/
 # 
-sigmc="BcToJPsiMuMu_2018_20210324"
-bgmc="HbToJPsiMuMu_2018_20210324"
-dataset="Charmonium_2018_20210324"
+sigmc="BcToJPsiMuMu_legacy_2018_20210331"
+bgmc="HbToJPsiMuMu_legacy_2018_20210331"
+dataset="Charmonium_legacy_2018_20210331"
 
 
 priority="pt"
