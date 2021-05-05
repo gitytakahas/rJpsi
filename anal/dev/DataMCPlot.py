@@ -400,6 +400,7 @@ class DataMCPlot(object):
                 ymin = 0.01
             if ymax is None:
                 ymax = mx*1.4
+#                ymax = mx*3.
             self.supportHist.GetYaxis().SetRangeUser(ymin, ymax)
             self.axisWasSet = True
         for hist in self.nostack:
@@ -466,7 +467,9 @@ class DataMCPlot(object):
             outf_dir.cd()
 
         for hist in self._SortedHistograms():
-            'Writing', hist, 'as', hist.name
+            print 'Writing', hist, 'as', hist.name
+            hist.weighted.SetName(hist.name)
+            hist.weighted.SetTitle(hist.name)
             hist.weighted.Write(hist.name)
         outf.Write()
 

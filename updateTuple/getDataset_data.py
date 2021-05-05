@@ -61,11 +61,11 @@ ensureDir(jobdir)
 
 from os import listdir
 from os.path import isfile, join
-onlyfiles = [f for f in listdir(options.path) if isfile(join(options.path, f)) and f.find('.root')!=-1 and f!="Myroot.root" and f!="Myroot_data_2018.root"]
+jlist = [f for f in listdir(options.path) if isfile(join(options.path, f)) and f.find('.root')!=-1 and f.find('Myroot')!=-1 and f!="Myroot.root" and f!="Myroot_data_2018.root" and f.find('training')==-1 and f.find('analysis')==-1 and f.find('data')==-1]
 
-print len(onlyfiles), 'files detected'
+#print len(onlyfiles), 'files detected'
 
-jlist=list(chunks(onlyfiles, options.chunk))
+#jlist=list(chunks(onlyfiles, options.chunk))
 
 print len(jlist), 'jobs created'
 
@@ -75,6 +75,8 @@ ijob=0
 for _jlist in jlist:
     
     print(ijob, _jlist)
+
+#    if ijob == 5: break
 
 #    import pdb; pdb.set_trace()
     jobscript = jobdir + '/job_' + str(ijob) + '.sh'
@@ -86,7 +88,8 @@ for _jlist in jlist:
     with open(jobscript) as f:
         data_lines = f.read()
         
-    data_lines = data_lines.replace('LOOP', ' '.join(options.path + '/' + str(x) for x in _jlist)).replace('ODIR', options.odir).replace('PNAME', options.name).replace('OMODEL', options.model).replace('IDJ', str(ijob))
+#    data_lines = data_lines.replace('LOOP', ' '.join(options.path + '/' + str(x) for x in _jlist)).replace('ODIR', options.odir).replace('PNAME', options.name).replace('OMODEL', options.model).replace('IDJ', str(ijob))
+    data_lines = data_lines.replace('INFILE', options.path + '/' + _jlist).replace('ODIR', options.odir).replace('PNAME', options.name + '_' + str(ijob)).replace('OMODEL', options.model).replace('OUTFILE','tmp_' + str(ijob) + '.root')
         
     with open(jobscript, mode="w") as f:
         f.write(data_lines)

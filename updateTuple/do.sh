@@ -2,8 +2,8 @@ today=`date "+%Y%m%d%H%M"`
 
 
 # Specify here the output file types 
-name="pt"
-#name="multiple"
+#name="mass_pt"
+name="multiple"
 
 prefix="/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${name}"
 

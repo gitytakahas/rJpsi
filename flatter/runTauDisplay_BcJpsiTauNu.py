@@ -7,6 +7,9 @@ from correction.PileupTool import *
 from DeltaR import deltaR
 import copy
 import random
+from scipy.constants import c as speed_of_light
+import numpy as np
+
 
 # from https://github.com/scikit-hep/particle/
 # installed via 
@@ -15,6 +18,40 @@ import random
 #from particle import Particle
 
 #gROOT.SetBatch(True)
+
+# Bc lifetime
+# https://pdglive.lbl.gov/DataBlock.action?node=S091T&home=MXXX049
+ctau_pdg    = 0.510e-12 * speed_of_light * 1000. # in mm
+ctau_actual = 0.507e-12 * speed_of_light * 1000. # in mm
+ctau_up     = (0.510+0.009)*1e-12 * speed_of_light * 1000. # in mm
+ctau_down   = (0.510-0.009)*1e-12 * speed_of_light * 1000. # in mm
+
+
+def weight_to_new_ctau(old_ctau, new_ctau, ct):
+    '''
+    Returns an event weight based on the ratio of the normalised lifetime distributions.
+    old_ctau: ctau used for the sample production
+    new_ctau: target ctau
+    ct      : per-event lifetime
+    '''
+    weight = old_ctau/new_ctau * np.exp( (1./old_ctau - 1./new_ctau) * ct )
+    return weight
+
+
+# compute the distance between primary and secondary vtx
+#sv = jpsi.vertex()
+#pv = first_ancestor.vertex()
+
+
+# compute the distance between primary and secondary vtx
+#sv = jpsi.vertex()
+#pv = first_ancestor.vertex()
+
+
+
+
+
+
 
 def ensureDir(directory):
     if not os.path.exists(directory):
@@ -76,7 +113,7 @@ parser.add_option("-o", "--out", default='Myroot.root', type="string", help="out
 parser.add_option("-p", "--priority", default='pt', type="string", help="priority", dest="priority")
 parser.add_option("-t", "--type", default='bg', type="string", help="type", dest="type")
 parser.add_option("-y", "--year", default='UL2017', type="string", help="year", dest="year")
-parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/BcToJPsiMuMu_legacy_2018_20210331/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v2/210331_105636/0000/flatTuple_99.root', type="string", help="file", dest="file")
+parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/BcToJPsiMuMu_legacy_2018_20210331/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1_ext1-v2/210331_105853/0000/flatTuple_9.root', type="string", help="file", dest="file")
 
 
 
@@ -191,6 +228,9 @@ if options.type!='data':
     chain.SetBranchStatus('JpsiTau_genPV_vx', 1)
     chain.SetBranchStatus('JpsiTau_genPV_vy', 1)
     chain.SetBranchStatus('JpsiTau_genPV_vz', 1)
+    chain.SetBranchStatus('JpsiTau_genSV_vx', 1)
+    chain.SetBranchStatus('JpsiTau_genSV_vy', 1)
+    chain.SetBranchStatus('JpsiTau_genSV_vz', 1)
     chain.SetBranchStatus('JpsiTau_hammer_*', 1)
     chain.SetBranchStatus('nPuVtxTrue', 1)
     chain.SetBranchStatus('JpsiTau_st_gentau*',1)
@@ -254,7 +294,8 @@ for evt in xrange(Nevt):
         for itau in range(len(chain.JpsiTau_tau_pt)):
             if chain.JpsiTau_tau_vprob[itau] < 0.1: continue
             if chain.JpsiTau_tau_fls3d[itau] < 3.: continue
-
+            if chain.JpsiTau_tau_mass[itau] > 1.7: continue
+            
             # you can add tau mass cuts here
 
             tindex_ = itau
@@ -267,6 +308,50 @@ for evt in xrange(Nevt):
 
 
     if len(chain.JpsiTau_B_pt) != len(chain.JpsiTau_tau_pt): continue
+
+
+
+    ### ctau calculation ! 
+
+
+    lxyz = math.sqrt((chain.JpsiTau_genPV_vx - chain.JpsiTau_genSV_vx)**2 + (chain.JpsiTau_genPV_vy - chain.JpsiTau_genSV_vy)**2 + (chain.JpsiTau_genPV_vz - chain.JpsiTau_genSV_vz)**2)
+
+
+    tlv_B = ROOT.TLorentzVector()
+    tlv_B.SetPtEtaPhiM(chain.JpsiTau_B_pt_gen, chain.JpsiTau_B_eta_gen, chain.JpsiTau_B_phi_gen, chain.JpsiTau_B_mass_gen)
+    
+    print chain.JpsiTau_B_pt_gen, chain.JpsiTau_B_eta_gen, chain.JpsiTau_B_phi_gen, chain.JpsiTau_B_mass_gen
+    import pdb; pdb.set_trace()
+#    beta_e = tlv_B.E()
+#    beta_p = tlv_B.P()
+    beta = tlv_B.Beta()
+    gamma = tlv_B.Gamma()
+    
+    
+    # lorentz boost of the B
+    #beta = first_ancestor.p4().Beta()
+    #gamma = first_ancestor.p4().Gamma()
+    
+    # now, lifetime L = beta * gamma * c * t ===> t = (L)/(beta*gamma*c)
+
+
+    ct = lxyz / (beta * gamma)
+    
+    weight_central = weight_to_new_ctau(ctau_actual, ctau_pdg , ct*10.)
+    weight_up = weight_to_new_ctau(ctau_actual, ctau_up , ct*10.)
+    weight_down = weight_to_new_ctau(ctau_actual, ctau_down , ct*10.)
+    
+    print lxyz, beta, gamma, weight_central, weight_up, weight_down 
+
+
+
+
+
+
+
+
+
+
 
     for tindex in range(len(chain.JpsiTau_tau_pt)):
 
@@ -302,7 +387,7 @@ for evt in xrange(Nevt):
 
         if options.priority=='multiple':
 
-            if tindex > 8: break
+            if tindex > 5: break
             # > 10 ---> 0.97316682 efficiency of catching the siganl
             # > 5 ---> 0.95029727 efficiency of catching the siganl
 

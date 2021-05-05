@@ -126,7 +126,7 @@ class DisplayManager(object):
 
 
         self.histo = histo
-        self.histo.DrawStack('HIST', None, None, None, None, 2)
+        self.histo.DrawStack('HIST', None, None, None, None, 5.)
 #        self.histo.DrawStack('HIST', None, None, 1., None, 100)
 
 #        self.histos = histos

@@ -49,11 +49,11 @@ def calc(nsig, ndata):
 
     if ndata!=0:
 
-        sig_err = math.sqrt(nsig/ndata + nsig*nsig/(4*ndata*ndata))
-        frac_err = math.sqrt(nsig/(ndata*ndata) + nsig*nsig/(ndata*ndata*ndata))
-        
         sig = nsig/math.sqrt(ndata)
+        sig_err = math.sqrt(nsig/ndata + nsig*nsig/(4*ndata*ndata))       
+
         frac = nsig/ndata
+        frac_err = math.sqrt(nsig/(ndata*ndata) + nsig*nsig/(ndata*ndata*ndata))
 
 #        h_significance.SetBinContent(ibin, nsig/math.sqrt(ndata))
 #        h_significance.SetBinError(ibin, err_sig)
@@ -216,7 +216,8 @@ rhomass2 = "tau_rhomass2 > 0.65 && tau_rhomass2 < 0.85"
 #cut =  'tau_vprob > 0.1 && tau_fls3d > 3. && xgbs > 10.' #xgbscut
 #cut = 'xgbs > 8.'
 #cut = 'tau_sumofdnn > 2.5 && tau_q==1'
-cut = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && xgbs > 9.5 && (pi1_trigMatch==1 || pi2_trigMatch==1 || pi3_trigMatch==1)'
+#cut = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && xgbs > 9.5 && (pi1_trigMatch==1 || pi2_trigMatch==1 || pi3_trigMatch==1)'
+cut = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && (pi1_trigMatch==1 || pi2_trigMatch==1 || pi3_trigMatch==1)'
 
 cut = '&&'.join([cut, phiveto])
 
@@ -224,7 +225,8 @@ print 'cut = ', cut
 
 #prefix = '../updateTuple/final_root_pt_save/'
 #prefix_pnfs ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_multiple/'
-prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_save/'
+#prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_multiple/'
+prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_mass_pt/'
 #prefix_pnfs ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_dnn/'
 
 #taumass_sr = '&&'.join([rhomass1, rhomass2])
@@ -241,8 +243,8 @@ prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_save/'
 
 ddir['data'] = {'file':prefix + '/Data_2018/data.root', 'acut':cut, 'weight':'1', 'lname':'data', 'scale':1}
 ddir['bg_ul'] = {'file':prefix + '/BcJpsiX_ul_2018/bkg.root', 'acut':cut, 'weight':'puweight', 'lname':'bg_ul', 'scale':7/0.8}
-ddir['sig'] = {'file':prefix + '/BcJpsiTau_inclusive_ul_all_2018/signal.root', 'acut':cut, 'weight':'puweight', 'lname':'sig', 'scale':0.45/(3.*0.8)}
-#ddir['sig_3p'] = {'file':prefix + 'signal.root', 'acut':cut + '&& tau_isRight_3prong==1 && tau_isRight_3prong_pi0==0', 'weight':'puweight', 'lname':'truth', 'scale':ddir['sig_3p']['scale']}
+ddir['sig'] = {'file':prefix + '/BcJpsiTau_inclusive_ul_all_2018/signal.root', 'acut':cut + '&& tau_isRight_3prong==1', 'weight':'puweight', 'lname':'sig', 'scale':0.45/(3.*0.8)}
+#ddir['sig_3p'] = {'file':prefix + '/BcJpsiTau_inclusive_ul_all_2018/signal.root', 'acut':cut + '&& tau_isRight_3prong==1', 'weight':'puweight', 'lname':'truth', 'scale':ddir['sig']['scale']}
 #ddir['sig_3pp'] = {'file':prefix + 'signal.root', 'acut':cut + '&& tau_isRight_3prong==1 && tau_isRight_3prong_pi0==1', 'weight':'puweight', 'lname':'truth', 'scale':ddir['sig_3p']['scale']}
 #ddir['sig_others'] = {'file':prefix + 'signal.root', 'acut':cut + '&& tau_isRight_3prong==0', 'weight':'puweight', 'lname':'truth', 'scale':ddir['sig_3p']['scale']}
 
@@ -322,7 +324,8 @@ for vkey, ivar in vardir.items():
 #            print multihists[type + '_' + vkey].GetName(), multihists[type + '_' + vkey].GetEntries(), multihists[type + '_' + vkey].GetSumOfWeights(), Double(ivar2['scale'])
 
             hists.append(copy.deepcopy(multihists[type + '_' + vkey]))
-            titles.append(ivar2['lname'] + ' (' + str(int(multihists[type + '_' + vkey].GetSumOfWeights())) + ', ' + str(int(multihists[type + '_' + vkey].GetEntries())) + ')')
+#            titles.append(ivar2['lname'] + ' (' + str(int(multihists[type + '_' + vkey].GetSumOfWeights())) + ', ' + str(int(multihists[type + '_' + vkey].GetEntries())) + ')')
+            titles.append(ivar2['lname'])
 
 
     hist_mc = None
@@ -338,7 +341,7 @@ for vkey, ivar in vardir.items():
         if ihist.GetSumOfWeights()==0:
             print('!!!!', vkey, ihist.GetName(), 'does not have any entries ...')
         else:
-#            ihist.Scale(1./ihist.GetSumOfWeights())
+            ihist.Scale(1./ihist.GetSumOfWeights())
             ihist.SetMaximum(ihist.GetBinContent(ihist.GetMaximumBin())*1.2)
 
             if (ihist.GetName().find('bg_ul')!=-1 or ihist.GetName().find('sig')!=-1) and ihist.GetName().find('sig_truth')==-1:
@@ -350,24 +353,25 @@ for vkey, ivar in vardir.items():
 
 
     applyHistStyle(hist_mc, len(hists))
-    hists.append(hist_mc)
-    titles.append('total_mc')
+#    hists.append(hist_mc)
+#    titles.append('total_mc')
 
-    comparisonPlots(hists, titles, ivar.has_key('isLog'), 'Plots/' + options.channel + '/comp/' + vkey + '.pdf', True, True, 'HpE')
+    comparisonPlots(hists, titles, ivar.has_key('isLog'), 'Plots/' + options.channel + '/comp/' + vkey + '.pdf', False, True, 'HpE')
 
     # make significance plots 
 
     continue
 
-    if not ivar.has_key('isRight'): continue
+    if vkey!='xgbs_fine': continue
 
     h_data = copy.deepcopy(multihists['data_' + vkey])
 
-    h_sig = copy.deepcopy(multihists['sig_' + vkey])
-    h_significance = copy.deepcopy(h_sig)
+#    h_sig = copy.deepcopy(multihists['sig_' + vkey])
+#    h_significance = copy.deepcopy(h_sig)
 
     h_sig_truth = copy.deepcopy(multihists['truth_' + vkey])
     h_significance_truth = copy.deepcopy(h_sig_truth)
+
     h_sig_truth.SetMarkerColor(kRed)
     h_sig_truth.SetLineColor(kRed)
     h_significance_truth = copy.deepcopy(h_sig_truth)
@@ -379,24 +383,25 @@ for vkey, ivar in vardir.items():
 #        ndata = h_data.GetBinContent(ibin)
 #        nsig = h_sig.GetBinContent(ibin)
 
-        if ivar['isRight']:
-            ndata = h_data.Integral(ibin, h_data.GetXaxis().GetNbins()+1)
-            nsig = h_sig.Integral(ibin, h_data.GetXaxis().GetNbins()+1)
-            ntruth = h_sig_truth.Integral(ibin, h_data.GetXaxis().GetNbins()+1)
-        else:
-            ndata = h_data.Integral(1, ibin)
-            nsig = h_sig.Integral(1, ibin)
-            ntruth = h_sig_truth.Integral(1, ibin)
+#        if ivar['isRight']:
+#            ndata = h_data.Integral(ibin, h_data.GetXaxis().GetNbins()+1)
+#            nsig = h_sig.Integral(ibin, h_data.GetXaxis().GetNbins()+1)
+#            ntruth = h_sig_truth.Integral(ibin, h_data.GetXaxis().GetNbins()+1)
+#        else:
+        ndata = h_data.Integral(ibin, h_data.GetXaxis().GetNbins()+1)
+#        nsig = h_sig.Integral(ibin, h_data.GetXaxis().GetNbins()+1)
+        ntruth = h_sig_truth.Integral(ibin, h_data.GetXaxis().GetNbins()+1)
 
+#        ndata -= ntruth
 
-        sig, sig_err, frac, frac_err = calc(nsig, ndata)
-
-
-        h_significance.SetBinContent(ibin, sig)
-        h_significance.SetBinError(ibin, sig_err)
-        
-        h_sig.SetBinContent(ibin, frac)
-        h_sig.SetBinError(ibin, frac_err)
+#        sig, sig_err, frac, frac_err = calc(nsig, ndata)
+#
+#
+#        h_significance.SetBinContent(ibin, sig)
+#        h_significance.SetBinError(ibin, sig_err)
+#        
+#        h_sig.SetBinContent(ibin, frac)
+#        h_sig.SetBinError(ibin, frac_err)
 
         sig, sig_err, frac, frac_err = calc(ntruth, ndata)
 

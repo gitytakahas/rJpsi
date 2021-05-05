@@ -27,13 +27,16 @@ def comparisonPlots(hist, pname='sync.pdf', clabel='', isRatio=True):
     display.Draw(hist)
 
 
-processes = ['signal', 'bg_ul', 'bg_bc', 'data_obs']
+#processes = ['signal', 'bg_ul', 'bg_bc', 'data_obs']
+processes = ['signal', 'bg_bc', 'data_obs']
 
-finaldiscriminant = ['q2', 'q2_simple', 'b_mass', 'b_mcorr', 'xgbs_zoom', 'estar', 'estar_simple', 'mm2', 'mm2_simple', 'tau_mass_zoom']
+#finaldiscriminant = ['q2', 'q2_simple', 'b_mass', 'b_mcorr', 'xgbs_zoom', 'estar', 'estar_simple', 'mm2', 'mm2_simple', 'tau_mass_zoom']
+finaldiscriminant = ['q2_simple']
 
 ensureDir('plots/combine')
-ensureDir('datacard')
+ensureDir('datacard/combine')
 
+#rjpsi=1
 
 
 for discriminant in finaldiscriminant:
@@ -42,7 +45,7 @@ for discriminant in finaldiscriminant:
 
     for dir in ['sr', 'sb', 'cr1', 'cr2']:
     
-        file = TFile('datacard/' + discriminant + '_' + dir + '.root')
+        file = TFile('datacard/' + dir + '/' + discriminant + '.root')
 
         for proc in processes:
 
@@ -52,32 +55,44 @@ for discriminant in finaldiscriminant:
             hists[proc + '_' + dir] = copy.deepcopy(hist)
 
 
-    hist_cr2 = copy.deepcopy(hists['data_obs_cr2'])
-    hist_cr2.Add(copy.deepcopy(hists['signal_cr2']), -1)
-    hist_cr2.Add(copy.deepcopy(hists['bg_bc_cr2']), -1)
+#    hist_cr2 = copy.deepcopy(hists['data_obs_cr2'])
+#    hist_cr2.Add(copy.deepcopy(hists['signal_cr2']), -rjpsi)
+#    hist_cr2.Add(copy.deepcopy(hists['bg_bc_cr2']), -1)
     
-    hist_cr1 = copy.deepcopy(hists['data_obs_cr1'])
-    hist_cr1.Add(copy.deepcopy(hists['signal_cr1']), -1)
-    hist_cr1.Add(copy.deepcopy(hists['bg_bc_cr1']), -1)
-    
-    sf = hist_cr1.GetSumOfWeights()/hist_cr2.GetSumOfWeights()
-    
-    print 'sf = ', sf
+#    hist_cr1 = copy.deepcopy(hists['data_obs_cr1'])
+#    hist_cr1.Add(copy.deepcopy(hists['signal_cr1']), -rjpsi)
+#    hist_cr1.Add(copy.deepcopy(hists['bg_bc_cr1']), -1)
 
-    # prepare now the sideband. 
+#    hist_sb = copy.deepcopy(hists['data_obs_sb'])
+#    hist_sb.Add(copy.deepcopy(hists['signal_sb']), -rjpsi)
+#    hist_sb.Add(copy.deepcopy(hists['bg_bc_sb']), -1)
+
+#    hist_sf = TH1F('sf', 'sf', 1,0,1)
+
+#    hist_cr1_norm = copy.deepcopy(hist_cr1)
+#    hist_cr2_norm = copy.deepcopy(hist_cr2)
+
+#    hist_cr1_norm.Scale(1./hist_cr1_norm.GetSumOfWeights())
+#    hist_cr2_norm.Scale(1./hist_cr2_norm.GetSumOfWeights())
+
+#    hist_ratio = copy.deepcopy(hist_cr1_norm)
+#    hist_ratio.Divide(copy.deepcopy(hist_cr2_norm))
+#    hist_ratio.SetName('ratio')
+#    hist_ratio.SetTitle('ratio')
+
+#    sf = hist_cr1.GetSumOfWeights()/hist_cr2.GetSumOfWeights()
+#    hist_sf.SetBinContent(1, sf)        
+
+#    print 'sf = ', sf
 
 
     hists4datacard = {}
 
-    for dir in ['sr', 'sb']:
+    for dir in ['sr', 'sb', 'cr1', 'cr2']:
 
-        if dir == 'sr':
-            hist_sb = copy.deepcopy(hists['data_obs_sb'])
-            hist_sb.Add(copy.deepcopy(hists['signal_sb']), -1)
-            hist_sb.Add(copy.deepcopy(hists['bg_bc_sb']), -1)
-            hist_sb.Scale(sf)
-            hist_sb.SetName('bg_ul_v2')
-            hist_sb.SetTitle('bg_ul_v2')
+#        if dir == 'sr':
+#            hist_sb.SetName('bg_ul')
+#            hist_sb.SetTitle('bg_ul')
 
         Histo = DataMCPlot(discriminant + '_' + dir)
 
@@ -87,15 +102,22 @@ for discriminant in finaldiscriminant:
 
             hist2add = copy.deepcopy(hists[proc + '_' + dir])
 
-            hists4datacard_.append(hist2add)
-        
-            if proc=='bg_ul':
-                hist2add = copy.deepcopy(hist_sb)
-            
+#            if proc=='bg_ul':
+#                if dir=='sr':
+#                    hist2add = copy.deepcopy(hist_sb)
+#                    hist2add.Scale(sf)
+#                    hist2add.Multiply(hist_ratio)
+#                elif dir=='sb':
+#                    hist2add = copy.deepcopy(hist_sb)
+#                # correction ... 
 
+                
             hist2add.SetName(proc)
+            hist2add.SetTitle(proc)
             hist2add.GetXaxis().SetLabelColor(1)
             hist2add.GetXaxis().SetLabelSize(0.0)
+
+            hists4datacard_.append(hist2add)
 
             if proc=='data_obs':
                 hist2add.SetFillStyle(0)
@@ -107,6 +129,10 @@ for discriminant in finaldiscriminant:
             if proc=='data_obs':
                 Histo.Hist(proc).stack = False
 
+
+#        if dir=='sr':
+#            hists4datacard_.append(hist_sf)
+#            hists4datacard_.append(hist_ratio)
 
                 
         # add BG histograms ... 
@@ -138,7 +164,7 @@ for discriminant in finaldiscriminant:
 
 #        Histo.WriteDataCard('datacard/comb_' + discriminant + '.root', True, 'RECREATE', 'sr')
 
-    ofile = TFile('datacard/comb_' + discriminant + '.root', 'recreate')
+    ofile = TFile('datacard/combine/' + discriminant + '.root', 'recreate')
 
     for cat, lhist in hists4datacard.items():
 

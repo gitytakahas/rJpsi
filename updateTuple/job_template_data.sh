@@ -17,17 +17,17 @@ export TMPDIR=/scratch/$USER/${SLURM_JOB_ID}
 
 #source ODIR/../setup.sh
 
-COUNTER=0
+#COUNTER=0
 
-for jid in LOOP
-do
+#for jid in LOOP
+#do
 #    sh updateTuple.sh INFILE OUTFILE WFILE $TMPDIR IDJ
 #    mv $TMPDIR/transient_IDJ.root OUTFILE
 #    python application.py --file OUTFILE --prefix PNAME_IDJ --model OMODEL --outdir ODIR --name PNAME_IDJ
-    python application.py --file $jid --prefix PNAME_IDJ_${COUNTER} --model OMODEL --outdir ODIR
-    let COUNTER=COUNTER+1 
-		 
-done
+python application.py --file INFILE --prefix PNAME --model OMODEL --outdir $TMPDIR
+#    let COUNTER=COUNTER+1 
+xrdcp -f $TMPDIR/Myroot_PNAME_*.root root://t3dcachedb03.psi.ch/ODIR
+#done
 
 #mv TDIR/transient_ID.root OUTFILE
 

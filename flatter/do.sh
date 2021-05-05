@@ -27,18 +27,18 @@ bgmc="HbToJPsiMuMu_legacy_2018_20210331"
 dataset="Charmonium_legacy_2018_20210331"
 
 
-priority="pt"
-nchunk_sig=10
-nchunk_bg=10
-nchunk_data=5
+#priority="pt"
+#nchunk_sig=10
+#nchunk_bg=10
+#nchunk_data=5
 
 
 
 # uncomment here in case of "multpile" options
-#nchunk_sig=5
-#nchunk_bg=3
-#nchunk_data=3
-#priority="multiple"
+nchunk_sig=5
+nchunk_bg=3
+nchunk_data=3
+priority="multiple"
 
 
 

@@ -109,7 +109,7 @@ def comparisonPlots(hist, pname='sync.pdf', clabel='', isRatio=True):
 
 
 ensureDir('plots/' + options.channel)
-ensureDir('datacard')
+ensureDir('datacard/' + options.channel)
 
 multihists = {}
 
@@ -118,9 +118,10 @@ ddir = {}
 
 
 phiveto = "!(tau_rhomass1_kk < 1.04) && !(tau_rhomass2_kk < 1.04)"
-cut = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && (pi1_trigMatch==1 || pi2_trigMatch==1 || pi3_trigMatch==1)'
-dnncut = 'perEVT_mc > 0.7'
-xgbscut = 'xgbs > 9.75'
+basic = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && (pi1_trigMatch==1 || pi2_trigMatch==1 || pi3_trigMatch==1)'
+#dnncut = 'perEVT_mc > 0.7'
+xgbscut = 'xgbs > 8.5'
+#xgbscut = 'xgbs > 8.6'
 #rhomass = '((tau_rhomass1 > 0.65 && tau_rhomass1 < 0.89) || (tau_rhomass2 > 0.65 && tau_rhomass2 < 0.89)) '
 rhomass = '((tau_rhomass1 > 0.69 && tau_rhomass1 < 0.85) || (tau_rhomass2 > 0.69 && tau_rhomass2 < 0.85)) '
 
@@ -132,7 +133,9 @@ if options.channel in ['cr1', 'cr2']:
     xgbscut = 'xgbs > 7. && xgbs < 8.5'
 
 
-cut = '&&'.join([cut, dnncut, rhomass, phiveto, xgbscut])
+#cut = '&&'.join([basic, rhomass, dnncut, phiveto, xgbscut])
+cut = '&&'.join([basic, rhomass, phiveto, xgbscut])
+#cut = '&&'.join([basic, phiveto])
 
 
 print '-'*80
@@ -141,7 +144,9 @@ print '-'*80
 print 'cut = ', cut
 print '-'*80
 
-prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt/'
+#sys.exit(1)
+
+prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_mass_pt/'
 
 datastr="Data_2018/data.root"
 sigstr="BcJpsiTau_inclusive_ul_all_2018/signal.root"
@@ -149,7 +154,7 @@ bkgstr="BcJpsiX_ul_2018/bkg.root"
 
 
 ddir['data_obs'] = {'file':prefix + datastr, 'acut':cut, 'weight':'1', 'scale':1, 'order':2999}
-ddir['bg_ul'] = {'file':prefix + bkgstr, 'acut':cut, 'weight':'puweight', 'scale':7/0.8, 'order':4}
+#ddir['bg_ul'] = {'file':prefix + bkgstr, 'acut':cut, 'weight':'puweight', 'scale':7/0.8, 'order':4}
 ddir['sig_3p'] = {'file':prefix + sigstr, 'acut':cut + '&& n_occurance==1 && tau_isRight_3prong==1 && tau_isRight_3prong_pi0==0', 'weight':'puweight', 'scale':0.45/(3*0.8), 'order':1}
 ddir['sig_3pp'] = {'file':prefix + sigstr, 'acut':cut + '&& n_occurance==1 && tau_isRight_3prong==1 && tau_isRight_3prong_pi0==1', 'weight':'puweight',  'scale':ddir['sig_3p']['scale'], 'order':2}
 ddir['sig_others'] = {'file':prefix + sigstr, 'acut':cut + '&& n_occurance==1 && tau_isRight_3prong==0', 'weight':'puweight', 'scale':ddir['sig_3p']['scale'], 'order':3}
@@ -157,7 +162,8 @@ ddir['bg_bc'] = {'file':prefix + sigstr, 'acut':cut + '&& n_occurance==0', 'weig
 
 
 # list of variables to produce datacards
-finaldiscriminant = ['q2', 'q2_simple', 'b_mass', 'b_mcorr', 'xgbs_zoom', 'estar', 'estar_simple', 'mm2', 'mm2_simple', 'tau_mass_zoom']
+finaldiscriminant = ['q2', 'q2_simple', 'b_mass', 'b_mcorr', 'xgbs_zoom', 'estar', 'estar_simple', 'mm2', 'mm2_simple', 'tau_mass_zoom', 'xgbs_fine']
+#finaldiscriminant = ['xgbs_fine']
 
             
 for type, ivar in ddir.items():
@@ -178,6 +184,7 @@ for type, ivar in ddir.items():
     multihists.update(copy.deepcopy(hists))
 
 
+print('write to datacards ...')
 
 writes = {}
 
@@ -201,6 +208,7 @@ for vkey, ivar in vardir.items():
             hist2add.SetBinErrorOption(1)
 
         hist2add.SetName(type)
+        hist2add.SetTitle(type)
         hist2add.GetXaxis().SetLabelColor(1)
         hist2add.GetXaxis().SetLabelSize(0.0)
 
@@ -217,5 +225,6 @@ for vkey, ivar in vardir.items():
 
     Histo.Group('signal', ['sig_3p', 'sig_others', 'sig_3pp'])
 
+#    print 'writing to datacard', vkey
     if vkey in finaldiscriminant:
-        Histo.WriteDataCard('datacard/' + vkey + '_' + options.channel + '.root', True, 'RECREATE', options.channel)
+        Histo.WriteDataCard('datacard/' + options.channel + '/' + vkey + '.root', True, 'RECREATE', options.channel)
