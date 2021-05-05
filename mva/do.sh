@@ -1,8 +1,8 @@
 today=`date "+%Y%m%d%H%M"`
 
 #name="nomass_pt"
-#name="mass_pt"
-name="multiple"
+name="pt"
+#name="multiple"
 
 # location of the input files
 prefix="/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${name}"

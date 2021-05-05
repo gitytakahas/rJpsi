@@ -226,7 +226,8 @@ print 'cut = ', cut
 #prefix = '../updateTuple/final_root_pt_save/'
 #prefix_pnfs ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_multiple/'
 #prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_multiple/'
-prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_mass_pt/'
+#prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_mass_pt/'
+prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt/'
 #prefix_pnfs ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_dnn/'
 
 #taumass_sr = '&&'.join([rhomass1, rhomass2])

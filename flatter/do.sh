@@ -22,23 +22,23 @@ analysis="BcJpsiTauNu"
 # You can get it by doing 
 # uberftp -ls gsiftp://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/
 # 
-sigmc="BcToJPsiMuMu_legacy_2018_20210331"
+sigmc="BcToJPsiMuMu_Legacy_2018_20210430"
 bgmc="HbToJPsiMuMu_legacy_2018_20210331"
 dataset="Charmonium_legacy_2018_20210331"
 
 
-#priority="pt"
-#nchunk_sig=10
-#nchunk_bg=10
-#nchunk_data=5
+priority="pt"
+nchunk_sig=10
+nchunk_bg=10
+nchunk_data=5
 
 
 
 # uncomment here in case of "multpile" options
-nchunk_sig=5
-nchunk_bg=3
-nchunk_data=3
-priority="multiple"
+#nchunk_sig=5
+#nchunk_bg=3
+#nchunk_data=3
+#priority="multiple"
 
 
 

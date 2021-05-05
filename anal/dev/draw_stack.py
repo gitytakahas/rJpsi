@@ -130,7 +130,7 @@ if options.channel in ['sb', 'cr2']:
 
 if options.channel in ['cr1', 'cr2']:
 #    xgbscut = 'xgbs > 7.25 && xgbs < 8.5'
-    xgbscut = 'xgbs > 7. && xgbs < 8.5'
+    xgbscut = 'xgbs > 6. && xgbs < 8.5'
 
 
 #cut = '&&'.join([basic, rhomass, dnncut, phiveto, xgbscut])
@@ -146,7 +146,8 @@ print '-'*80
 
 #sys.exit(1)
 
-prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_mass_pt/'
+#prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_mass_pt/'
+prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt/'
 
 datastr="Data_2018/data.root"
 sigstr="BcJpsiTau_inclusive_ul_all_2018/signal.root"

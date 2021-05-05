@@ -113,7 +113,7 @@ parser.add_option("-o", "--out", default='Myroot.root', type="string", help="out
 parser.add_option("-p", "--priority", default='pt', type="string", help="priority", dest="priority")
 parser.add_option("-t", "--type", default='bg', type="string", help="type", dest="type")
 parser.add_option("-y", "--year", default='UL2017', type="string", help="year", dest="year")
-parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/BcToJPsiMuMu_legacy_2018_20210331/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1_ext1-v2/210331_105853/0000/flatTuple_9.root', type="string", help="file", dest="file")
+parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/BcToJPsiMuMu_Legacy_2018_20210430/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v2/210430_140808/0000/flatTuple_100.root', type="string", help="file", dest="file")
 
 
 
@@ -295,6 +295,9 @@ for evt in xrange(Nevt):
             if chain.JpsiTau_tau_vprob[itau] < 0.1: continue
             if chain.JpsiTau_tau_fls3d[itau] < 3.: continue
             if chain.JpsiTau_tau_mass[itau] > 1.7: continue
+            if bool(chain.JpsiTau_tau_pi1_trigMatch[itau])==False and bool(chain.JpsiTau_tau_pi2_trigMatch[itau])==False and bool(chain.JpsiTau_tau_pi3_trigMatch[itau])==False: 
+#                print 'trigger matching was not satisifed ...'
+                continue
             
             # you can add tau mass cuts here
 
@@ -313,38 +316,39 @@ for evt in xrange(Nevt):
 
     ### ctau calculation ! 
 
+    if options.type == 'signal':
+        lxyz = math.sqrt((chain.JpsiTau_genPV_vx - chain.JpsiTau_genSV_vx)**2 + (chain.JpsiTau_genPV_vy - chain.JpsiTau_genSV_vy)**2 + (chain.JpsiTau_genPV_vz - chain.JpsiTau_genSV_vz)**2)
 
-    lxyz = math.sqrt((chain.JpsiTau_genPV_vx - chain.JpsiTau_genSV_vx)**2 + (chain.JpsiTau_genPV_vy - chain.JpsiTau_genSV_vy)**2 + (chain.JpsiTau_genPV_vz - chain.JpsiTau_genSV_vz)**2)
 
-
-    tlv_B = ROOT.TLorentzVector()
-    tlv_B.SetPtEtaPhiM(chain.JpsiTau_B_pt_gen, chain.JpsiTau_B_eta_gen, chain.JpsiTau_B_phi_gen, chain.JpsiTau_B_mass_gen)
+        tlv_B = ROOT.TLorentzVector()
+        tlv_B.SetPtEtaPhiM(chain.JpsiTau_B_pt_gen, chain.JpsiTau_B_eta_gen, chain.JpsiTau_B_phi_gen, chain.JpsiTau_B_mass_gen)
+        
+#        print chain.JpsiTau_B_pt_gen, chain.JpsiTau_B_eta_gen, chain.JpsiTau_B_phi_gen, chain.JpsiTau_B_mass_gen
+        #    beta_e = tlv_B.E()
+        #    beta_p = tlv_B.P()
+        beta = tlv_B.Beta()
+        gamma = tlv_B.Gamma()
+        
     
-    print chain.JpsiTau_B_pt_gen, chain.JpsiTau_B_eta_gen, chain.JpsiTau_B_phi_gen, chain.JpsiTau_B_mass_gen
-    import pdb; pdb.set_trace()
-#    beta_e = tlv_B.E()
-#    beta_p = tlv_B.P()
-    beta = tlv_B.Beta()
-    gamma = tlv_B.Gamma()
+        # lorentz boost of the B
+        #beta = first_ancestor.p4().Beta()
+        #gamma = first_ancestor.p4().Gamma()
+        
+        # now, lifetime L = beta * gamma * c * t ===> t = (L)/(beta*gamma*c)
     
-    
-    # lorentz boost of the B
-    #beta = first_ancestor.p4().Beta()
-    #gamma = first_ancestor.p4().Gamma()
-    
-    # now, lifetime L = beta * gamma * c * t ===> t = (L)/(beta*gamma*c)
+        #        print lxyz, beta, gamma, weight_central, weight_up, weight_down 
+        
+        ct = lxyz / (beta * gamma)
+        
+        weight_central = weight_to_new_ctau(ctau_actual, ctau_pdg , ct*10.)
+        weight_up = weight_to_new_ctau(ctau_actual, ctau_up , ct*10.)
+        weight_down = weight_to_new_ctau(ctau_actual, ctau_down , ct*10.)
+        
+        out.weight_ctau[0] = weight_central
+        out.weight_ctau_up[0] = weight_up
+        out.weight_ctau_down[0] = weight_down
 
-
-    ct = lxyz / (beta * gamma)
-    
-    weight_central = weight_to_new_ctau(ctau_actual, ctau_pdg , ct*10.)
-    weight_up = weight_to_new_ctau(ctau_actual, ctau_up , ct*10.)
-    weight_down = weight_to_new_ctau(ctau_actual, ctau_down , ct*10.)
-    
-    print lxyz, beta, gamma, weight_central, weight_up, weight_down 
-
-
-
+      
 
 
 
@@ -378,11 +382,6 @@ for evt in xrange(Nevt):
 
 
 
-
-        if options.type=='truth':
-            if not (isRight_3prong == True or isRight_3prong_pi0 == True):
-                continue
-            
 
 
         if options.priority=='multiple':
@@ -996,17 +995,25 @@ for evt in xrange(Nevt):
 
             if options.type == 'bg':
                 out.genWeightBkgB[0] = chain.genWeightBkgB
-##            if options.type in ['signal', 'truth']:
-##                out.hammer_ebe[0] = chain.JpsiTau_hammer_ebe[0]
-##                if chain.JpsiTau_hammer_ebe[0]==-1: continue
-##            
-##
-##            if options.type == 'signal':
-##                out.hammer_wratio[0] = ROOT.Double(hist_hammer.GetBinContent(2))/ROOT.Double(hist_hammer.GetBinContent(1))
-##
-##                for iham in range(len(chain.JpsiTau_hammer_ebe_toy[0])):
-##            
-##                    out.hammer_ebe_toy[iham] = ROOT.Double(chain.JpsiTau_hammer_ebe_toy[0][iham])
+
+            if options.type in ['signal'] and chain.JpsiTau_st_n_occurance == 1:
+
+#                print evtid, chain.JpsiTau_hammer_ebe[0]
+                if len(chain.JpsiTau_hammer_ebe)==1:
+                    out.hammer_ebe[0] = chain.JpsiTau_hammer_ebe[0]
+                    out.hammer_wratio[0] = ROOT.Double(hist_hammer.GetBinContent(2))/ROOT.Double(hist_hammer.GetBinContent(1))
+
+                    for iham in range(len(chain.JpsiTau_hammer_ebe_toy[0])):
+            
+                        out.hammer_ebe_toy[iham] = ROOT.Double(chain.JpsiTau_hammer_ebe_toy[0][iham])
+
+                else:
+                    out.hammer_ebe[0] = -1
+
+#                if chain.JpsiTau_hammer_ebe[0]==-1: continue
+            
+
+
 
 
             out.puweight[0] = ROOT.Double(putool.getWeight(chain.nPuVtxTrue[0]))

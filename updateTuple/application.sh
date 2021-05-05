@@ -1,8 +1,8 @@
 today=`date "+%Y%m%d%H%M"`
 
-#name="mass_pt"
+name="pt"
 #name="nomass_pt"
-name="multiple"
+#name="multiple"
 
 # input files
 prefix="/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${name}"
@@ -22,7 +22,6 @@ oname="${name}"
 
 #python application.py --file ${bkg_ul_2018}/Myroot_analysis.root --prefix bkg_ul_2018 --model ${oname} --outdir $PWD/final_root_${oname}
 #python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis.root --prefix sig_ul --model ${oname} --outdir $PWD/final_root_${oname}
-
 #python getDataset_data.py --path ${data_ul_2018} --odir ${data_ul_2018} --jdir data_application_${today} --name data_xgbs6_2018 --chunk 5 --model $oname
 
 
@@ -37,7 +36,7 @@ for prio in ${name}
 do
     echo ${prio}
     cd $PWD/final_root_${prio}
-#    hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/Data_2018/data.root Myroot_data_2018_*
+    hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/Data_2018/data.root /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/Data_2018/Myroot_data_xgbs6_2018_*.root
     hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/BcJpsiTau_inclusive_ul_all_2018/signal.root  Myroot_sig_ul_*.root 
     hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/BcJpsiX_ul_2018/bkg.root Myroot_bkg_ul_2018_*.root
 

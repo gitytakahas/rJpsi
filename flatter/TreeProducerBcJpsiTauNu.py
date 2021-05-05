@@ -227,12 +227,13 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
             self.addBranch('n_occurance',                  'i')
             self.addBranch('decayid',                  'i')
 
-            if dataType in ['signal', 'truth']:
+            if dataType in ['signal']:
                 self.addBranch('hammer_ebe',                  'f')
-
-            if dataType=='signal':
                 self.addBranch('hammer_wratio',                  'f')
                 self.addBranch('hammer_ebe_toy',                  'v')
+                self.addBranch('weight_ctau',                  'f')
+                self.addBranch('weight_ctau_up',                  'f')
+                self.addBranch('weight_ctau_down',                  'f')
 
             if dataType=='bg':
                 self.addBranch('isveto',                  '?')
