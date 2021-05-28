@@ -113,7 +113,7 @@ parser.add_option("-o", "--out", default='Myroot.root', type="string", help="out
 parser.add_option("-p", "--priority", default='pt', type="string", help="priority", dest="priority")
 parser.add_option("-t", "--type", default='bg', type="string", help="type", dest="type")
 parser.add_option("-y", "--year", default='UL2017', type="string", help="year", dest="year")
-parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/BcToJPsiMuMu_Legacy_2018_20210430/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v2/210430_140808/0000/flatTuple_100.root', type="string", help="file", dest="file")
+parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/BcToJPsiMuMu_Legacy_2018_20210509/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v2/210509_061557/0000/flatTuple_8.root', type="string", help="file", dest="file")
 
 
 
@@ -1002,6 +1002,34 @@ for evt in xrange(Nevt):
                 if len(chain.JpsiTau_hammer_ebe)==1:
                     out.hammer_ebe[0] = chain.JpsiTau_hammer_ebe[0]
                     out.hammer_wratio[0] = ROOT.Double(hist_hammer.GetBinContent(2))/ROOT.Double(hist_hammer.GetBinContent(1))
+                    out.hammer_ebe_a0_up[0] = chain.JpsiTau_hammer_ebe_a0_up[0]
+                    out.hammer_ebe_a0_down[0] = chain.JpsiTau_hammer_ebe_a0_down[0]
+                    out.hammer_ebe_a1_up[0] = chain.JpsiTau_hammer_ebe_a1_up[0]
+                    out.hammer_ebe_a1_down[0] = chain.JpsiTau_hammer_ebe_a1_down[0]
+                    out.hammer_ebe_a2_up[0] = chain.JpsiTau_hammer_ebe_a2_up[0]
+                    out.hammer_ebe_a2_down[0] = chain.JpsiTau_hammer_ebe_a2_down[0]
+
+                    out.hammer_ebe_b0_up[0] = chain.JpsiTau_hammer_ebe_b0_up[0]
+                    out.hammer_ebe_b0_down[0] = chain.JpsiTau_hammer_ebe_b0_down[0]
+                    out.hammer_ebe_b1_up[0] = chain.JpsiTau_hammer_ebe_b1_up[0]
+                    out.hammer_ebe_b1_down[0] = chain.JpsiTau_hammer_ebe_b1_down[0]
+                    out.hammer_ebe_b2_up[0] = chain.JpsiTau_hammer_ebe_b2_up[0]
+                    out.hammer_ebe_b2_down[0] = chain.JpsiTau_hammer_ebe_b2_down[0]
+
+                    out.hammer_ebe_c1_up[0] = chain.JpsiTau_hammer_ebe_c1_up[0]
+                    out.hammer_ebe_c1_down[0] = chain.JpsiTau_hammer_ebe_c1_down[0]
+                    out.hammer_ebe_c2_up[0] = chain.JpsiTau_hammer_ebe_c2_up[0]
+                    out.hammer_ebe_c2_down[0] = chain.JpsiTau_hammer_ebe_c2_down[0]
+
+                    out.hammer_ebe_d0_up[0] = chain.JpsiTau_hammer_ebe_d0_up[0]
+                    out.hammer_ebe_d0_down[0] = chain.JpsiTau_hammer_ebe_d0_down[0]
+                    out.hammer_ebe_d1_up[0] = chain.JpsiTau_hammer_ebe_d1_up[0]
+                    out.hammer_ebe_d1_down[0] = chain.JpsiTau_hammer_ebe_d1_down[0]
+                    out.hammer_ebe_d2_up[0] = chain.JpsiTau_hammer_ebe_d2_up[0]
+                    out.hammer_ebe_d2_down[0] = chain.JpsiTau_hammer_ebe_d2_down[0]
+
+
+
 
                     for iham in range(len(chain.JpsiTau_hammer_ebe_toy[0])):
             

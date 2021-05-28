@@ -7,7 +7,7 @@ name="pt"
 # input files
 prefix="/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${name}"
 
-sig_inclusive_ul_all_2018="${prefix}/BcJpsiTau_inclusive_ul_all_2018"
+sig_inclusive_ul_all_2018="${prefix}_hammer/BcJpsiTau_inclusive_ul_all_2018"
 bkg_ul_2018="${prefix}/BcJpsiX_ul_2018"
 data_ul_2018="${prefix}/Data_2018"
 
@@ -20,9 +20,9 @@ data_ul_2018="${prefix}/Data_2018"
 
 oname="${name}"
 
-#python application.py --file ${bkg_ul_2018}/Myroot_analysis.root --prefix bkg_ul_2018 --model ${oname} --outdir $PWD/final_root_${oname}
-#python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis.root --prefix sig_ul --model ${oname} --outdir $PWD/final_root_${oname}
-#python getDataset_data.py --path ${data_ul_2018} --odir ${data_ul_2018} --jdir data_application_${today} --name data_xgbs6_2018 --chunk 5 --model $oname
+#python application.py --file ${bkg_ul_2018}/Myroot_analysis_default.root --prefix bkg_xgbs6_default --model ${oname} --outdir ${bkg_ul_2018}
+#python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis_default.root --prefix sig_xgbs6_default --model ${oname} --outdir ${sig_inclusive_ul_all_2018}
+
 
 
 ##############################################
@@ -35,17 +35,15 @@ oname="${name}"
 for prio in ${name}
 do
     echo ${prio}
-    cd $PWD/final_root_${prio}
-    hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/Data_2018/data.root /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/Data_2018/Myroot_data_xgbs6_2018_*.root
-    hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/BcJpsiTau_inclusive_ul_all_2018/signal.root  Myroot_sig_ul_*.root 
-    hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/BcJpsiX_ul_2018/bkg.root Myroot_bkg_ul_2018_*.root
+#    hadd -f /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/Data_2018/data.root /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${prio}/Data_2018/Myroot_data_xgbs6_2018_*.root
+    hadd -f ${sig_inclusive_ul_all_2018}/signal_xgbs6.root  ${sig_inclusive_ul_all_2018}/Myroot_sig_xgbs6_default*.root 
+    hadd -f ${bkg_ul_2018}/bkg_xgbs6.root ${bkg_ul_2018}/Myroot_bkg_xgbs6_default*.root
 
-    cd -;
+#    cd -;
 done
 
 
+#python getDataset_data.py --path ${data_ul_2018} --odir ${data_ul_2018} --jdir data_application_${today} --name data_xgbs6_2018 --chunk 5 --model $oname
+#python getDataset_data.py --path ${sig_inclusive_ul_all_2018} --odir ${sig_inclusive_ul_all_2018} --jdir signal_hammer_application_${today} --name sig_xgbs6_hammer --chunk 5 --model $oname --signal
 
 
-#python getDataset_data.py --path ${sig_inclusive_ul_all_2018} --odir ${sig_inclusive_ul_all_2018} --jdir signal_application_${today} --name signal_xgbs6_2018 --chunk 5 --model $oname
-#python getDataset_data.py --path ${bkg_ul_2018} --odir ${bkg_ul_2018} --jdir bg_application_${today} --name bg_xgbs6_2018 --chunk 5 --model $oname
-#python application.py --file ${data_ul_2018}/Myroot.root --prefix data_2018 --model ${oname} --outdir $PWD/final_root_${oname}

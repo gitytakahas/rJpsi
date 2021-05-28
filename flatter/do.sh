@@ -22,9 +22,10 @@ analysis="BcJpsiTauNu"
 # You can get it by doing 
 # uberftp -ls gsiftp://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/
 # 
-sigmc="BcToJPsiMuMu_Legacy_2018_20210430"
+sigmc="BcToJPsiMuMu_Legacy_2018_20210509"
 bgmc="HbToJPsiMuMu_legacy_2018_20210331"
-dataset="Charmonium_legacy_2018_20210331"
+#dataset="Charmonium_legacy_2018_20210331"
+dataset="Charmonium_Legacy_q3_2018_20210518"
 
 
 priority="pt"
@@ -44,7 +45,7 @@ nchunk_data=5
 
 
 
-outdir="job_${priority}"
+outdir="job_${priority}_q3"
 
 #########################################
 # for signal MC
@@ -60,7 +61,7 @@ do
 
     echo "signal", $year
 
-    python getDataset.py --file ${sigmc} --chunk ${nchunk_sig} --analysis ${analysis} --type signal --name BcJpsiTau_inclusive_ul_all_${year} --select UL --year $pustr --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+#    python getDataset.py --file ${sigmc} --chunk ${nchunk_sig} --analysis ${analysis} --type signal --name BcJpsiTau_inclusive_ul_all_${year} --select UL --year $pustr --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 
 
 done
@@ -69,7 +70,7 @@ done
 #########################################
 # for J/psi + X BG
 #########################################
-python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BcJpsiX_ul_2018 --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+#python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BcJpsiX_ul_2018 --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 
 #########################################
 # Data (2016)

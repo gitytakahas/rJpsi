@@ -27,27 +27,22 @@ usage = "usage: python compare.py"
 parser = OptionParser(usage) 
 
 parser.add_option("-c", "--channel", default="sr", type="string", dest="channel")
-#parser.add_option('-f', '--ff', action="store_true", default=False, dest='ff')
+parser.add_option("-s", "--sys", default="None", type="string", dest="sys")
+parser.add_option('-m', '--min', action="store_true", default=False, dest='min')
 
 (options, args) = parser.parse_args() 
 
 colours = [1, 2, 4, 6, 8, 1, 46, 13, 15, 1,1,1,1,1,1]
 styles = [1, 2, 4, 3, 5, 2,7, 1, 1, 1,1,1,1,1,1]
 
-isxgbs = True
+#isxgbs = True
 
-if not isxgbs:
-    for vkey, ivar in vardir.items():
-        if vkey.find('xgbs')!=-1:
-            vardir.pop(vkey)
+#if not isxgbs:
+#    for vkey, ivar in vardir.items():
+#        if vkey.find('xgbs')!=-1:
+#            vardir.pop(vkey)
 
 
-print '-'*80
-
-for vkey, ivar in vardir.items():
-    print '->', vkey.ljust(20), ivar
-
-print '-'*80
 
 
 def overflow(hist):
@@ -147,38 +142,79 @@ print '-'*80
 #sys.exit(1)
 
 #prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_mass_pt/'
-prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt/'
+prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_hammer/'
 
-datastr="Data_2018/data.root"
-sigstr="BcJpsiTau_inclusive_ul_all_2018/signal.root"
-bkgstr="BcJpsiX_ul_2018/bkg.root"
+datastr =  prefix.replace('_hammer','') + "Data_2018/data.root"
+sigstr = prefix + "BcJpsiTau_inclusive_ul_all_2018/signal_xgbs6.root"
+#bkgstr = "BcJpsiX_ul_2018/bkg_xgbs6.root"
+
+def_sig_3p = cut + '&& n_occurance==1 && tau_isRight_3prong==1 && tau_isRight_3prong_pi0==0'
+def_sig_3pp = cut + '&& n_occurance==1 && tau_isRight_3prong==1 && tau_isRight_3prong_pi0==1'
+def_sig_others = cut + '&& n_occurance==1 && tau_isRight_3prong==0'
+def_bg_bc = cut + '&& n_occurance==0'
+
+bc_sf = 0.45/(3*0.8)
+wstr = 'puweight'
+
+ddir['data_obs'] = {'file':datastr, 'cut':cut, 'weight':'1', 'scale':1, 'order':2999}
+
+ddir['sig_3p'] = {'file':sigstr, 'cut':def_sig_3p, 'weight':wstr, 'scale':bc_sf, 'order':1}
+ddir['sig_3pp'] = {'file':sigstr, 'cut':def_sig_3pp, 'weight':wstr,  'scale':bc_sf, 'order':2}
+ddir['sig_others'] = {'file':sigstr, 'cut':def_sig_others, 'weight':wstr, 'scale':bc_sf, 'order':3}
+ddir['bg_bc'] = {'file':sigstr, 'cut':def_bg_bc, 'weight':wstr, 'scale':bc_sf, 'order':4}
+
+wstr_shape = 'hammer_ebe*weight_ctau*puweight'
+ddir['sig_3p_shape'] = {'file':sigstr, 'cut':def_sig_3p, 'weight':wstr_shape, 'scale':bc_sf, 'order':1}
+ddir['sig_3pp_shape'] = {'file':sigstr, 'cut':def_sig_3pp, 'weight':wstr_shape,  'scale':bc_sf, 'order':2}
+ddir['sig_others_shape'] = {'file':sigstr, 'cut':def_sig_others, 'weight':wstr_shape, 'scale':bc_sf, 'order':3}
 
 
-ddir['data_obs'] = {'file':prefix + datastr, 'acut':cut, 'weight':'1', 'scale':1, 'order':2999}
-#ddir['bg_ul'] = {'file':prefix + bkgstr, 'acut':cut, 'weight':'puweight', 'scale':7/0.8, 'order':4}
-ddir['sig_3p'] = {'file':prefix + sigstr, 'acut':cut + '&& n_occurance==1 && tau_isRight_3prong==1 && tau_isRight_3prong_pi0==0', 'weight':'puweight', 'scale':0.45/(3*0.8), 'order':1}
-ddir['sig_3pp'] = {'file':prefix + sigstr, 'acut':cut + '&& n_occurance==1 && tau_isRight_3prong==1 && tau_isRight_3prong_pi0==1', 'weight':'puweight',  'scale':ddir['sig_3p']['scale'], 'order':2}
-ddir['sig_others'] = {'file':prefix + sigstr, 'acut':cut + '&& n_occurance==1 && tau_isRight_3prong==0', 'weight':'puweight', 'scale':ddir['sig_3p']['scale'], 'order':3}
-ddir['bg_bc'] = {'file':prefix + sigstr, 'acut':cut + '&& n_occurance==0', 'weight':'puweight', 'scale':ddir['sig_3p']['scale'], 'order':4}
+
 
 
 # list of variables to produce datacards
-finaldiscriminant = ['q2', 'q2_simple', 'b_mass', 'b_mcorr', 'xgbs_zoom', 'estar', 'estar_simple', 'mm2', 'mm2_simple', 'tau_mass_zoom', 'xgbs_fine']
+#finaldiscriminant = ['q2', 'q2_simple', 'b_mass', 'b_mcorr', 'xgbs_zoom', 'estar', 'estar_simple', 'mm2', 'mm2_simple', 'tau_mass_zoom', 'xgbs_fine']
+finaldiscriminant = ['q2_simple']
 #finaldiscriminant = ['xgbs_fine']
+
+if options.min:
+    for vkey, ivar in vardir.items():
+        if vkey not in finaldiscriminant:
+            vardir.pop(vkey)
+
+
+print '-'*80
+
+for vkey, ivar in vardir.items():
+    print '->', vkey.ljust(20), ivar
+
+print '-'*80
+
 
             
 for type, ivar in ddir.items():
     
+    wstr = ivar['weight']
+
     file = TFile(ivar['file'])
     tree = file.Get('tree')
 
     print ivar['file'], 'is read ...'
 
-    var_tuples, hists = returnTuples(type, vardir)
+    var_tuples, hists = returnTuples(type, vardir)    
+
+    if options.sys.find('hammer')!=-1 and type.find('_shape')!=-1:
+        wstr = ivar['weight'].replace('hammer_ebe', options.sys)
+
+    elif options.sys.find('ctau')!=-1 and type.find('_shape')!=-1:
+        wstr = ivar['weight'].replace('weight_ctau', options.sys)
 
 
-    cut = '(' + ivar['acut'] + ')*' + ivar['weight']
+    cut = '(' + ivar['cut'] + ')*' + wstr
     print(type, cut)
+
+
+        
 
     tree.MultiDraw(var_tuples, cut)
     
@@ -224,8 +260,12 @@ for vkey, ivar in vardir.items():
 
     comparisonPlots(Histo, 'plots/' + options.channel + '/' + vkey  + '.gif')
 
-    Histo.Group('signal', ['sig_3p', 'sig_others', 'sig_3pp'])
+    Histo.Group('signal_ref', ['sig_3p', 'sig_others', 'sig_3pp'])
+    Histo.Group('signal_shape', ['sig_3p_shape', 'sig_3pp_shape', 'sig_others_shape'])
 
 #    print 'writing to datacard', vkey
     if vkey in finaldiscriminant:
-        Histo.WriteDataCard('datacard/' + options.channel + '/' + vkey + '.root', True, 'RECREATE', options.channel)
+        if options.sys=="None":
+            Histo.WriteDataCard('datacard/' + options.channel + '/' + vkey + '.root', True, 'RECREATE', options.channel)
+        else:
+            Histo.WriteDataCard('datacard/' + options.channel + '/' + vkey + '_' + options.sys + '.root', True, 'RECREATE', options.channel)

@@ -8,7 +8,7 @@ name="pt"
 
 prefix="/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${name}"
 
-sig_inclusive_ul_all_2018="${prefix}/BcJpsiTau_inclusive_ul_all_2018"
+sig_inclusive_ul_all_2018="${prefix}_hammer/BcJpsiTau_inclusive_ul_all_2018"
 bkg_ul_2018="${prefix}/BcJpsiX_ul_2018"
 data_ul_2018="${prefix}/Data_2018"
 
@@ -76,13 +76,12 @@ python create_weights.py --sig_file ${sig_inclusive_ul_all_2018}/Myroot_training
 # 
 ##############################################
 
-sh updateTuple.sh ${bkg_ul_2018}/Myroot_training.root ${bkg_ul_2018}/Myroot_training_updated.root $PWD/weight_${name}/weight.root -1 -1
-sh updateTuple.sh ${bkg_ul_2018}/Myroot_analysis.root ${bkg_ul_2018}/Myroot_analysis_updated.root $PWD/weight_${name}/weight.root -1 -1
+sh updateTuple.sh ${bkg_ul_2018}/Myroot_training.root $PWD/weight_${name}/weight.root ${bkg_ul_2018} -1
+sh updateTuple.sh ${bkg_ul_2018}/Myroot_analysis.root $PWD/weight_${name}/weight.root ${bkg_ul_2018} -1
 
-sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_training.root ${sig_inclusive_ul_all_2018}/Myroot_training_updated.root $PWD/weight_${name}/weight.root ${sig_inclusive_ul_all_2018} -1
-sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_analysis.root ${sig_inclusive_ul_all_2018}/Myroot_analysis_updated.root $PWD/weight_${name}/weight.root ${sig_inclusive_ul_all_2018} -1
-
-
+sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_training.root $PWD/weight_${name}/weight.root ${sig_inclusive_ul_all_2018} -1
+sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_analysis.root $PWD/weight_${name}/weight.root ${sig_inclusive_ul_all_2018} -1
 
 
+python getDataset.py --path ${sig_inclusive_ul_all_2018}/Myroot_analysis.root --wfile $PWD/weight_${name}/weight.root --odir signal_hammer_${today} --chunk 5
 

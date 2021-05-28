@@ -37,7 +37,6 @@ parser.add_option("-o", "--odir", default="None", type="string", help="odir", de
 
 parser.add_option("-c", "--chunk", default=3, type=int, help="chunk", dest="chunk")
 
-parser.add_option("-n", "--name", default="None", type="string", help="name", dest="name")
 
 (options, args) = parser.parse_args()
 
@@ -45,26 +44,26 @@ print('Path = ', options.path)
 print('wfile = ', options.wfile)
 print('output directory = ', options.odir)
 print('chunk = ', options.chunk)
-print('name = ', options.name)
 
 jobdir = cdir + '/job/' + options.odir
 
 ensureDir(jobdir)
 
-jlist=list(chunks(range(-1, 1000), options.chunk))
+jlist=list(chunks(range(0, 1000), options.chunk))
 
 #import pdb; pdb.set_trace()
 #sys.exit(1)
 
 ijob=0
 for _jlist in jlist:
+
+#    if ijob==1: continue
     
     print(ijob, _jlist)
 
 #    import pdb; pdb.set_trace()
     jobscript = jobdir + '/job_' + str(ijob) + '.sh'
     infile = options.path
-    outfile = infile.replace('.root', '_new_${jid}.root')
 
     os.system("cp job_template.sh " + jobscript)
 
@@ -72,7 +71,7 @@ for _jlist in jlist:
     with open(jobscript) as f:
         data_lines = f.read()
         
-    data_lines = data_lines.replace('INFILE', infile).replace('OUTFILE', outfile).replace('IDJ', '${jid}').replace('WFILE', options.wfile).replace('LOOP', ' '.join(str(x) for x in _jlist)).replace('ODIR', cdir).replace('PNAME', options.name)
+    data_lines = data_lines.replace('INFILE', infile).replace('IDJ', '${jid}').replace('WFILE', options.wfile).replace('LOOP', ' '.join(str(x) for x in _jlist))
         
     with open(jobscript, mode="w") as f:
         f.write(data_lines)

@@ -41,6 +41,8 @@ parser.add_option("-m", "--model", default="None", type="string", help="model", 
 
 parser.add_option("-j", "--jdir", default="None", type="string", help="jdir", dest="jdir")
 
+parser.add_option('-s', '--signal', action="store_true", default=False, dest='signal')
+
 (options, args) = parser.parse_args()
 
 print('Path = ', options.path)
@@ -63,6 +65,13 @@ from os import listdir
 from os.path import isfile, join
 jlist = [f for f in listdir(options.path) if isfile(join(options.path, f)) and f.find('.root')!=-1 and f.find('Myroot')!=-1 and f!="Myroot.root" and f!="Myroot_data_2018.root" and f.find('training')==-1 and f.find('analysis')==-1 and f.find('data')==-1]
 
+if options.signal:
+    jlist = [f for f in listdir(options.path) if isfile(join(options.path, f)) and f.find('hammer')!=-1]
+
+
+#import pdb; pdb.set_trace()
+
+print jlist
 #print len(onlyfiles), 'files detected'
 
 #jlist=list(chunks(onlyfiles, options.chunk))
@@ -76,7 +85,7 @@ for _jlist in jlist:
     
     print(ijob, _jlist)
 
-#    if ijob == 5: break
+#    if ijob == 1: break
 
 #    import pdb; pdb.set_trace()
     jobscript = jobdir + '/job_' + str(ijob) + '.sh'
@@ -96,7 +105,7 @@ for _jlist in jlist:
 
 
 
-    command = 'sbatch -p quick --account=t3 --error=' + jobdir + '/err.' + str(ijob) + ' --output=' + jobdir + '/out.' + str(ijob) + ' ' + jobscript
+    command = 'sbatch -p quick --mem=4G --account=t3 --error=' + jobdir + '/err.' + str(ijob) + ' --output=' + jobdir + '/out.' + str(ijob) + ' ' + jobscript
 
     os.system(command)
 
