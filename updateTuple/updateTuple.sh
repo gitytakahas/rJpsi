@@ -2,9 +2,9 @@
 # update each ntuple by adding QCD fake weight and the MVA for ttbar rejection
 
 
-if [ $# -ne 4 ]; then
+if [ $# -ne 2 ]; then
   echo "# of specified params: #" 1>&2
-  echo "You need to give 5 param" 1>&2
+  echo "You need to give 2 param" 1>&2
   exit 1
 fi
 
@@ -19,12 +19,13 @@ fi
 ifile="$1"
 #ofile="$2"
 wfile="$2"
-tdir="$3"
-id="$4"
+#tdir="$3"
+#id="$4"
 #    ifile="/work/ytakahas/work/BsTauTau/CMSSW_10_2_10/src/job/BcJpsiTau_large_BcJpsiTauNu_truth_2020-04-24-150429/Myroot.root";
 #    ofile="/work/ytakahas/work/BsTauTau/CMSSW_10_2_10/src/job/BcJpsiTau_large_BcJpsiTauNu_truth_2020-04-24-150429/Myroot.root";
     
-root -l -q -b 'addvariable.C("'${ifile}'", "'${wfile}'", "'${tdir}'", "'${id}'")'
+#root -l -q -b 'addvariable.C("'${ifile}'", "'${wfile}'", "'${tdir}'", "'${id}'")'
+root -l -q -b 'addvariable.C("'${ifile}'", "'${wfile}'")'
 
 #if [ $id == "-1" ]; then
 #    echo "${id} is -1!"

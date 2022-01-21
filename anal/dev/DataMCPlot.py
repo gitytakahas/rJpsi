@@ -14,13 +14,18 @@ from H2TauStyle import histPref, Style
 
 
 def ymax(hists):
+
     def getmax(h):
         hw = h.weighted
         return hw.GetBinContent(hw.GetMaximumBin())
     maxs = map(getmax, hists)
     ymax = max(maxs)*1.1
+
     if ymax == 0:
         ymax = 1
+
+
+    print 'CHECK!!!!!!!!!!!!!!!!!!!!'
     return ymax
 
 
@@ -39,6 +44,7 @@ class DataMCPlot(object):
         self.histos = []
         self.supportHist = None
         self.name = name
+
         self.stack = None
         self.legendOn = True
         self.legend = None
@@ -374,6 +380,8 @@ class DataMCPlot(object):
         '''Draw all histograms, some of them in a stack.
 
         if Histogram.stack is True, the histogram is put in the stack.'''
+        
+#        print('factor=', factor)
         self._BuildStack(self._SortedHistograms(), ytitle='Events')
         same = 'same'
         if len(self.nostack) == 0:
@@ -385,7 +393,7 @@ class DataMCPlot(object):
                 self.supportHist = hist
         self.stack.Draw(opt+same,
                         xmin=xmin, xmax=xmax,
-                        ymin=ymin, ymax=ymax, factor=factor)
+                        ymin=ymin, ymax=ymax*factor)
         if self.supportHist is None:
             self.supportHist = self.stack.totalHist
         if not self.axisWasSet:
@@ -396,12 +404,13 @@ class DataMCPlot(object):
                 self.stack.totalHist.weighted.GetMaximumBin()
             )
             mx = max(mxsup, mxstack)
+
             if ymin is None:
                 ymin = 0.01
             if ymax is None:
                 ymax = mx*1.4
 #                ymax = mx*3.
-            self.supportHist.GetYaxis().SetRangeUser(ymin, ymax)
+            self.supportHist.GetYaxis().SetRangeUser(ymin, ymax*factor)
             self.axisWasSet = True
         for hist in self.nostack:
             if self.blindminx:
@@ -468,6 +477,7 @@ class DataMCPlot(object):
 
         for hist in self._SortedHistograms():
             print 'Writing', hist, 'as', hist.name
+            hist.weighted.GetXaxis().SetLabelSize(0.05)
             hist.weighted.SetName(hist.name)
             hist.weighted.SetTitle(hist.name)
             hist.weighted.Write(hist.name)

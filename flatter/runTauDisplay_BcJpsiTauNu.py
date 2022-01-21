@@ -130,23 +130,34 @@ files = options.file.split(',')
 chain = ROOT.TChain('ntuplizer/tree', 'tree')
 
 hist_hammer = None
+hist_hammer_lattice = None
 
 for inputfile in files:
     print('Adding ...', inputfile)
     chain.AddFile(inputfile)
 
     _file = TFile.Open(inputfile)
-    _hist = _file.Get('ntuplizer/cutflow')
+    _hist = copy.deepcopy(_file.Get('ntuplizer/cutflow'))
 
-    if out.hist == None:
-        print('cutflow histo created')
-        out.hist = copy.deepcopy(_hist)
-    else:
-        print('cutflow histo added')
-        out.hist.Add(copy.deepcopy(_hist))
+#    if out.hist == None:
+#        print('cutflow histo created')
+#        out.hist = copy.deepcopy(_hist)
+##        out.hist = _hist
+#    else:
+#    print('cutflow histo added')
+#    for ibin in range(1, _hist.GetXaxis().GetNbins()+1):
+#        out.hist.GetXaxis().SetBinLabel(ibin, _hist.GetXaxis().GetBinLabel(ibin))
+#        print('bin label', _hist.GetXaxis().GetBinLabel(ibin), out.hist.GetXaxis().GetBinLabel(ibin))
 
-    if hist_hammer==None:
-        hist_hammer = _file.Get('ntuplizer/hammer_width')
+
+    out.hist.Add(_hist)
+    
+    if options.type=='signal':
+        if hist_hammer==None:
+            hist_hammer = _file.Get('ntuplizer/hammer_width')
+            
+        if hist_hammer_lattice==None:
+            hist_hammer_lattice = _file.Get('ntuplizer/hammer_width_lattice')
 
 chain.SetBranchStatus('*', 0)
 
@@ -231,7 +242,6 @@ if options.type!='data':
     chain.SetBranchStatus('JpsiTau_genSV_vx', 1)
     chain.SetBranchStatus('JpsiTau_genSV_vy', 1)
     chain.SetBranchStatus('JpsiTau_genSV_vz', 1)
-    chain.SetBranchStatus('JpsiTau_hammer_*', 1)
     chain.SetBranchStatus('nPuVtxTrue', 1)
     chain.SetBranchStatus('JpsiTau_st_gentau*',1)
     chain.SetBranchStatus('JpsiTau_st_n_occurance',1)
@@ -242,6 +252,8 @@ if options.type!='data':
 if options.type=='bg':
     chain.SetBranchStatus('genWeightBkgB',1)
 
+if options.type=='signal':
+    chain.SetBranchStatus('JpsiTau_hammer_*', 1)
 
 Nevt = chain.GetEntries()
 
@@ -260,11 +272,13 @@ for evt in xrange(Nevt):
     if evt%10000==0: print('{0:.2f}'.format(ROOT.Double(evt)/ROOT.Double(Nevt)*100.), '% processed')
 
     out.multi.Fill(len(chain.JpsiTau_tau_pt))
+    out.filt.Fill(0)
 
     if len(chain.JpsiTau_tau_pt)==0: 
         print('This is not possible !!')
         continue
 
+    out.filt.Fill(1)
 
     tlv_jpsi = ROOT.TLorentzVector()
     tlv_jpsi.SetPtEtaPhiM(chain.JpsiTau_Jpsi_pt, chain.JpsiTau_Jpsi_eta, chain.JpsiTau_Jpsi_phi, chain.JpsiTau_Jpsi_mass)
@@ -292,8 +306,12 @@ for evt in xrange(Nevt):
     if options.priority=='pt':
             
         for itau in range(len(chain.JpsiTau_tau_pt)):
+#            if chain.JpsiTau_tau_vprob[itau] > 0.1: continue
             if chain.JpsiTau_tau_vprob[itau] < 0.1: continue
             if chain.JpsiTau_tau_fls3d[itau] < 3.: continue
+#            if  chain.JpsiTau_tau_fls3d[itau] > 3. and chain.JpsiTau_tau_vprob[itau] > 0.1: continue
+#            if abs(chain.JpsiTau_tau_q[itau])!=1: continue
+
             if chain.JpsiTau_tau_mass[itau] > 1.7: continue
             if bool(chain.JpsiTau_tau_pi1_trigMatch[itau])==False and bool(chain.JpsiTau_tau_pi2_trigMatch[itau])==False and bool(chain.JpsiTau_tau_pi3_trigMatch[itau])==False: 
 #                print 'trigger matching was not satisifed ...'
@@ -309,10 +327,11 @@ for evt in xrange(Nevt):
             
     if options.priority!='multiple' and tindex_ == -1: continue
 
+    out.filt.Fill(2)
 
     if len(chain.JpsiTau_B_pt) != len(chain.JpsiTau_tau_pt): continue
 
-
+    out.filt.Fill(3)
 
     ### ctau calculation ! 
 
@@ -356,15 +375,17 @@ for evt in xrange(Nevt):
 
 
 
-
     for tindex in range(len(chain.JpsiTau_tau_pt)):
 
 
-        if abs(chain.JpsiTau_tau_q[tindex])!=1: continue
+#        if abs(chain.JpsiTau_tau_q[tindex])!=1: continue
+#        if abs(chain.JpsiTau_tau_q[tindex])!=1: continue
 
         if options.priority in ['pt']:
             if tindex != tindex_: continue
 
+
+        out.filt.Fill(4)
 
         isRight_3prong = False
         isRight_3prong_pi0 = False
@@ -418,7 +439,7 @@ for evt in xrange(Nevt):
             out.pid[0] = pid
 
             
-
+#        print('test4')
         out.mu1_pt[0] = tlv_mu1.Pt()
         out.mu1_eta[0] = tlv_mu1.Eta()
         out.mu1_phi[0] = tlv_mu1.Phi()
@@ -527,7 +548,7 @@ for evt in xrange(Nevt):
             out.dz_b_pv[0] = _bdz
             out.dr_b_pv[0] = math.sqrt(_bdx*_bdx + _bdy*_bdy + _bdz*_bdz)
 
-
+            out.filt.Fill(5)
 
         out.tau_iso_0p5[0] = chain.JpsiTau_tau_iso[tindex][0]
         out.tau_iso_ntracks_0p5[0] = chain.JpsiTau_tau_iso_ntracks[tindex][0]
@@ -998,58 +1019,137 @@ for evt in xrange(Nevt):
 
             if options.type in ['signal'] and chain.JpsiTau_st_n_occurance == 1:
 
-#                print evtid, chain.JpsiTau_hammer_ebe[0]
+#                import pdb; pdb.set_trace()
+
+                out.filt.Fill(6)
+                
                 if len(chain.JpsiTau_hammer_ebe)==1:
+
+
+#                    print evtid, chain.JpsiTau_hammer_ebe[0], len(chain.JpsiTau_hammer_ebe)
+                    
+                    if chain.JpsiTau_hammer_ebe[0]==-1:
+                        continue
+
                     out.hammer_ebe[0] = chain.JpsiTau_hammer_ebe[0]
                     out.hammer_wratio[0] = ROOT.Double(hist_hammer.GetBinContent(2))/ROOT.Double(hist_hammer.GetBinContent(1))
-                    out.hammer_ebe_a0_up[0] = chain.JpsiTau_hammer_ebe_a0_up[0]
-                    out.hammer_ebe_a0_down[0] = chain.JpsiTau_hammer_ebe_a0_down[0]
-                    out.hammer_ebe_a1_up[0] = chain.JpsiTau_hammer_ebe_a1_up[0]
-                    out.hammer_ebe_a1_down[0] = chain.JpsiTau_hammer_ebe_a1_down[0]
-                    out.hammer_ebe_a2_up[0] = chain.JpsiTau_hammer_ebe_a2_up[0]
-                    out.hammer_ebe_a2_down[0] = chain.JpsiTau_hammer_ebe_a2_down[0]
+                    
+                    for ii in range(0, 15):
+                        for ud in ['up', 'down']:
+                            
+                            hammer_weight = getattr(chain, 'JpsiTau_hammer_ebe_e' + str(ii) + '_' + ud)[0]
+                            if hammer_weight==-1: continue
+                            getattr(out, 'hammer_ebe_e' + str(ii) + '_' + ud)[0] = hammer_weight
 
-                    out.hammer_ebe_b0_up[0] = chain.JpsiTau_hammer_ebe_b0_up[0]
-                    out.hammer_ebe_b0_down[0] = chain.JpsiTau_hammer_ebe_b0_down[0]
-                    out.hammer_ebe_b1_up[0] = chain.JpsiTau_hammer_ebe_b1_up[0]
-                    out.hammer_ebe_b1_down[0] = chain.JpsiTau_hammer_ebe_b1_down[0]
-                    out.hammer_ebe_b2_up[0] = chain.JpsiTau_hammer_ebe_b2_up[0]
-                    out.hammer_ebe_b2_down[0] = chain.JpsiTau_hammer_ebe_b2_down[0]
+                        
+#                    out.hammer_ebe_a0_up[0] = chain.JpsiTau_hammer_ebe_a0_up[0]
+#                    out.hammer_ebe_a0_down[0] = chain.JpsiTau_hammer_ebe_a0_down[0]
+#                    out.hammer_ebe_a1_up[0] = chain.JpsiTau_hammer_ebe_a1_up[0]
+#                    out.hammer_ebe_a1_down[0] = chain.JpsiTau_hammer_ebe_a1_down[0]
+#                    out.hammer_ebe_a2_up[0] = chain.JpsiTau_hammer_ebe_a2_up[0]
+#                    out.hammer_ebe_a2_down[0] = chain.JpsiTau_hammer_ebe_a2_down[0]
+#
+#                    out.hammer_ebe_b0_up[0] = chain.JpsiTau_hammer_ebe_b0_up[0]
+#                    out.hammer_ebe_b0_down[0] = chain.JpsiTau_hammer_ebe_b0_down[0]
+#                    out.hammer_ebe_b1_up[0] = chain.JpsiTau_hammer_ebe_b1_up[0]
+#                    out.hammer_ebe_b1_down[0] = chain.JpsiTau_hammer_ebe_b1_down[0]
+#                    out.hammer_ebe_b2_up[0] = chain.JpsiTau_hammer_ebe_b2_up[0]
+#                    out.hammer_ebe_b2_down[0] = chain.JpsiTau_hammer_ebe_b2_down[0]
+#
+#                    out.hammer_ebe_c1_up[0] = chain.JpsiTau_hammer_ebe_c1_up[0]
+#                    out.hammer_ebe_c1_down[0] = chain.JpsiTau_hammer_ebe_c1_down[0]
+#                    out.hammer_ebe_c2_up[0] = chain.JpsiTau_hammer_ebe_c2_up[0]
+#                    out.hammer_ebe_c2_down[0] = chain.JpsiTau_hammer_ebe_c2_down[0]
+#
+#                    out.hammer_ebe_d0_up[0] = chain.JpsiTau_hammer_ebe_d0_up[0]
+#                    out.hammer_ebe_d0_down[0] = chain.JpsiTau_hammer_ebe_d0_down[0]
+#                    out.hammer_ebe_d1_up[0] = chain.JpsiTau_hammer_ebe_d1_up[0]
+#                    out.hammer_ebe_d1_down[0] = chain.JpsiTau_hammer_ebe_d1_down[0]
+#                    out.hammer_ebe_d2_up[0] = chain.JpsiTau_hammer_ebe_d2_up[0]
+#                    out.hammer_ebe_d2_down[0] = chain.JpsiTau_hammer_ebe_d2_down[0]
 
-                    out.hammer_ebe_c1_up[0] = chain.JpsiTau_hammer_ebe_c1_up[0]
-                    out.hammer_ebe_c1_down[0] = chain.JpsiTau_hammer_ebe_c1_down[0]
-                    out.hammer_ebe_c2_up[0] = chain.JpsiTau_hammer_ebe_c2_up[0]
-                    out.hammer_ebe_c2_down[0] = chain.JpsiTau_hammer_ebe_c2_down[0]
-
-                    out.hammer_ebe_d0_up[0] = chain.JpsiTau_hammer_ebe_d0_up[0]
-                    out.hammer_ebe_d0_down[0] = chain.JpsiTau_hammer_ebe_d0_down[0]
-                    out.hammer_ebe_d1_up[0] = chain.JpsiTau_hammer_ebe_d1_up[0]
-                    out.hammer_ebe_d1_down[0] = chain.JpsiTau_hammer_ebe_d1_down[0]
-                    out.hammer_ebe_d2_up[0] = chain.JpsiTau_hammer_ebe_d2_up[0]
-                    out.hammer_ebe_d2_down[0] = chain.JpsiTau_hammer_ebe_d2_down[0]
 
 
 
-
-                    for iham in range(len(chain.JpsiTau_hammer_ebe_toy[0])):
+#                    for iham in range(len(chain.JpsiTau_hammer_ebe_toy[0])):
             
-                        out.hammer_ebe_toy[iham] = ROOT.Double(chain.JpsiTau_hammer_ebe_toy[0][iham])
+#                        out.hammer_ebe_toy[iham] = ROOT.Double(chain.JpsiTau_hammer_ebe_toy[0][iham])
 
                 else:
-                    out.hammer_ebe[0] = -1
+                    continue
+
 
 #                if chain.JpsiTau_hammer_ebe[0]==-1: continue
             
 
+
+                if len(chain.JpsiTau_hammer_ebe_lattice)==1:
+#                    print evtid, chain.JpsiTau_hammer_ebe[0], len(chain.JpsiTau_hammer_ebe)
+
+                    if chain.JpsiTau_hammer_ebe_lattice[0]==-1:
+                        continue
+
+                    out.hammer_ebe_lattice[0] = chain.JpsiTau_hammer_ebe_lattice[0]
+                    out.hammer_wratio_lattice[0] = ROOT.Double(hist_hammer_lattice.GetBinContent(2))/ROOT.Double(hist_hammer_lattice.GetBinContent(1))
+
+                    for ii in range(0, 15):
+                        for ud in ['up', 'down']:
+                            hammer_weight = getattr(chain, 'JpsiTau_hammer_ebe_e' + str(ii) + '_' + ud + '_lattice')[0]
+                            if hammer_weight==-1: continue
+                            getattr(out, 'hammer_ebe_e' + str(ii) + '_' + ud + '_lattice')[0] = hammer_weight
+ 
+
+#                    out.hammer_ebe_a0_up_lattice[0] = chain.JpsiTau_hammer_ebe_a0_up_lattice[0]
+#                    out.hammer_ebe_a0_down_lattice[0] = chain.JpsiTau_hammer_ebe_a0_down_lattice[0]
+#                    out.hammer_ebe_a1_up_lattice[0] = chain.JpsiTau_hammer_ebe_a1_up_lattice[0]
+#                    out.hammer_ebe_a1_down_lattice[0] = chain.JpsiTau_hammer_ebe_a1_down_lattice[0]
+#                    out.hammer_ebe_a2_up_lattice[0] = chain.JpsiTau_hammer_ebe_a2_up_lattice[0]
+#                    out.hammer_ebe_a2_down_lattice[0] = chain.JpsiTau_hammer_ebe_a2_down_lattice[0]
+#
+#                    out.hammer_ebe_b0_up_lattice[0] = chain.JpsiTau_hammer_ebe_b0_up_lattice[0]
+#                    out.hammer_ebe_b0_down_lattice[0] = chain.JpsiTau_hammer_ebe_b0_down_lattice[0]
+#                    out.hammer_ebe_b1_up_lattice[0] = chain.JpsiTau_hammer_ebe_b1_up_lattice[0]
+#                    out.hammer_ebe_b1_down_lattice[0] = chain.JpsiTau_hammer_ebe_b1_down_lattice[0]
+#                    out.hammer_ebe_b2_up_lattice[0] = chain.JpsiTau_hammer_ebe_b2_up_lattice[0]
+#                    out.hammer_ebe_b2_down_lattice[0] = chain.JpsiTau_hammer_ebe_b2_down_lattice[0]
+#
+#                    out.hammer_ebe_c1_up_lattice[0] = chain.JpsiTau_hammer_ebe_c1_up_lattice[0]
+#                    out.hammer_ebe_c1_down_lattice[0] = chain.JpsiTau_hammer_ebe_c1_down_lattice[0]
+#                    out.hammer_ebe_c2_up_lattice[0] = chain.JpsiTau_hammer_ebe_c2_up_lattice[0]
+#                    out.hammer_ebe_c2_down_lattice[0] = chain.JpsiTau_hammer_ebe_c2_down_lattice[0]
+#
+#                    out.hammer_ebe_d0_up_lattice[0] = chain.JpsiTau_hammer_ebe_d0_up_lattice[0]
+#                    out.hammer_ebe_d0_down_lattice[0] = chain.JpsiTau_hammer_ebe_d0_down_lattice[0]
+#                    out.hammer_ebe_d1_up_lattice[0] = chain.JpsiTau_hammer_ebe_d1_up_lattice[0]
+#                    out.hammer_ebe_d1_down_lattice[0] = chain.JpsiTau_hammer_ebe_d1_down_lattice[0]
+#                    out.hammer_ebe_d2_up_lattice[0] = chain.JpsiTau_hammer_ebe_d2_up_lattice[0]
+#                    out.hammer_ebe_d2_down_lattice[0] = chain.JpsiTau_hammer_ebe_d2_down_lattice[0]
+
+
+
+
+#                    for iham in range(len(chain.JpsiTau_hammer_ebe_toy[0])):
+            
+#                        out.hammer_ebe_toy[iham] = ROOT.Double(chain.JpsiTau_hammer_ebe_toy[0][iham])
+
+                else:
+                    continue
+#                    out.hammer_ebe_lattice[0] = -1
+
+#                if chain.JpsiTau_hammer_ebe[0]==-1: continue
+            
+                out.filt.Fill(7)
 
 
 
             out.puweight[0] = ROOT.Double(putool.getWeight(chain.nPuVtxTrue[0]))
 
 
+        out.filt.Fill(8)
         evtid += 1
         out.tree.Fill()
     
+    out.filt.Fill(9)
 
 print(Nevt, 'evt processed.', evtid, 'evt has matching')
 

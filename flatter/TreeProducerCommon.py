@@ -36,6 +36,8 @@ class TreeProducerCommon(object):
 #        self.hist = None
         self.multi = ROOT.TH1F('multi', 'multi', 100,0,100)
 
+        self.filt = ROOT.TH1F('filter', 'filter', 10,0,10)
+        
         self.addBranch('evt',                  'i')
         self.addBranch('run',                  'i')
         self.addBranch('lumi',                  'i')

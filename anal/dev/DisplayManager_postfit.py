@@ -100,7 +100,7 @@ def createRatioCanvas(name, errorBandFillColor=14, errorBandStyle=3354):
 
 class DisplayManager(object):
 
-    def __init__(self, name, ratio, lumi, clabel, xmin=0.42, ymin=0.6):
+    def __init__(self, name, ratio, isLog, lumi, clabel, xmin=0.42, ymin=0.6):
 
         if ratio:
             self.canvas = createRatioCanvas(name.replace('pdf', ''))
@@ -116,6 +116,8 @@ class DisplayManager(object):
 #        self.histos = []
         self.pullRange = 1.49
 
+        self.isLog = isLog
+
         self.adapt = ROOT.gROOT.GetColor(12)
 #        self.new_idx = ROOT.gROOT.GetListOfColors().GetSize() + 1
         self.new_idx = 2001
@@ -126,13 +128,23 @@ class DisplayManager(object):
 
 
         self.histo = histo
-        self.histo.DrawStack('HIST', None, None, None, None, 5.)
 #        self.histo.DrawStack('HIST', None, None, 1., None, 100)
 
 #        self.histos = histos
         self.data = self.histo.Hist('data_obs')
 #        self.data.obj.Sumw2(False) ## This is needed to make poisson error bar !!!!!!!!!!!!!!!!!!!!!!!!!!!
         self.total = self.histo.returnTotal()
+
+
+        yfactor = 2.
+        if self.isLog:
+            yfactor = 500.
+
+        if self.isLog:
+            self.canvas.cd(1).SetLogy()
+
+
+        self.histo.DrawStack('HIST', None, None, None, max(self.data.GetMaximum(), self.total.GetMaximum()), yfactor)
 
 
 #        for shist in [self.histo['TotalSig']]:
@@ -326,4 +338,19 @@ class DisplayManager(object):
 
         self.canvas.Print(self.name.replace('.gif','.pdf'))
         self.canvas.Print(self.name.replace('.gif','.gif'))
-        
+
+#        self.canvas.cd(1).Clear()
+#        self.histo.DrawStack('HIST', None, None, None, max(self.data.GetMaximum(), self.total.GetMaximum()), 100)
+#        print('max check=', str(max(self.data.GetMaximum(), self.total.GetMaximum())*10000 ))
+#        self.histo.supportHist.GetYaxis().SetRangeUser(0.01, max(self.data.GetMaximum(), self.total.GetMaximum())*1000)
+           
+
+#        self.data.GetYaxis().SetRangeUser(0.01, max(self.data.GetMaximum(), self.total.GetMaximum())*100)
+#        self.total.GetYaxis().SetRangeUser(0.01, max(self.data.GetMaximum(), self.total.GetMaximum())*100)
+#        self.canvas.Update()
+
+#        self.histo.DrawStack('HIST', None, None, None, max(self.data.GetMaximum(), self.total.GetMaximum()), 100.)
+
+
+#        self.canvas.Print(self.name.replace('.gif','_log.pdf'))
+#        self.canvas.Print(self.name.replace('.gif','_log.gif'))

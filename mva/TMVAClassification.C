@@ -164,8 +164,8 @@ int TMVAClassification( TString myMethodList = "" )
    // Read training and test data
    // (it is also possible to use ASCII format as input -> see TMVA Users Guide)
 
-   TFile *input_s = TFile::Open( "/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_v2/Myroot4mva_comb.root" );
-   TFile *input_b = TFile::Open( "/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_v2/BcJpsiX_rereco_2018/Myroot4mva.root" );
+   TFile *input_s = TFile::Open( "/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt/BcJpsiTau_inclusive_ul_all_2018/Myroot_training_default.root");
+   TFile *input_b = TFile::Open( "/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt/Data_2018/Myroot_training.root");
 
    TTree *signalTree     = (TTree*)input_s->Get("tree");
    TTree *background     = (TTree*)input_b->Get("tree");
@@ -216,9 +216,12 @@ int TMVAClassification( TString myMethodList = "" )
    dataloader->AddVariable( "tau_vprob",                "tau_vprob", "", 'F');
    dataloader->AddVariable( "tau_fls3d_wjpsi",                "tau_fls3d_wjpsi", "", 'F');
    dataloader->AddVariable( "tau_sumofdnn",                "tau_sumofdnn", "", 'F');
+   dataloader->AddVariable( "tau_sumofdnn_1prong",                "tau_sumofdnn_1prong", "", 'F');
+   dataloader->AddVariable( "tau_sumofdnn_otherB",                "tau_sumofdnn_otherB", "", 'F');
+   dataloader->AddVariable( "tau_sumofdnn_pu",                "tau_sumofdnn_pu", "", 'F');
    dataloader->AddVariable( "tau_iso_0p7",                "tau_iso_0p7", "", 'F');
    //   dataloader->AddVariable( "tau_iso_ntracks_0p7",                "tau_iso_ntracks_0p7", "", 'F');
-   //   dataloader->AddVariable( "ncand",                "ncand", "", 'I');
+   dataloader->AddVariable( "ncand",                "ncand", "", 'I');
    dataloader->AddVariable( "estar",                "estar", "", 'F');
 
 
@@ -284,8 +287,9 @@ int TMVAClassification( TString myMethodList = "" )
    //   dataloader->SetBackgroundWeightExpression( "weight" );
 
    // Apply additional cuts on the signal and background samples (can be different)
-   TCut mycuts = "tau_fls3d > 0 && tau_fls3d < 100 && tau_sumofdnn > -3 && tau_sumofdnn < 3 && tau_fls3d_wjpsi > -20 && tau_fls3d_wjpsi < 20 && b_lips > -20 && b_lips < 20 && b_pvips < 20. && b_pvips > 0."; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
-   TCut mycutb = mycuts;  // for example: TCut mycutb = "abs(var1)<0.5";
+   TCut mycuts = "tau_isRight_3prong==1 && tau_fls3d > 0 && tau_fls3d < 100 && tau_sumofdnn > -3 && tau_sumofdnn < 3 && tau_fls3d_wjpsi > -20 && tau_fls3d_wjpsi < 20 && b_lips > -20 && b_lips < 20 && b_pvips < 20. && b_pvips > 0."; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+   TCut mycutb = "tau_fls3d > 0 && tau_fls3d < 100 && tau_sumofdnn > -3 && tau_sumofdnn < 3 && tau_fls3d_wjpsi > -20 && tau_fls3d_wjpsi < 20 && b_lips > -20 && b_lips < 20 && b_pvips < 20. && b_pvips > 0."; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+
 
    // Tell the dataloader how to use the training and testing events
    //

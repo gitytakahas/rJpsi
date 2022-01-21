@@ -105,7 +105,7 @@ for _jlist in jlist:
 
 
 
-    command = 'sbatch -p quick --mem=4G --account=t3 --error=' + jobdir + '/err.' + str(ijob) + ' --output=' + jobdir + '/out.' + str(ijob) + ' ' + jobscript
+    command = 'sbatch -p short --mem=4G --account=t3 --error=' + jobdir + '/err.' + str(ijob) + ' --output=' + jobdir + '/out.' + str(ijob) + ' ' + jobscript
 
     os.system(command)
 

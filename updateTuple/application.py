@@ -55,6 +55,7 @@ ensureDir(fdir)
 #features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7',  'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'tau_fls3d', 'tau_vprob', 'tau_fls3d_wjpsi',  'tau_sumofdnn', 'ncand', 'estar', 'perEVT_mc']
 features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7',  'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'tau_fls3d', 'tau_vprob', 'tau_fls3d_wjpsi',  'tau_sumofdnn','tau_sumofdnn_1prong', 'tau_sumofdnn_otherB', 'tau_sumofdnn_pu', 'ncand', 'estar']
 
+
 #features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7', 'tau_iso_ntracks_0p7', 'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'dr_jpsi_tau', 'tau_fls3d', 'tau_vprob', 'tau_fls3d_wjpsi', 'tau_sumofdnn', 'tau_sumofdnn_1prong', 'tau_sumofdnn_otherB', 'tau_sumofdnn_pu', 'ncand', 'estar', 'mm2', 'mu1_isLoose', 'mu2_isLoose']
 
 training_branches = sorted(features)
@@ -121,8 +122,8 @@ for i, params in enumerate(events.iterate(outputtype=pd.DataFrame, entrysteps=10
 #  _branches['xgb']
 
 #    xgbsgt6 =  _branches['xgbs'] > 4.52
-#    xgbsgt =  _branches['xgbs'] > -100.
-    xgbsgt =  _branches['xgbs'] > 6.
+    xgbsgt =  _branches['xgbs'] > -100.
+#    xgbsgt =  _branches['xgbs'] > 6.
 #    xgbsgt =  _branches['tau_index'] ==0
 
 #    import pdb; pdb.set_trace()

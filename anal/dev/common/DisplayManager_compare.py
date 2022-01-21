@@ -1,6 +1,6 @@
 import ROOT
 import copy
-
+import math
 
 
 def add_CMS(add=0):
@@ -90,7 +90,7 @@ def createRatioCanvas(name, errorBandFillColor=14, errorBandStyle=3354):
     return cv
 
 
-class DisplayManager(object):
+class DisplayManager_compare(object):
 
     def __init__(self, name, isLog, ratio, xmin=0.42, ymin=0.6, doption='ep'):
 
@@ -116,15 +116,32 @@ class DisplayManager(object):
         self.draw_ratioLegend = ROOT.TLegend(0.15, 0.79, 0.5, 0.89)
         applyLegendSettings(self.draw_ratioLegend)
 
-        self.pullRange = 2.
+        self.pullRange = 0.8
 #        self.canvas.Print(self.name + '[')
 
 #    def __del__(self):
 #        self.canvas.Print(self.name + ']')
 
-    def Draw(self, histos, titles, prefix=None):
+    def Draw(self, histos, titles, norm=False, prefix=None):
 
         self.histos = histos
+
+#        print('norm', norm)
+
+        # dirty ... 
+#        for hh in self.histos:
+#            if hh.GetName().find('data')!=-1:
+#                for ibin in range(1, hh.GetXaxis().GetNbins()+1):
+#                    hh.SetBinError(ibin, math.sqrt(hh.GetBinContent(ibin)))
+
+        if norm:
+#            print('normalization option enabled!')
+            for hh in self.histos:
+                hh.Scale(1./hh.GetSumOfWeights())
+        
+
+        
+
         ymax = max(h.GetMaximum() for h in self.histos)
         ymin = min(h.GetMinimum() for h in self.histos)
 
@@ -138,12 +155,12 @@ class DisplayManager(object):
 
         for i, h in enumerate(self.histos):
             title = titles[i]
-            h.GetYaxis().SetRangeUser(0., ymax * 1.3)
+            h.GetYaxis().SetRangeUser(0., ymax * 1.5)
             h.GetYaxis().SetNdivisions(505)
 
             if ymin < 0:
                 print('set negative minimum ...')
-                h.GetYaxis().SetRangeUser(ymin*1.5, ymax * 1.3)
+                h.GetYaxis().SetRangeUser(ymin*1.5, ymax * 1.5)
 
             if self.isLog:
                 h.GetYaxis().SetRangeUser(0.00001, ymax * 100)
@@ -155,16 +172,18 @@ class DisplayManager(object):
 
             _doption = self.doption
 
-            if h.GetName().find('data')!=-1:
-                _doption = 'lep'
-                h.SetMarkerStyle(20)
-                h.SetMarkerSize(1)
-                h.SetMarkerColor(1)
-                h.SetLineColor(1)
-                h.SetLineStyle(1)
+#            if h.GetName().find('data')!=-1:
+#                _doption = 'lep'
+#                h.SetMarkerStyle(20)
+#                h.SetMarkerSize(1)
+#                h.SetMarkerColor(1)
+#                h.SetLineColor(1)
+#                h.SetLineStyle(1)
 
 #            print h.GetName(), title, _doption
-            self.Legend.AddEntry(h, title, 'lep')
+#            self.Legend.AddEntry(h, title + ' (' + str(int(h.GetEntries())) + ')', 'lep')
+            self.Legend.AddEntry(h, title + ' (' + str(int(h.GetEntries())) + ', ' +  '{0:.1f}'.format(h.GetSumOfWeights()) + ')', 'lep')
+#            self.Legend.AddEntry(h, title + ' (' + str(int(h.GetSumOfWeights())) + ')', 'lep')
 
             if i == 0:
 #                print 'initial !', i
@@ -201,7 +220,7 @@ class DisplayManager(object):
                 histPull.SetLineStyle(self.histos[ihist].GetLineStyle())
                 histPull.SetLineWidth(self.histos[ihist].GetLineWidth())
 
-                histPull.GetYaxis().SetRangeUser(-self.pullRange + 1., self.pullRange + 1.)
+                histPull.GetYaxis().SetRangeUser(-self.pullRange + 1., self.pullRange + 1.5)
 
                 # defaultYtoPixel = 408.  # height in pixels of default canvas
                 defaultYtoPixel = self.canvas.GetPad(1).YtoPixel(0.)

@@ -46,7 +46,7 @@ def sproducer(name, cut, chain, weight='1'):
 #    tree = rootfile.Get('tree')
 
     chain.Draw('b_pt:abs(b_eta) >> ' + hist.GetName(), selection)
-    hist.GetXaxis().SetTitle('eta')
+    hist.GetXaxis().SetTitle('abs(eta)')
     hist.GetYaxis().SetTitle('pt')
 
 
@@ -83,8 +83,10 @@ print('# of bkg =', chain_bg.GetEntries())
 #sig = sproducer('sig', 'tau_index==0', chain_sig, 'puweight*hammer_ebe')
 #bkg = sproducer('bkg', '1.', chain_bg, 'puweight')
 
-sig = sproducer('sig', 'tau_isRight_3prong==1', chain_sig, 'puweight')
-bkg = sproducer('bkg', '1.', chain_bg, 'puweight*genWeightBkgB')
+sig = sproducer('sig', 'tau_isRight_3prong==1', chain_sig, 'puweight*hammer_ebe/0.55')
+sig.Scale(1./sig.GetSumOfWeights())
+bkg = sproducer('bkg', '1.', chain_bg, '1')
+bkg.Scale(1./bkg.GetSumOfWeights())
 
 #weight = TH2F('weight', 'weight', 20,0, 2.5, 20, 2, 30)
 weight = copy.deepcopy(sig)

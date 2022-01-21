@@ -12,30 +12,35 @@
 using namespace TMVA;
 
 
-void addvariable(TString filename, TString wfile, TString tdir, TString idstr){
+//void addvariable(TString filename, TString wfile, TString tdir, TString idstr){
+void addvariable(TString filename, TString wfile){
 
   std::cout << "------------------------------------------" << std::endl;
   std::cout << "input filename = " <<  filename << std::endl;
   std::cout << "------------------------------------------" << std::endl;
   std::cout << "weight file = " << wfile << std::endl;
   std::cout << "------------------------------------------" << std::endl;
-  std::cout << "transient dir = " << tdir << std::endl;
-  std::cout << "------------------------------------------" << std::endl;
-  std::cout << "id dir = " << idstr << std::endl;
-  std::cout << "------------------------------------------" << std::endl;
+  //  std::cout << "transient dir = " << tdir << std::endl;
+  //  std::cout << "------------------------------------------" << std::endl;
+  //  std::cout << "id dir = " << idstr << std::endl;
+  //  std::cout << "------------------------------------------" << std::endl;
 
-  int id = std::stoi((string) idstr);
+  //  int id = std::stoi((string) idstr);
 
-  bool isBG = false;
-  bool isSignal_all = false;
+  //  bool isBG = false;
+  bool isSignal = false;
+  bool isData = false;
 
-  if(string(filename).find("BcJpsiX")!=std::string::npos){
-    std::cout << "This is BG!" << std::endl;
-    isBG = true;
-  }
-  else if(string(filename).find("all")!=std::string::npos){
-    std::cout << "This is signal all!" << std::endl;
-    isSignal_all = true;
+//  if(string(filename).find("BcJpsiX")!=std::string::npos){
+//    std::cout << "This is BG!" << std::endl;
+//    isBG = true;
+//  }else 
+  if(string(filename).find("BcJpsiTau")!=std::string::npos){
+    std::cout << "This is signal !!" << std::endl;
+    isSignal = true;
+  }else if(string(filename).find("Data")!=std::string::npos){
+    std::cout << "This is signal all !!" << std::endl;
+    isData = true;
   }else{
     std::cout << "This is invalid!" << std::endl;
   }
@@ -45,7 +50,7 @@ void addvariable(TString filename, TString wfile, TString tdir, TString idstr){
   TFile *wFile = new TFile(wfile);
   TH2F *hist = (TH2F*) gROOT->FindObject("ratio");
 
-  std::cout << "input file";
+  std::cout << "input file: ";
 
   TFile *lFile = new TFile(filename);
   TTree *lTree = (TTree*) lFile->FindObjectAny("tree");
@@ -53,11 +58,11 @@ void addvariable(TString filename, TString wfile, TString tdir, TString idstr){
   std::cout << "... done" << std::endl;
 
   Double_t b_pt, b_eta, b_puweight, b_hammer;
-  Double_t b_toy[3000];
-  Double_t b_bkgBweight;
-  Int_t b_tau_index;
+  //  Double_t b_toy[3000];
+  //  Double_t b_bkgBweight;
+  //  Int_t b_tau_index;
 
-  TString _output;
+  //  TString _output;
   string output = (string)filename;
 
   //  std::cout << "output file = " <<  output << std::endl;
@@ -66,32 +71,34 @@ void addvariable(TString filename, TString wfile, TString tdir, TString idstr){
   auto len = tbr.length();
 
   if(pos != std::string::npos){
-    if(idstr=="-1"){
-      output.replace(pos, len, "_default.root");
+    //    if(idstr=="-1"){
+    output.replace(pos, len, "_weightAdded.root");
       //    output.replace(output.begin(), output.end(), '.root', '_default.root');
-    }else{
-      output.replace(pos, len, "_hammer" + idstr + ".root");
-    }
+    //}else{
+    //      output.replace(pos, len, "_hammer" + idstr + ".root");
+    //    }
   }
 
   std::cout << "output file = " <<  output << std::endl;
 
-  lTree->SetBranchAddress( "puweight", &b_puweight);
-
-  if(isSignal_all){
+    
+  if(isSignal){
+    lTree->SetBranchAddress( "puweight", &b_puweight);
     lTree->SetBranchAddress( "hammer_ebe", &b_hammer);
-    lTree->SetBranchAddress( "hammer_ebe_toy", &b_toy);
-    _output = tdir + "/transient_large_" + idstr + ".root";
+    //    lTree->SetBranchAddress( "hammer_ebe_toy", &b_toy);
+    //    _output = tdir + "/transient_large_" + idstr + ".root";
   }
 
-  if(isBG){
+  if(isData){
     lTree->SetBranchAddress( "b_pt", &b_pt);
     lTree->SetBranchAddress( "b_eta", &b_eta);
-    lTree->SetBranchAddress( "genWeightBkgB", &b_bkgBweight);
-    _output = (TString)output;
   }
 
-  TFile *lOFile = new TFile(_output,"RECREATE");
+//    lTree->SetBranchAddress( "genWeightBkgB", &b_bkgBweight);
+//    _output = (TString)output;
+//  }
+
+  TFile *lOFile = new TFile((TString)output,"RECREATE");
   TTree *lOTree = lTree->CloneTree(0);
    
   Float_t lweight;
@@ -106,20 +113,26 @@ void addvariable(TString filename, TString wfile, TString tdir, TString idstr){
     //    if(i0==20000) break;
 
     
-    if(isBG){
+//    if(isBG){
+//
 
-      Float_t histw = hist->GetBinContent(hist->GetXaxis()->FindBin(TMath::Abs(b_eta)), hist->GetYaxis()->FindBin(b_pt));
-      lweight = histw*b_puweight*b_bkgBweight;
+//      lweight = histw*b_puweight*b_bkgBweight;
+//
+//    }else 
+    if(isSignal){
 
-    }else if(isSignal_all){
+      //if(id==-1)
+      lweight = b_hammer*b_puweight/0.55;
+//      else{
+//	lweight = b_toy[id]*b_puweight;
+//      }
 
-      if(id==-1) lweight = b_hammer*b_puweight;
-      else{
-	lweight = b_toy[id]*b_puweight;
-      }
+    }else if(isData){
 
-    }else{
-      std::cout << "Invalid data type" << std::endl;
+      Float_t histw = hist->GetBinContent(hist->GetXaxis()->FindBin(TMath::Abs(b_eta)), hist->GetYaxis()->FindBin(b_pt));      
+      lweight = histw;
+
+      //      std::cout << "Invalid data type" << std::endl;
     }
 
     lOTree->Fill();    
@@ -133,52 +146,51 @@ void addvariable(TString filename, TString wfile, TString tdir, TString idstr){
   lFile = 0; lTree = 0; lOTree = 0;
 
 
-  if(isSignal_all){
-
-    
-
-    std::cout << "cleaning up the branch" << std::endl;
-    TFile *input = TFile::Open(_output);
-    TTree *inputtree; input->GetObject("tree",inputtree);
-    TFile *foutput = TFile::Open(tdir + "/transient_" + idstr + ".root","RECREATE");
-    inputtree->SetBranchStatus("hammer_ebe_toy",0);
-    TTree *outputtree = inputtree->CloneTree(-1,"fast"); 
-    foutput->Write(); 
-    delete input; 
-    delete foutput;
-
-    //    TString passbuf_mv = "mv -f " + tdir + "/transient_" + idstr + ".root " + output;
-    TString passbuf_mv = "xrdcp -f " + tdir + "/transient_" + idstr + ".root root://t3dcachedb03.psi.ch/" + output;
-
-//    if(idstr!="-1"){
-//      string output_tbr = (string)output;
-//      output_tbr.replace(output_tbr.begin(), output_tbr.end(), ".root", "_" + idstr + ".root");
-//
-////      auto pos = output_tbr.find(".root");
-////      auto len = t.length();
-////      if (pos != std::string::npos) {
-////	.replace(pos, len, "|"); // s == "a|b"
-////      }
-//
-//
-//      //      TString output_wid = output;
-//      //      string output_wid = std::regex_replace(output, regex(".root"), "_" + idstr + ".root");
-//      std::cout << "check!!! " << output_tbr << std::endl;
-//      passbuf_mv = "mv -f " + tdir + "/transient_" + idstr + ".root " + output_tbr;
-//    }
-
-    system(passbuf_mv);
-
-    //char passbuf_rm[] = "rm " + output_;
-    TString passbuf_rm = "rm -f " + _output;
-
-    system(passbuf_rm);
-
-    passbuf_rm = "rm -f " + tdir + "/transient_" + idstr + ".root";
-
-    system(passbuf_rm);
-
-  }
+////  if(isSignal){
+////
+////   
+////    std::cout << "cleaning up the branch" << std::endl;
+////    TFile *input = TFile::Open(_output);
+////    TTree *inputtree; input->GetObject("tree",inputtree);
+////    TFile *foutput = TFile::Open(tdir + "/transient_" + idstr + ".root","RECREATE");
+////    inputtree->SetBranchStatus("hammer_ebe_toy",0);
+////    TTree *outputtree = inputtree->CloneTree(-1,"fast"); 
+////    foutput->Write(); 
+////    delete input; 
+////    delete foutput;
+////
+////    //    TString passbuf_mv = "mv -f " + tdir + "/transient_" + idstr + ".root " + output;
+////    TString passbuf_mv = "xrdcp -f " + tdir + "/transient_" + idstr + ".root root://t3dcachedb03.psi.ch/" + output;
+////
+//////    if(idstr!="-1"){
+//////      string output_tbr = (string)output;
+//////      output_tbr.replace(output_tbr.begin(), output_tbr.end(), ".root", "_" + idstr + ".root");
+//////
+////////      auto pos = output_tbr.find(".root");
+////////      auto len = t.length();
+////////      if (pos != std::string::npos) {
+////////	.replace(pos, len, "|"); // s == "a|b"
+////////      }
+//////
+//////
+//////      //      TString output_wid = output;
+//////      //      string output_wid = std::regex_replace(output, regex(".root"), "_" + idstr + ".root");
+//////      std::cout << "check!!! " << output_tbr << std::endl;
+//////      passbuf_mv = "mv -f " + tdir + "/transient_" + idstr + ".root " + output_tbr;
+//////    }
+////
+////    system(passbuf_mv);
+////
+////    //char passbuf_rm[] = "rm " + output_;
+////    TString passbuf_rm = "rm -f " + _output;
+////
+////    system(passbuf_rm);
+////
+////    passbuf_rm = "rm -f " + tdir + "/transient_" + idstr + ".root";
+////
+////    system(passbuf_rm);
+////
+////  }
 
 
   

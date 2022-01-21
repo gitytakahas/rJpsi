@@ -285,7 +285,7 @@ if __name__ == '__main__':
     features = sorted(features)
 
     branches_bg = features + ['weight']
-    branches_sig = features + ['weight', 'tau_isRight_3prong']
+    branches_sig = features + ['tau_isRight_3prong', 'weight']
 #    branches_bg = features
 #    branches_sig = features + ['tau_isRight_3prong']
 #    branches = features
@@ -324,6 +324,7 @@ if __name__ == '__main__':
 #    df['weights'] = np.where(df['isSignal']==0, df['weight'], 1.0)
 #    df['weights'] = np.where(df['isSignal']==0, 1.0, 1.0)
     df['weights'] = df['weight']
+#    df['weights'] = 1.0
 
     X = df[features]
     y = df['isSignal']
@@ -335,7 +336,13 @@ if __name__ == '__main__':
     n_random_starts = 40
     do_bo = args.optimization
     do_cv = True
-    best_params = {'colsample_bytree': 0.8380017432637168, 'subsample': 0.7771020436861611, 'eta': 0.043554653675279234, 'alpha': 0.13978587730419964, 'max_depth': 3, 'gamma': 0.5966218064835417, 'lambda': 1.380893119219306}
+    # previous 
+#    best_params = {'colsample_bytree': 0.8380017432637168, 'subsample': 0.7771020436861611, 'eta': 0.043554653675279234, 'alpha': 0.13978587730419964, 'max_depth': 3, 'gamma': 0.5966218064835417, 'lambda': 1.380893119219306}
+
+    # new bayes opt. 
+    # Final model: Best hyper-parameters: {'max_depth': 6, 'eta': 0.03718974050661139, 'gamma': 9.316326797578686, 'min_child_weight': 2, 'subsample': 0.9963570761354923, 'colsample_bytree': 0.9961841085498498, 'alpha': 5.705916054501746, 'lambda': 1.8429733724333799}, ntree_limit: 699
+
+    best_params = {'max_depth': 6, 'eta': 0.03718974050661139, 'gamma': 9.316326797578686, 'min_child_weight': 2, 'subsample': 0.9963570761354923, 'colsample_bytree': 0.9961841085498498, 'alpha': 5.705916054501746, 'lambda': 1.8429733724333799}
 
     # split X and y up in train and test samples
     X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.20, random_state=rseed)

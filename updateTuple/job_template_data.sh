@@ -1,6 +1,6 @@
 #!/bin/bash
 # 
-#SBATCH -p quick
+#SBATCH -p short
 #SBATCH --account=t3
 #SBATCH --time 00:59:00
 #SBATCH -e cn-test.err 

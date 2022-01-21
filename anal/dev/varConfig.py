@@ -8,7 +8,7 @@ vardir["tau_phi"] = {'tree':'tree',  'nbin':30, 'xmin':-math.pi, 'xmax':math.pi,
 vardir["tau_q"] = {'tree':'tree',  'nbin':7, 'xmin':-3, 'xmax':4, 'xtitle':'tau q'}
 
 vardir["tau_vprob"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1, 'xtitle':'Tau vertex prob.'}
-vardir["tau_fls3d"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':30., 'xtitle':'Tau flight length sig.'}
+vardir["tau_fls3d"] = {'tree':'tree',  'nbin':30, 'xmin':2., 'xmax':30., 'xtitle':'Tau flight length sig.'}
 vardir["tau_fl3d"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1., 'xtitle':'Tau flight length'}
 vardir["tau_sumofdnn"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':3., 'xtitle':'Sum of DNN'}
 #vardir["tau_sumofdnn_old"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':3., 'xtitle':'Sum of DNN old'}
@@ -32,11 +32,16 @@ vardir["tau_index"] = {'tree':'tree',  'nbin':10, 'xmin':0., 'xmax':10., 'xtitle
 
 #vardir["reg_taupt"] = {'tree':'tree',  'nbin':20, 'xmin':0, 'xmax':20, 'xtitle':'reg. tau pT (GeV)'}
 #vardir["reg_taueta"] = {'tree':'tree',  'nbin':20, 'xmin':-2.5, 'xmax':2.5, 'xtitle':'reg. tau eta'}
-vardir["tau_mass"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':4, 'xtitle':'Tau mass (GeV)'}
+vardir["tau_mass"] = {'tree':'tree',  'nbin':30, 'xmin':0.4, 'xmax':1.8, 'xtitle':'Tau mass (GeV)'}
 #vardir["tau_max_dr"] = {'tree':'tree',  'nbin':20, 'xmin':0., 'xmax':2*math.pi, 'xtitle':'Tau max dr'}
 vardir["tau_mass_zoom"] = {'tree':'tree',  'nbin':40, 'xmin':0.7, 'xmax':1.7, 'xtitle':'Tau mass wide (GeV)', 'var':'tau_mass'}
-vardir["tau_rhomass1"] = {'tree':'tree',  'nbin':30, 'xmin':0.2, 'xmax':1.5, 'xtitle':'Tau rhomass1 (GeV)'}
-vardir["tau_rhomass2"] = {'tree':'tree',  'nbin':30, 'xmin':0.2, 'xmax':1.5, 'xtitle':'Tau rhomass2 (GeV)'}
+vardir["tau_rhomass1"] = {'tree':'tree',  'nbin':25, 'xmin':0.2, 'xmax':1.4, 'xtitle':'Tau rhomass1 (GeV)'}
+vardir["tau_rhomass2"] = {'tree':'tree',  'nbin':25, 'xmin':0.2, 'xmax':1.4, 'xtitle':'Tau rhomass2 (GeV)'}
+#vardir["tau_rhomass_unrolled"] = {'tree':'tree',  'nbin':625, 'xmin':0, 'xmax':625, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'(min(tau_rhomass2, 1.4) - 0.2)/0.048 + 25*(min(tau_rhomass1, 1.4) - 0.2)/0.048'}
+vardir["tau_rhomass_unrolled"] = {'tree':'tree',  'nbin':121, 'xmin':0, 'xmax':121, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.3) - 0.2)/0.11) + 11*int((min(tau_rhomass1, 1.3) - 0.2)/0.11)'}
+
+vardir["tau_rhomass_unrolled_coarse"] = {'tree':'tree',  'nbin':36, 'xmin':0, 'xmax':36, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.3) - 0.2)/0.22) + 6*int((min(tau_rhomass1, 1.3) - 0.2)/0.22)'}
+
 vardir["tau_rhomass_ss"] = {'tree':'tree',  'nbin':30, 'xmin':0.2, 'xmax':1.5, 'xtitle':'Tau rhomass ss (GeV)'}
 vardir["tau_rhomass_random"] = {'tree':'tree',  'nbin':30, 'xmin':0.2, 'xmax':1.5, 'xtitle':'Tau rhomass random (GeV)', 'var':'tau_rhomass'}
 vardir["tau_rhomass_ave"] = {'tree':'tree',  'nbin':30, 'xmin':0.2, 'xmax':1.5, 'xtitle':'Tau rhomass average (GeV)', 'var':'(tau_rhomass1 + tau_rhomass2)/2.'}
@@ -132,8 +137,8 @@ vardir["B_ptback_simple"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':70., '
 
 vardir["delta_chi2"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':25., 'xtitle':'delta chi2'}
 vardir["vweight"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1.5, 'xtitle':'vweight'}
-vardir["tau_fls3d_wjpsi"] = {'tree':'tree',  'nbin':30, 'xmin':-15., 'xmax':15, 'xtitle':'tau fls3d w.r.t j/psi'}
-vardir["tau_fl3d_wjpsi"] = {'tree':'tree',  'nbin':30, 'xmin':-0.3, 'xmax':1., 'xtitle':'tau fl3d w.r.t j/psi'}
+vardir["tau_fls3d_wjpsi"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':15, 'xtitle':'tau fls3d w.r.t j/psi'}
+vardir["tau_fl3d_wjpsi"] = {'tree':'tree',  'nbin':30, 'xmin':-0.3, 'xmax':0.7, 'xtitle':'tau fl3d w.r.t j/psi'}
 
 vardir["tau_refit_chi2"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':200., 'xtitle':'refitted PV chi2'}
 vardir["tau_refit_ndof"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':200., 'xtitle':'refitted PV ndof'}
@@ -184,16 +189,17 @@ vardir["tau_dr_jpsi"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':2*math.pi,
 #vardir["xgbs_log"] = {'tree':'tree',  'nbin':30, 'xmin':8.5, 'xmax':13, 'xtitle':'zoom XGB output score', 'var':'xgbs', 'isLog':True}
 #vardir["xgbs_wide"] = {'tree':'tree',  'nbin':30, 'xmin':8.5, 'xmax':13, 'xtitle':'XGB output score', 'var':'xgbs'}
 
-vardir["xgbs_fine"] = {'tree':'tree',  'nbin':30, 'xmin':6, 'xmax':12, 'xtitle':'XGB output score fine', 'var':'xgbs', 'isRight':True}
-vardir["xgbs"] = {'tree':'tree',  'nbin':30, 'xmin':-15, 'xmax':15, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
-vardir["xgbs_log"] = {'tree':'tree',  'nbin':30, 'xmin':-15, 'xmax':15, 'xtitle':'XGB output score', 'var':'xgbs', 'isLog':True}
+#vardir["xgbs_fine"] = {'tree':'tree',  'nbin':30, 'xmin':6, 'xmax':12, 'xtitle':'XGB output score fine', 'var':'xgbs', 'isRight':True}
+vardir["xgbs"] = {'tree':'tree',  'nbin':100, 'xmin':-15, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
+vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':3, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
+vardir["xgbs_log"] = {'tree':'tree',  'nbin':30, 'xmin':-15, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isLog':True}
 #vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':9., 'xmax':11, 'xtitle':'zoom XGB output score', 'var':'xgbs', 'isLog':True}
-vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':7., 'xmax':12, 'xtitle':'zoom XGB output score', 'var':'xgbs', 'isLog':True}
+#vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':7., 'xmax':12, 'xtitle':'zoom XGB output score', 'var':'xgbs', 'isLog':True}
 #vardir["xgbs_wide"] = {'tree':'tree',  'nbin':30, 'xmin':-15, 'xmax':13, 'xtitle':'XGB output score', 'var':'xgbs'}
 #vardir["perEVT_old"] = {'tree':'tree',  'nbin':20, 'xmin':0., 'xmax':1, 'xtitle':'perEVT DNN', 'isRight':True}
 #vardir["perEVT_old_log"] = {'tree':'tree',  'nbin':30, 'xmin':0, 'xmax':1, 'xtitle':'perEVT DNN log', 'var':'perEVT_old', 'isLog':True}
-vardir["perEVT_mc"] = {'tree':'tree',  'nbin':20, 'xmin':0., 'xmax':1, 'xtitle':'perEVT mc'}
-vardir["perEVT_data"] = {'tree':'tree',  'nbin':20, 'xmin':0., 'xmax':1, 'xtitle':'perEVT data'}
+#vardir["perEVT_mc"] = {'tree':'tree',  'nbin':20, 'xmin':0., 'xmax':1, 'xtitle':'perEVT mc'}
+#vardir["perEVT_data"] = {'tree':'tree',  'nbin':20, 'xmin':0., 'xmax':1, 'xtitle':'perEVT data'}
 #vardir["perEVT_otherB"] = {'tree':'tree',  'nbin':20, 'xmin':0., 'xmax':1, 'xtitle':'perEVT DNN otherB'}
 #vardir["perEVT_leptonic"] = {'tree':'tree',  'nbin':20, 'xmin':0., 'xmax':1, 'xtitle':'perEVT DNN leptonic'}
 #vardir["perEVT_1prong"] = {'tree':'tree',  'nbin':20, 'xmin':0., 'xmax':1, 'xtitle':'perEVT DNN 1prong'}

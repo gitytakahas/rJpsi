@@ -207,5 +207,6 @@ for ijob, files in enumerate(listoffiles):
     with open(jobscript, mode="w") as f:
         f.write(data_lines)
 
-    command = 'sbatch -p quick --account=t3 --error=' + jobdir + '/err.' + str(ijob) + ' --output=' + jobdir + '/out.' + str(ijob) + ' ' + jobscript
+    command = 'sbatch -p short --account=t3 --error=' + jobdir + '/err.' + str(ijob) + ' --output=' + jobdir + '/out.' + str(ijob) + ' ' + jobscript
+    print(command)
     os.system(command)
