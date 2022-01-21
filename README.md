@@ -11,23 +11,27 @@ BEAWARE:
 In some places, you have to change by hand (e.g. output directory), which is currently set to my environment!!
 
 
-0. Setup package
+### 0. Setup package
+```
+cmsrel CMSSW_10_2_10
+cd CMSSW_10_2_10/src
+cmsenv
+git clone https://github.com/gitytakahas/rJpsi.git
+```
 
-> cmsrel CMSSW_10_2_10
-> cd CMSSW_10_2_10/src
-> cmsenv
 
-> git clone https://github.com/gitytakahas/rJpsi.git
+### 1. Make a flat ntuples 
 
-1. Make a flat ntuples 
-
-> export RJPSI=$PWD
-> cd $RJPSI/flatter
+```
+export RJPSI=$PWD
+cd $RJPSI/flatter
+```
 
 Inspect runTauDisplay_BcJpsiTauNu and see what is doing here. 
 When you want to run on a single file, do, 
 
-> python runTauDisplay_BcJpsiTauNu.py <-o outputfilename> <-p priority><-t type><-y year><-f inputfile>
+
+python runTauDisplay_BcJpsiTauNu.py <-o outputfilename> <-p priority><-t type><-y year><-f inputfile>
 
 -p option: you can choose either "pt" or "multiple". "pt" option will pick up the highest in pT that satisfies vertex prob > 10% and flight significance > 3 sigma (this can be changed). "multiple" option will pick up all the triplets per event
 
@@ -40,41 +44,46 @@ When you want to run on a single file, do,
 
 If you are confident, you can submit jobs through T3 batch. How to do it? You can see, for instance, 
 
-> sh do.sh 
+```
+sh do.sh 
+```
 
 In this script, the output of the job submission will be directed to "/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/" but you can choose wherever you want. 
 
 
-2. Update ntuples 
+### 2. Update ntuples 
 
-> cd $RJPSI/updateTuple;
+```
+cd $RJPSI/updateTuple;
+```
 
 Here, we do, 
 
 (1) Hadd flat-ntuples produced in the previous step ---> This take some time, especially for data !! be patient !!
 (2) split the flat-ntuples into 20% (for training analysis-BDT) and 80% (for the analysis).
 
-> sh do.sh
+```
+sh do.sh
+```
 
 
-
-3. Building MVA based on the xgboost 
-
-> cd $RJPSI/mva;
-> sh do.sh 
-
+### 3. Building MVA based on the xgboost 
+```
+cd $RJPSI/mva;
+sh do.sh 
+```
 
 Once finish, your MVA is ready. Inspect Plots_*/* to see the performance.
 
 
-4. add analysis MVA, build in the previous step, and produce the final ROOT files
+### 4. add analysis MVA, build in the previous step, and produce the final ROOT files
 
-> cd $RJPSI/updateTuple; 
-> sh application.sh 
+```
+cd $RJPSI/updateTuple; 
+sh application.sh 
+```
 
-
-This takes some time, especially for the data (1 hour or so). Be Patient!!
-(I also developed the batch submission but for some reason there are non-negligible failure rate so I gave up ...)
+This takes some time, especially for the data. Be Patient!!
 
 
 In the application step,, the timestamp of the input files will be printed out. Keep an eye on it if it is reasonable.
@@ -83,19 +92,29 @@ You should also make sure the "features" as defined in the application.py should
 this will produce the final tree at the directory, $RJPSI/updateTuple/final_root_* for instance. 
 
 
-5. plotting 
+### 5. plotting 
 
-> cd $RJPSI/anal
+```
+cd $RJPSI/anal/dev
+```
 
 If you don't have it yet, copy, 
-
-> cp /t3home/ytakahas/.rootrc ~/.rootrc
-> cp /t3home/ytakahas/rootlogon.C ~/
-> mkdir ~/tool
-> cp -r /t3home/ytakahas/tool ~/tool 
+```
+cp /t3home/ytakahas/.rootrc ~/.rootrc
+cp /t3home/ytakahas/rootlogon.C ~/
+mkdir ~/tool
+cp -r /t3home/ytakahas/tool ~/tool 
+```
 
 Then inspect draw.py what is going to be plotted, and then do, 
 
-> python draw.py 
+```
+python draw.py 
+```
 
 the list of variables to be plotted is defined in varConfig.py.
+
+To create the datacard and systematics comparison plots, do, 
+```
+python createFinalDatacard.py
+```
