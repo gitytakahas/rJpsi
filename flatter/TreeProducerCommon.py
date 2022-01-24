@@ -37,6 +37,12 @@ class TreeProducerCommon(object):
         self.multi = ROOT.TH1F('multi', 'multi', 100,0,100)
 
         self.filt = ROOT.TH1F('filter', 'filter', 10,0,10)
+
+#        if dataType=='signal':
+  #           print('This is for signal !!! ')
+        self.hist_hammer = ROOT.TH1F('hammer', 'hammer', 32,0,32)
+        self.hist_hammer_lattice = ROOT.TH1F('hammer_lattice', 'hammer_lattice', 32,0,32)
+
         
         self.addBranch('evt',                  'i')
         self.addBranch('run',                  'i')
@@ -136,7 +142,11 @@ class TreeProducerCommon(object):
     def endJob(self):
         """Write and close files after the job ends."""
 #        self.hist.Write()
-#        self.hammer_hist.Write()
+#        ROOT.gDirectory.cd()
+#        print(self.hist_hammer, self.hist_hammer_lattice)
+#        self.hist_hammer.Write()
+#        self.hist_hammer_lattice.Write()
+
         self.outputfile.Write()
         self.outputfile.Close()
         

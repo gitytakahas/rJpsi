@@ -304,7 +304,7 @@ if __name__ == '__main__':
     
     nSig = ddf['sig'].shape[0]
 #    nBkg = 30000
-    nBkg = 100000
+    nBkg = 120000
 #    nBkg = 300000
 #    nBkg = 1000000
     #nSig = 10000
@@ -342,7 +342,11 @@ if __name__ == '__main__':
     # new bayes opt. 
     # Final model: Best hyper-parameters: {'max_depth': 6, 'eta': 0.03718974050661139, 'gamma': 9.316326797578686, 'min_child_weight': 2, 'subsample': 0.9963570761354923, 'colsample_bytree': 0.9961841085498498, 'alpha': 5.705916054501746, 'lambda': 1.8429733724333799}, ntree_limit: 699
 
-    best_params = {'max_depth': 6, 'eta': 0.03718974050661139, 'gamma': 9.316326797578686, 'min_child_weight': 2, 'subsample': 0.9963570761354923, 'colsample_bytree': 0.9961841085498498, 'alpha': 5.705916054501746, 'lambda': 1.8429733724333799}
+#    Final model: Best hyper-parameters: {'max_depth': 6, 'eta': 0.03718974050661139, 'gamma': 9.316326797578686, 'min_child_weight': 2, 'subsample': 0.9963570761354923, 'colsample_bytree': 0.9961841085498498, 'alpha': 5.705916054501746, 'lambda': 1.8429733724333799, 'ntree_limit': 699}, ntree_limit: 784
+
+#    best_params = {'max_depth': 6, 'eta': 0.03718974050661139, 'gamma': 9.316326797578686, 'min_child_weight': 2, 'subsample': 0.9963570761354923, 'colsample_bytree': 0.9961841085498498, 'alpha': 5.705916054501746, 'lambda': 1.8429733724333799}
+    # Final model: Best hyper-parameters: {'max_depth': 5, 'eta': 0.10843801583225915, 'gamma': 6.326875430961053, 'min_child_weight': 7, 'subsample': 0.8122897346388722, 'colsample_bytree': 0.9660155998801924, 'alpha': 4.537372820217554, 'lambda': 8.833065141971506}, ntree_limit: 311
+    best_params = {'max_depth': 5, 'eta': 0.10843801583225915, 'gamma': 6.326875430961053, 'min_child_weight': 7, 'subsample': 0.8122897346388722, 'colsample_bytree': 0.9660155998801924, 'alpha': 4.537372820217554, 'lambda': 8.833065141971506}
 
     # split X and y up in train and test samples
     X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.20, random_state=rseed)

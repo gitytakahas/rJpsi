@@ -34,7 +34,7 @@ for dir in $sig_inclusive_ul_all_2018 $bkg_ul_2018 $data_ul_2018
 do
 
     echo "hadding ...", $dir
-#    hadding $dir Myroot.root Myroot_*.root
+    hadding $dir Myroot.root Myroot_*.root
 
 done
 
@@ -56,13 +56,13 @@ done
 for dir in $sig_inclusive_ul_all_2018
 do
     echo "splitting into two ...", $dir
-#    sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.2
+    sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.2
 done
 
 for dir in $data_ul_2018
 do
     echo "splitting into two ...", $dir
-#    sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.006
+    sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.006
 done
 
 
@@ -73,7 +73,7 @@ done
 # to avoid biasing, we can reweigh based on B pT and eta
 #
 ##############################################
-#python create_weights.py --sig_file ${sig_inclusive_ul_all_2018}/Myroot_training.root --bkg_file ${data_ul_2018}/Myroot_training.root --out_dir weight_${name}
+python create_weights.py --sig_file ${sig_inclusive_ul_all_2018}/Myroot_training.root --bkg_file ${data_ul_2018}/Myroot_training.root --out_dir weight_${name}
 
 
 ##############################################
@@ -84,8 +84,10 @@ done
 # 
 ##############################################
 
-#sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_training.root $PWD/weight_${name}/weight.root
-#sh updateTuple.sh ${data_ul_2018}/Myroot_training.root $PWD/weight_${name}/weight.root
+sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_training.root $PWD/weight_${name}/weight.root
+sh updateTuple.sh ${data_ul_2018}/Myroot_training.root $PWD/weight_${name}/weight.root
+
+
 
 
 

@@ -232,6 +232,8 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
                 self.addBranch('hammer_wratio',                  'f')
                 self.addBranch('hammer_ebe_lattice',                  'f')
                 self.addBranch('hammer_wratio_lattice',                  'f')
+                self.addBranch('isJpsiMu',                  '?')
+                self.addBranch('isJpsiTau2Mu',                  '?')
 
 
                 for ii in range(0, 15):
@@ -293,8 +295,8 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
                 self.addBranch('weight_ctau_down',                  'f')
 
 
-            if dataType=='bg':
-                self.addBranch('isveto',                  '?')
+#            if dataType=='bg':
+#                self.addBranch('isveto',                  '?')
 
 #                self.addBranch('sameB',                  '?')
 #                self.addBranch('diffB',                  '?')

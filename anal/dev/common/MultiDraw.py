@@ -10,6 +10,7 @@ import os
 from ROOT import gROOT, gSystem, gDirectory, TObject, TTree, TObjArray, TTreeFormula,\
     TH1D, SetOwnership, TTreeFormulaManager
 
+#gROOT.Macro('~/common/functionmacro.C+')
 
 def MakeTObjArray(theList):
     """Turn a python iterable into a ROOT TObjArray"""

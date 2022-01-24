@@ -10,7 +10,6 @@ import random
 from scipy.constants import c as speed_of_light
 import numpy as np
 
-
 # from https://github.com/scikit-hep/particle/
 # installed via 
 # >>> pip install particle --user
@@ -132,6 +131,8 @@ chain = ROOT.TChain('ntuplizer/tree', 'tree')
 hist_hammer = None
 hist_hammer_lattice = None
 
+#flag_fill = False
+
 for inputfile in files:
     print('Adding ...', inputfile)
     chain.AddFile(inputfile)
@@ -152,12 +153,40 @@ for inputfile in files:
 
     out.hist.Add(_hist)
     
-    if options.type=='signal':
-        if hist_hammer==None:
-            hist_hammer = _file.Get('ntuplizer/hammer_width')
-            
-        if hist_hammer_lattice==None:
-            hist_hammer_lattice = _file.Get('ntuplizer/hammer_width_lattice')
+#    if options.type=='signal' and not flag_fill:
+
+
+    if hist_hammer==None:
+        hist_hammer = copy.deepcopy(_file.Get('ntuplizer/hammer_width'))
+
+        for ibin in range(1, hist_hammer.GetXaxis().GetNbins()+1):
+
+            out.hist_hammer.SetBinContent(ibin, hist_hammer.GetBinContent(ibin))
+            out.hist_hammer.GetXaxis().SetBinLabel(ibin, hist_hammer.GetXaxis().GetBinLabel(ibin))
+
+
+        
+    if hist_hammer_lattice==None:
+        hist_hammer_lattice = copy.deepcopy(_file.Get('ntuplizer/hammer_width_lattice'))
+
+        for ibin in range(1, hist_hammer_lattice.GetXaxis().GetNbins()+1):
+
+            out.hist_hammer_lattice.SetBinContent(ibin, hist_hammer_lattice.GetBinContent(ibin))
+            out.hist_hammer_lattice.GetXaxis().SetBinLabel(ibin, hist_hammer_lattice.GetXaxis().GetBinLabel(ibin))
+
+#        out.hist_hammer_lattice = hist_hammer_lattice
+
+
+#    _tmp = _file.Get('ntuplizer/hammer_width')
+#    out.hist_hammer = _tmp
+#            
+#    _tmp = _file.Get('ntuplizer/hammer_width_lattice')
+#    out.hist_hammer_lattice = _tmp
+#
+#    print('This is it!', out.hist_hammer, out.hist_hammer_lattice)
+
+#flag_fill = True
+
 
 chain.SetBranchStatus('*', 0)
 
@@ -226,6 +255,7 @@ chain.SetBranchStatus('JpsiTau_mu*', 1)
 chain.SetBranchStatus('JpsiTau_ptbal', 1)
 chain.SetBranchStatus('JpsiTau_jpsi_tau_alpha', 1)
 chain.SetBranchStatus('JpsiTau_perEVT_*', 1)
+chain.SetBranchStatus('JpsiTau_isJpsi*', 1)
 
 
 chain.SetBranchStatus('JpsiTau_nCandidates', 1)
@@ -270,6 +300,11 @@ for evt in xrange(Nevt):
     chain.GetEntry(evt)
 
     if evt%10000==0: print('{0:.2f}'.format(ROOT.Double(evt)/ROOT.Double(Nevt)*100.), '% processed')
+
+#    print(chain.JpsiTau_isJpsiMu, bool(chain.JpsiTau_isJpsiMu))
+#    import pdb; pdb.set_trace()
+#    if bool(chain.JpsiTau_isJpsiMu)==True:
+#        print(type(chain.JpsiTau_isJpsiMu), bool(chain.JpsiTau_isJpsiMu))
 
     out.multi.Fill(len(chain.JpsiTau_tau_pt))
     out.filt.Fill(0)
@@ -367,6 +402,9 @@ for evt in xrange(Nevt):
         out.weight_ctau_up[0] = weight_up
         out.weight_ctau_down[0] = weight_down
 
+#        import pdb; pdb.set_trace()
+        out.isJpsiMu[0] = bool(chain.JpsiTau_isJpsiMu)
+        out.isJpsiTau2Mu[0] = bool(chain.JpsiTau_isJpsiTau2Mu)
       
 
 

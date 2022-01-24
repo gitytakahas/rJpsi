@@ -20,8 +20,14 @@ officialStyle(gStyle)
 gStyle.SetOptTitle(0)
 #gStyle.SetOptStat(0)
 
+gROOT.Macro('./functionmacro.C+')
 
 gROOT.ProcessLine(".L ~/tool//MultiDraw.cc+");
+
+
+file_hammer = TFile('/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi//job_pt_Legacy_v2/BcJpsiTau_inclusive_ul_all_2018/Myroot_0.root')
+hist_hammer = file_hammer.Get('hammer')
+
 
 from optparse import OptionParser, OptionValueError
 usage = "usage: python compare.py" 
@@ -162,12 +168,40 @@ bc_sf = 0.45/(3*0.8)
 
 ddir = {}
 
+
+binid = 2
+
+if options.sys.find('hammer')!=-1:
+    print('detecting new hammer weight')
+    
+    binid = -1 
+
+    for ibin in range(1, hist_hammer.GetXaxis().GetNbins()+1):
+        if options.sys.replace('hammer_ebe','num') == hist_hammer.GetXaxis().GetBinLabel(ibin):
+            binid = ibin
+
+
+    if binid == -1:
+        print('No Hammer weight is found !!! Set to 2')
+        binid = 2
+
+
+hammer_sf = float(hist_hammer.GetBinContent(binid))/float(hist_hammer.GetBinContent(1))
+
+hammer_weight = 'hammer_ebe/' + str(hammer_sf)
+
+print('hammer weight = ', hammer_weight, 'id=', binid)
+
 # data 
 ddir['data_obs'] =  {'file':datastr, 'weight':'1', 'scale':1, 'order':2999, 'color':1, 'addcut':'1'}
 
 # signal + Bc 
-ddir['sig_3p'] =     {'file':sigstr, 'weight':'hammer_ebe*puweight/0.394', 'scale':bc_sf, 'order':1, 'color':ttcol_v2, 'addcut':'n_occurance==1 && tau_isRight_3prong==1'}
-ddir['sig_others'] = {'file':sigstr, 'weight':'hammer_ebe*puweight/0.394', 'scale':bc_sf, 'order':3, 'color':wcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0'}
+ddir['sig_3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':1, 'color':ttcol_v2, 'addcut':'n_occurance==1 && tau_isRight_3prong==1'}
+#ddir['sig_lep'] = {'file':sigstr, 'weight':'puweight*(hammer_ebe/0.55)', 'scale':bc_sf, 'order':3, 'color':ttcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0 && isJpsiTau2Mu==1'}
+#ddir['sig_others'] = {'file':sigstr, 'weight':'puweight*(hammer_ebe/0.55)', 'scale':bc_sf, 'order':3, 'color':wcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0 && isJpsiTau2Mu==0'}
+ddir['sig_others'] = {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':3, 'color':wcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0'}
+#ddir['bg_bc'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':qcdcol, 'addcut':'n_occurance==0 && isJpsiMu==0'}
+#ddir['bg_norm'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jtfake, 'addcut':'n_occurance==0 && isJpsiMu==1'}
 ddir['bg_bc'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':qcdcol, 'addcut':'n_occurance==0'}
 
 # other B backgrounds 
@@ -180,9 +214,9 @@ ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight', 'scale':7*0.64/0.8, 'o
 
 basic = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1'
 phiveto = "!(tau_rhomass1_kk < 1.04) && !(tau_rhomass2_kk < 1.04)"
-xgbs_sr = 'xgbs > 4.84'
-xgbs_sb = 'xgbs > 3.5 && xgbs < 4.84'
-xgbs_lp = 'xgbs > 3. && xgbs < 3.5'
+xgbs_sr = 'xgbs > 5.35'
+xgbs_sb = 'xgbs > 4.35 && xgbs < 5.35'
+xgbs_lp = 'xgbs > 3.5 && xgbs < 4.35'
 
 #rhomass = '((tau_rhomass1 > 0.65 && tau_rhomass1 < 0.89) || (tau_rhomass2 > 0.65 && tau_rhomass2 < 0.89)) '
 #rhomass = '((tau_rhomass1 > 0.69 && tau_rhomass1 < 0.85) || (tau_rhomass2 > 0.69 && tau_rhomass2 < 0.85)) '
@@ -194,11 +228,14 @@ channels = {
 
 #    'inclusive':{'cut':'&&'.join([basic])},
 
+#    'extrapolate':{'cut':'&&'.join([basic, 'xgbs > 3.5'])},
+
     'sr':{'cut':'&&'.join([basic, xgbs_sr])},
 
     'sb':{'cut':'&&'.join([basic, xgbs_sb])},
 
     'lp':{'cut':'&&'.join([basic, xgbs_lp])},
+
 
 #    'cr_sr':{'cut':'&&'.join([basic, xgbs_sr])},
 #    'cr_sb':{'cut':'&&'.join([basic, xgbs_sb])},
@@ -234,7 +271,7 @@ channels = {
 
 
 #finaldiscriminant = ['xgbs', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
-finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
+finaldiscriminant = ['xgbs', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
 
 
 if options.min:
@@ -277,6 +314,10 @@ for channel, dict in channels.iteritems():
         print(filename, 'is read ...')
 
         var_tuples, hists = returnTuples(type, vardir)    
+
+        if channel != 'inclusive' and type.find('bg_ul')!=-1:
+            wstr += '*getWeight(b_mass)'
+
 
         if options.sys.find('hammer')!=-1 and type.find('sig')!=-1: 
             wstr = ivar['weight'].replace('hammer_ebe', options.sys)
@@ -360,6 +401,8 @@ for channel, dict in channels.iteritems():
 #        if channel.find('q3')==-1:
 
         comparisonPlots(Histo, 'plots/' + channel + '/' + commonname  + '_log.gif', True)
+        
+#        Histo.Group('signal_ref', ['sig_3p', 'sig_others', 'sig_3pp'])
             
         ensureDir('datacard/' + channel)
 

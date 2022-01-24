@@ -14,7 +14,9 @@ using namespace TMVA;
 
 inline void InitRand()
 {
-  srand((unsigned int)time(NULL));
+  //  srand((unsigned int)time(NULL));
+  // seeding set on 24 Jan. 
+  srand(20220124);
 }
 
 

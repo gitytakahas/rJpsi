@@ -22,12 +22,14 @@ data_ul_2018="${prefix}/Data_2018"
 
 model_name="pt_Legacy"
 
-#python application.py --file ${bkg_ul_2018}/Myroot.root --prefix bkg_xgbs --model ${model_name} --outdir ${bkg_ul_2018}
-#python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive_ul_all_2018}
+python application.py --file ${bkg_ul_2018}/Myroot.root --prefix bkg_xgbs --model ${model_name} --outdir ${bkg_ul_2018}
+python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive_ul_all_2018}
+python application.py --file ${data_ul_2018}/Myroot_analysis.root --prefix data_xgbs --model ${model_name} --outdir ${data_ul_2018}
+
 #python getDataset_data.py --path ${data_ul_2018} --odir ${data_ul_2018} --jdir data_application_${today} --name data_xgbs_2018 --chunk 5 --model $model_name
 
 
-#python application.py --file ${data_ul_2018}/Myroot_analysis.root --prefix data_xgbs --model ${model_name} --outdir ${data_ul_2018}
+
 
 ##############################################
 #

@@ -25,4 +25,4 @@ ls -lart ${sig_inclusive_ul_all_2018}
 ls -lart ${data_ul_2018}
 
 #python TrainModel_XGB.py -s ${sig_inclusive_ul_all_2018} -b ${bkg_ul_2018} --dir ${name}
-python TrainModel_XGB.py -s ${sig_inclusive_ul_all_2018} -b ${data_ul_2018} --dir ${name} -o
+python TrainModel_XGB.py -s ${sig_inclusive_ul_all_2018} -b ${data_ul_2018} --dir ${name}_val -o
