@@ -118,11 +118,16 @@ def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False):
 
     hists2return = copy.deepcopy(hists)    
 
-    _dirname = 'plots/compare/' + '_'.join(channels) + '_' + target
-    ensureDir(_dirname)
 
     if saveFig:
+        _dirname = 'plots/compare/' + '_'.join(channels) + '_' + target
+        ensureDir(_dirname)
+
         comparisonPlots_alt(hists, titles, True, False, _dirname + '/' + vkey +  '.pdf', True, True, 'hpe')
+
+
+    _dirname = 'datacard/compare/' + '_'.join(channels) + '_' + target
+    ensureDir(_dirname)
 
     file_output = TFile(_dirname + '/' + vkey +  '.root', 'recreate')
     for _hist in hists2return:
