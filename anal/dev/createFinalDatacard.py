@@ -74,7 +74,7 @@ def setNameTitle(hist, name):
     hist.SetTitle(name)
     hist.SetName(name)
 
-def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False):
+def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False, sf = 0.265):
 
     hists = []
     titles = []
@@ -97,12 +97,18 @@ def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False):
 #            ['bg_bc', 'sig_others', 'sig_3p', 'bg_ul', 'data_obs']
 
             for proc in ['bg_bc', 'sig_others', 'sig_3p']:
+
+                    
             
 #                if channel=='sr' and target=='data_obs' and proc=='sig_3p':
 #                    print('THIS IS NOT CONSIDERED !!!!')
 #                    continue
 
                 _hist2 = getHist(vkey, channel, proc, sys) #copy.deepcopy(file.Get(channel + '/' + proc))
+
+                if proc in ['sig_others', 'sig_3p']:
+                    _hist2.Scale(sf)
+
                 _hist.Add(_hist2, -1)
         
         _hist.SetFillStyle(0)
@@ -201,9 +207,9 @@ for vkey, ivar in vardir.items():
 
 
 
-    draw(vkey, ['sb', 'sr'], 'bg_ul', None, False, True)
+    hists4ddbkg_bgmc = draw(vkey, ['sb', 'sr'], 'bg_ul', None, False, True)
 
-    draw(vkey, ['lp', 'sb'], 'data_obs', None, True, True)
+    hists4ddbkg_vr = draw(vkey, ['lp', 'sb'], 'data_obs', None, True, True)
     
 
 #    if vkey=='tau_rhomass_unrolled':
@@ -221,11 +227,33 @@ for vkey, ivar in vardir.items():
             _tmp = file.Get(fitCat + '/' + proc)
             hists2write.append(copy.deepcopy(_tmp))
 
-        hists4ddbkg = draw(vkey, ['sr', 'sb'], 'data_obs', None, True, False)
-        bkgHist = hists4ddbkg[1]        
+        hists4ddbkg_sr = draw(vkey, ['sr', 'sb'], 'data_obs', None, True, False)
+        bkgHist = copy.deepcopy(hists4ddbkg_sr[1])
         bkgHist.Scale(ratio)
         setNameTitle(bkgHist, 'dd_bkg')
         hists2write.append(bkgHist)
+
+        ### shape variation 
+
+        hists4ddbkg_up = draw(vkey, ['sr', 'sb'], 'data_obs', None, True, False, 0.95)
+        bkgHist_up = copy.deepcopy(hists4ddbkg_up[1])
+        bkgHist_up.Scale(ratio)
+        setNameTitle(bkgHist_up, 'dd_bkg_shapeUp')
+        hists2write.append(bkgHist_up)
+
+        hists4ddbkg_down = draw(vkey, ['sr', 'sb'], 'data_obs', None, True, False, 0.2)
+        bkgHist_down = copy.deepcopy(hists4ddbkg_down[1])
+        bkgHist_down.Scale(ratio)
+        setNameTitle(bkgHist_down, 'dd_bkg_shapeDown')
+        hists2write.append(bkgHist_down)
+
+
+
+#        bkgHist_alt = copy.deepcopy(hists4ddbkg_vr[0])
+#        bkgHist_alt.Scale(hists4ddbkg[1].GetSumOfWeights()/bkgHist_alt.GetSumOfWeights())
+#        bkgHist_alt.Scale(ratio)
+#        setNameTitle(bkgHist_alt, 'dd_bkg_shape')
+
 
         ### reference
 #        sig_3p_cent = getHist(vkey, fitCat, 'sig_3p')
