@@ -10,6 +10,7 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
         print('TreeProducerBsTauTau is called for', name)
         super(TreeProducerBcJpsiTauNu, self).__init__(name,dataType,**kwargs)
 
+        self.addBranch('gen_sig_decay',                  'i')  
         self.addBranch('mu1_pt',                  'f')
         self.addBranch('mu1_eta',                  'f')
         self.addBranch('mu1_phi',                  'f')

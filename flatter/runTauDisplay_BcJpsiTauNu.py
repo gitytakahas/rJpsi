@@ -1182,7 +1182,55 @@ for evt in xrange(Nevt):
 
             out.puweight[0] = ROOT.Double(putool.getWeight(chain.nPuVtxTrue[0]))
 
+        if options.type =='signal':
+            #GEN weight for the signal 
+            print ' NEW Event '
+            final_daus = [] 
 
+            for igen in range(len(chain.genParticle_pdgId)):
+                if abs(chain.genParticle_pdgId[igen])==541 or abs(chain.genParticle_pdgId[igen])==543  and chain.genParticle_status[igen]==2:
+#                    print 'Event found a Mother ---- of status ', chain.genParticle_status[igen] , ' pdgId ' ,  chain.genParticle_pdgId[igen]
+#                    print ' Bc daughers are : '
+                    final_daus = []
+                    for idau in range(len(chain.genParticle_dau[igen])):
+#                        print '   -> ', (chain.genParticle_dau[igen][idau])
+                        if abs(chain.genParticle_dau[igen][idau]) not in [22, 541]: #avoid propagation and photon emission
+                            final_daus.append(abs(chain.genParticle_dau[igen][idau]))
+                        dau_number = [x for x in range(len(chain.genParticle_pdgId)) if  chain.genParticle_pdgId[x] == chain.genParticle_dau[igen][idau]][0]
+                        #for iidau in range(len(chain.genParticle_dau[dau_number])):
+                            #print ' nephew  tentative --> ', (chain.genParticle_dau[dau_number][iidau])
+#                    print "Bc final_daus: ", final_daus
+
+            final_daus.sort()
+#            print " Event final_daus: ", final_daus
+            if final_daus==[13, 14, 443]:
+                out.gen_sig_decay[0] = 0 ##Bc -> Jpsi mu nu  
+            elif final_daus==[13, 14, 100443]:
+                out.gen_sig_decay[0] = 1  ##Bc -> psi(2s) mu nu 
+            elif final_daus==[13, 14, 10441]:
+                out.gen_sig_decay[0] = 2##Bc -> chic0 mu nu
+            elif final_daus==[13, 14, 20443]:
+                out.gen_sig_decay[0] = 3 ##Bc -> chic1 mu nu              
+            elif final_daus==[13, 14, 445]:
+                out.gen_sig_decay[0] = 4 ##Bc -> chic2 mu nu             
+            elif final_daus==[13, 14, 10443]:
+                out.gen_sig_decay[0] = 5 ##Bc -> hc mu nu               
+            elif final_daus==[15, 16, 443]:
+                out.gen_sig_decay[0] = 6 ##Bc -> Jpsi tau nu            
+            elif final_daus==[15, 16, 100443]:
+                out.gen_sig_decay[0] = 7 ##Bc -> Psi(2s) tau nu            
+            elif final_daus==[211, 443]:
+                out.gen_sig_decay[0] = 8 ##Bc -> Jpsi pi
+            elif final_daus==[211, 211, 211, 443]:
+                out.gen_sig_decay[0] = 9 ##Bc -> Jpsi  3pi  
+            elif final_daus==[431, 443] or final_daus==[433, 443]:
+                out.gen_sig_decay[0] = 10 ##Bc -> Jpsi +hadrons
+            elif final_daus==[211, 211, 211, 211, 211, 443]:
+                out.gen_sig_decay[0] = 11 ##Bc -> Jpsi  5pi   
+            else :   
+                print "final_daus not recognized: ", final_daus            
+                out.gen_sig_decay[0] = 12 ##Bc no more decays 
+    
         out.filt.Fill(8)
         evtid += 1
         out.tree.Fill()
