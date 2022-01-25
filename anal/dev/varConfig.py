@@ -95,7 +95,7 @@ vardir["b_mcorr"] = {'tree':'tree',  'nbin':30, 'xmin':4, 'xmax':12, 'xtitle':'B
 #vardir["m_corr_bd"] = {'tree':'tree',  'nbin':30, 'xmin':3, 'xmax':15, 'xtitle':'B corrected mass bd (GeV)'}
 vardir["b_mass"] = {'tree':'tree',  'nbin':35, 'xmin':4., 'xmax':6, 'xtitle':'B mass (GeV)'}
 vardir["b_mass_simple"] = {'tree':'tree',  'nbin':35, 'xmin':4., 'xmax':6, 'xtitle':'B mass simple (GeV)'}
-vardir["b_mass_sf"] = {'tree':'tree', 'nbin':50, 'xmin':3.5, 'xmax':9, 'xtitle':'B mass (GeV)', 'var':'b_mass'}
+vardir["b_mass_sf"] = {'tree':'tree', 'nbin':50, 'xmin':3.5, 'xmax':8, 'xtitle':'B mass (GeV)', 'var':'b_mass'}
 
 vardir["dx_b_pv"] = {'tree':'tree',  'nbin':30, 'xmin':-0.4, 'xmax':0.4, 'xtitle':'#Deltax (B, bbPV) (cm)'}
 vardir["dy_b_pv"] = {'tree':'tree',  'nbin':30, 'xmin':-0.4, 'xmax':0.4, 'xtitle':'#Deltay (B, bbPV) (cm)'}
@@ -192,8 +192,8 @@ vardir["tau_dr_jpsi"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':2*math.pi,
 
 #vardir["xgbs_fine"] = {'tree':'tree',  'nbin':30, 'xmin':6, 'xmax':12, 'xtitle':'XGB output score fine', 'var':'xgbs', 'isRight':True}
 vardir["xgbs"] = {'tree':'tree',  'nbin':100, 'xmin':-15, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
-vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':3.5, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
-vardir["xgbs_log"] = {'tree':'tree',  'nbin':30, 'xmin':-15, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isLog':True}
+vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':3.35, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
+#vardir["xgbs_log"] = {'tree':'tree',  'nbin':30, 'xmin':-15, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isLog':True}
 #vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':9., 'xmax':11, 'xtitle':'zoom XGB output score', 'var':'xgbs', 'isLog':True}
 #vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':7., 'xmax':12, 'xtitle':'zoom XGB output score', 'var':'xgbs', 'isLog':True}
 #vardir["xgbs_wide"] = {'tree':'tree',  'nbin':30, 'xmin':-15, 'xmax':13, 'xtitle':'XGB output score', 'var':'xgbs'}

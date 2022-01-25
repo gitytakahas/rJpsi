@@ -98,6 +98,8 @@ class TreeProducerCommon(object):
 #            self.addBranch('gen_vy',                  'f')
             self.addBranch('gen_vz',                  'f')
             self.addBranch('puweight',                  'f')
+            self.addBranch('puweight_up',                  'f')
+            self.addBranch('puweight_down',                  'f')
             self.addBranch('npv_true',                  'i')
 
 

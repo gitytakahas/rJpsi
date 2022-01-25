@@ -35,6 +35,7 @@ parser = OptionParser(usage)
 
 parser.add_option("-s", "--sys", default="None", type="string", dest="sys")
 parser.add_option('-m', '--min', action="store_true", default=False, dest='min')
+parser.add_option('-c', '--create', action="store_true", default=False, dest='create')
 
 (options, args) = parser.parse_args() 
 
@@ -197,15 +198,18 @@ ddir['data_obs'] =  {'file':datastr, 'weight':'1', 'scale':1, 'order':2999, 'col
 
 # signal + Bc 
 ddir['sig_3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':1, 'color':ttcol_v2, 'addcut':'n_occurance==1 && tau_isRight_3prong==1'}
+
 #ddir['sig_lep'] = {'file':sigstr, 'weight':'puweight*(hammer_ebe/0.55)', 'scale':bc_sf, 'order':3, 'color':ttcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0 && isJpsiTau2Mu==1'}
 #ddir['sig_others'] = {'file':sigstr, 'weight':'puweight*(hammer_ebe/0.55)', 'scale':bc_sf, 'order':3, 'color':wcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0 && isJpsiTau2Mu==0'}
 ddir['sig_others'] = {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':3, 'color':wcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0'}
+
+
 #ddir['bg_bc'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':qcdcol, 'addcut':'n_occurance==0 && isJpsiMu==0'}
 #ddir['bg_norm'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jtfake, 'addcut':'n_occurance==0 && isJpsiMu==1'}
 ddir['bg_bc'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':qcdcol, 'addcut':'n_occurance==0'}
 
+
 # other B backgrounds 
-#ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight', 'scale':7/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
 ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
 
 
@@ -216,7 +220,7 @@ basic = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1'
 phiveto = "!(tau_rhomass1_kk < 1.04) && !(tau_rhomass2_kk < 1.04)"
 xgbs_sr = 'xgbs > 5.35'
 xgbs_sb = 'xgbs > 4.35 && xgbs < 5.35'
-xgbs_lp = 'xgbs > 3.5 && xgbs < 4.35'
+xgbs_lp = 'xgbs > 3.35 && xgbs < 4.35'
 
 #rhomass = '((tau_rhomass1 > 0.65 && tau_rhomass1 < 0.89) || (tau_rhomass2 > 0.65 && tau_rhomass2 < 0.89)) '
 #rhomass = '((tau_rhomass1 > 0.69 && tau_rhomass1 < 0.85) || (tau_rhomass2 > 0.69 && tau_rhomass2 < 0.85)) '
@@ -226,7 +230,7 @@ xgbs_lp = 'xgbs > 3.5 && xgbs < 4.35'
 
 channels = {
 
-#    'inclusive':{'cut':'&&'.join([basic])},
+    'inclusive':{'cut':'&&'.join([basic])},
 
 #    'extrapolate':{'cut':'&&'.join([basic, 'xgbs > 3.5'])},
 
@@ -271,8 +275,11 @@ channels = {
 
 
 #finaldiscriminant = ['xgbs', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
-finaldiscriminant = ['xgbs', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
+finaldiscriminant = ['xgbs', 'xgbs_zoom', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple']
 
+
+if not options.create:
+    vardir.pop('b_mass_sf')
 
 if options.min:
     for vkey, ivar in vardir.items():
@@ -315,7 +322,8 @@ for channel, dict in channels.iteritems():
 
         var_tuples, hists = returnTuples(type, vardir)    
 
-        if channel != 'inclusive' and type.find('bg_ul')!=-1:
+        if not options.create and type.find('bg_ul')!=-1:
+#        if type.find('bg_ul')!=-1:
             wstr += '*getWeight(b_mass)'
 
 

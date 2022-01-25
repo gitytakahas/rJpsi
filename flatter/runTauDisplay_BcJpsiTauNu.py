@@ -263,6 +263,8 @@ chain.SetBranchStatus('PV_N', 1)
 chain.SetBranchStatus('EVENT_*', 1)
 
 putool = None
+putool_up = None
+putool_down = None
 
 if options.type!='data':
     chain.SetBranchStatus('*genParticle*', 1)
@@ -279,6 +281,8 @@ if options.type!='data':
     chain.SetBranchStatus('JpsiTau_st_decayid',1)
 
     putool = PileupWeightTool(options.year, 'central')
+    putool_up = PileupWeightTool(options.year, 'up')
+    putool_down = PileupWeightTool(options.year, 'down')
 
 if options.type=='bg':
     chain.SetBranchStatus('genWeightBkgB',1)
@@ -1182,6 +1186,8 @@ for evt in xrange(Nevt):
 
 
             out.puweight[0] = ROOT.Double(putool.getWeight(chain.nPuVtxTrue[0]))
+            out.puweight_up[0] = ROOT.Double(putool_up.getWeight(chain.nPuVtxTrue[0]))
+            out.puweight_down[0] = ROOT.Double(putool_down.getWeight(chain.nPuVtxTrue[0]))
 
         if options.type =='signal':
             #GEN weight for the signal 

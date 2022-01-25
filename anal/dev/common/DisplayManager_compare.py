@@ -145,6 +145,9 @@ class DisplayManager_compare(object):
         ymax = max(h.GetMaximum() for h in self.histos)
         ymin = min(h.GetMinimum() for h in self.histos)
 
+        print 'ymax=', ymax, 'ymin=', ymin
+
+
         self.Legend.Clear()
         self.draw_ratioLegend.Clear()
 

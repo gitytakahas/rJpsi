@@ -26,7 +26,7 @@ gROOT.ProcessLine(".L ~/tool//MultiDraw.cc+");
 
 systs = []
 
-for hammer in range(0, 2):
+for hammer in range(0, 9):
     systs.append('hammer_ebe_e' + str(hammer) + '_up')
     systs.append('hammer_ebe_e' + str(hammer) + '_down')
 
@@ -126,6 +126,7 @@ def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False):
 
 
 finaldiscriminant = ['tau_rhomass_unrolled']
+#finaldiscriminant = ['q2_simple']
 
 
 for vkey, ivar in vardir.items():
@@ -175,16 +176,23 @@ for vkey, ivar in vardir.items():
 #    ratio12 = draw(vkey, ['hp_sb'], 'data_obs', True, ratio2)
 
 #    hists4ratio = draw(vkey, ['sr', 'sb'], 'bg_ul')
-    draw(vkey, ['sb', 'sr'], 'bg_ul', None, False, True)
     
 #    draw(vkey, ['cr_lp',  'cr_sb'], 'data_obs', True)
 
 #    draw(vkey, ['cr_sb',  'cr_sr'], 'data_obs', True)
 
+
+
+
+
+
+    draw(vkey, ['sb', 'sr'], 'bg_ul', None, False, True)
+
     draw(vkey, ['lp', 'sb'], 'data_obs', None, True, True)
     
 
-    if vkey=='tau_rhomass_unrolled':
+#    if vkey=='tau_rhomass_unrolled':
+    if vkey in finaldiscriminant:
 
         hists2write = []
 
@@ -238,6 +246,7 @@ for vkey, ivar in vardir.items():
 #            comparisonPlots(hists, titles, cat + ', ' + syst.replace('_up',''), 'syscompare/' + cat + '/' + syst + '.gif')
             
 
+        ### CREATE shape comparisons 
 
         filename_new = 'datacard/'+ fitCat + '/' + vkey + '_new.root'
         file_new = TFile(filename_new, 'recreate')
@@ -275,9 +284,9 @@ for vkey, ivar in vardir.items():
 
             print('comparing,', _cent, _down, _up)
 
-            cent = file.Get(_cent)
-            down = file.Get(_down)
-            up = file.Get(_up)
+            cent = copy.deepcopy(file.Get(_cent))
+            down = copy.deepcopy(file.Get(_down))
+            up = copy.deepcopy(file.Get(_up))
             
             hists = [cent, down, up]
             titles = [procname, proc, proc.replace('Up','Down')]

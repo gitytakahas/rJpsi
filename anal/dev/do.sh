@@ -1,4 +1,4 @@
-#python draw.py --min
+python draw.py --min
 
 for h in $(seq 0 9)
 do
