@@ -108,6 +108,7 @@ def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False):
         _hist.SetFillStyle(0)
         _hist.SetMarkerColor(ii+1)
         _hist.SetLineColor(ii+1)
+        setNameTitle(_hist, target + '_' + channel)
         hists.append(_hist)
         titles.append(channel)
 
@@ -117,15 +118,24 @@ def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False):
 
     hists2return = copy.deepcopy(hists)    
 
+    _dirname = 'plots/compare/' + '_'.join(channels) + '_' + target
+    ensureDir(_dirname)
+
     if saveFig:
-        _dirname = 'plots/compare/' + '_'.join(channels) + '_' + target
-        ensureDir(_dirname)
         comparisonPlots_alt(hists, titles, True, False, _dirname + '/' + vkey +  '.pdf', True, True, 'hpe')
+
+    file_output = TFile(_dirname + '/' + vkey +  '.root', 'recreate')
+    for _hist in hists2return:
+        _hist.Write()
+    file_output.Write()
+    file_output.Close()
+
+        
 
     return hists2return
 
 
-finaldiscriminant = ['tau_rhomass_unrolled']
+finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
 #finaldiscriminant = ['q2_simple']
 
 
