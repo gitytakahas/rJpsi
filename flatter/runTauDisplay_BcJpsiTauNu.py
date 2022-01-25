@@ -156,7 +156,7 @@ for inputfile in files:
 #    if options.type=='signal' and not flag_fill:
 
 
-    if hist_hammer==None:
+    if hist_hammer==None and options.type=='signal':
         hist_hammer = copy.deepcopy(_file.Get('ntuplizer/hammer_width'))
 
         for ibin in range(1, hist_hammer.GetXaxis().GetNbins()+1):
@@ -166,7 +166,7 @@ for inputfile in files:
 
 
         
-    if hist_hammer_lattice==None:
+    if hist_hammer_lattice==None and options.type=='signal':
         hist_hammer_lattice = copy.deepcopy(_file.Get('ntuplizer/hammer_width_lattice'))
 
         for ibin in range(1, hist_hammer_lattice.GetXaxis().GetNbins()+1):
@@ -255,7 +255,8 @@ chain.SetBranchStatus('JpsiTau_mu*', 1)
 chain.SetBranchStatus('JpsiTau_ptbal', 1)
 chain.SetBranchStatus('JpsiTau_jpsi_tau_alpha', 1)
 chain.SetBranchStatus('JpsiTau_perEVT_*', 1)
-chain.SetBranchStatus('JpsiTau_isJpsi*', 1)
+
+
 
 
 chain.SetBranchStatus('JpsiTau_nCandidates', 1)
@@ -279,6 +280,7 @@ if options.type!='data':
     chain.SetBranchStatus('JpsiTau_st_gentau*',1)
     chain.SetBranchStatus('JpsiTau_st_n_occurance',1)
     chain.SetBranchStatus('JpsiTau_st_decayid',1)
+    chain.SetBranchStatus('JpsiTau_isJpsi*', 1)
 
     putool = PileupWeightTool(options.year, 'central')
     putool_up = PileupWeightTool(options.year, 'up')
@@ -346,7 +348,6 @@ for evt in xrange(Nevt):
     if options.priority=='pt':
             
         for itau in range(len(chain.JpsiTau_tau_pt)):
-#            if chain.JpsiTau_tau_vprob[itau] > 0.1: continue
             if chain.JpsiTau_tau_vprob[itau] < 0.1: continue
             if chain.JpsiTau_tau_fls3d[itau] < 3.: continue
 #            if  chain.JpsiTau_tau_fls3d[itau] > 3. and chain.JpsiTau_tau_vprob[itau] > 0.1: continue
@@ -1191,7 +1192,7 @@ for evt in xrange(Nevt):
 
         if options.type =='signal':
             #GEN weight for the signal 
-            print ' NEW Event '
+#            print ' NEW Event '
             final_daus = [] 
 
             for igen in range(len(chain.genParticle_pdgId)):
