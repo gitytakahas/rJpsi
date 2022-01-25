@@ -265,6 +265,7 @@ chain.SetBranchStatus('EVENT_*', 1)
 putool = None
 
 if options.type!='data':
+    chain.SetBranchStatus('*genParticle*', 1)
     chain.SetBranchStatus('JpsiTau_*gen*', 1)
     chain.SetBranchStatus('JpsiTau_genPV_vx', 1)
     chain.SetBranchStatus('JpsiTau_genPV_vy', 1)
