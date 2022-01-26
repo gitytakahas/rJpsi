@@ -263,9 +263,13 @@ chain.SetBranchStatus('JpsiTau_nCandidates', 1)
 chain.SetBranchStatus('PV_N', 1)
 chain.SetBranchStatus('EVENT_*', 1)
 
-putool = None
-putool_up = None
-putool_down = None
+#putool = None
+#putool_up = None
+#putool_down = None
+
+puhist = None
+puhist_up = None
+puhist_down = None
 
 if options.type!='data':
     chain.SetBranchStatus('*genParticle*', 1)
@@ -282,9 +286,17 @@ if options.type!='data':
     chain.SetBranchStatus('JpsiTau_st_decayid',1)
     chain.SetBranchStatus('JpsiTau_isJpsi*', 1)
 
-    putool = PileupWeightTool(options.year, 'central')
-    putool_up = PileupWeightTool(options.year, 'up')
-    putool_down = PileupWeightTool(options.year, 'down')
+#    putool = PileupWeightTool(options.year, 'central')
+#    putool_up = PileupWeightTool(options.year, 'up')
+#    putool_down = PileupWeightTool(options.year, 'down')
+
+    pufile = TFile('/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/RJPsi_mc_pu_2021Dec08_111.root')
+
+    puhist = pufile.Get('hweights')
+    puhist_up = pufile.Get('hweights_up')
+    puhist_down = pufile.Get('hweights_down')
+
+    print(pufile, puhist, puhist_up, puhist_down, 'is read ...')
 
 if options.type=='bg':
     chain.SetBranchStatus('genWeightBkgB',1)
@@ -1186,9 +1198,25 @@ for evt in xrange(Nevt):
 
 
 
-            out.puweight[0] = ROOT.Double(putool.getWeight(chain.nPuVtxTrue[0]))
-            out.puweight_up[0] = ROOT.Double(putool_up.getWeight(chain.nPuVtxTrue[0]))
-            out.puweight_down[0] = ROOT.Double(putool_down.getWeight(chain.nPuVtxTrue[0]))
+#            out.puweight[0] = ROOT.Double(putool.getWeight(chain.nPuVtxTrue[0]))
+#            out.puweight_up[0] = ROOT.Double(putool_up.getWeight(chain.nPuVtxTrue[0]))
+#            out.puweight_down[0] = ROOT.Double(putool_down.getWeight(chain.nPuVtxTrue[0]))
+
+            pubin = max(1, min(puhist.GetNbinsX(), puhist.FindBin(chain.nPuVtxTrue[0])))
+
+            if chain.nPuVtxTrue[0] < puhist.GetNbinsX():
+                out.puweight[0] = puhist.GetBinContent(pubin)
+                out.puweight_up[0] = puhist_up.GetBinContent(pubin)
+                out.puweight_down[0] = puhist_down.GetBinContent(pubin)
+            else:
+                print('This cannot happen !!!!')
+                out.puweight[0] = 1
+                out.puweight_up[0] = 1
+                out.puweight_down[0] = 1
+                
+#            print('pubin=', pubin, out.puweight[0],out.puweight_up[0],out.puweight_down[0])
+
+
 
         if options.type =='signal':
             #GEN weight for the signal 
