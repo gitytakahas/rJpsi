@@ -48,7 +48,7 @@ class DataMCPlot(object):
         self.stack = None
         self.legendOn = True
         self.legend = None
-        self.legendBorders = 0.15, 0.58, 0.87, 0.87
+        self.legendBorders = 0.15, 0.63, 0.87, 0.87
         self.legendPos = 'left'
         self.legendColumns = 2
         # self.lastDraw = None
@@ -214,7 +214,7 @@ class DataMCPlot(object):
             self.tstyle = TStyle()
             self.tstyle.SetLegendTextSize(0.007)
             self.legend.SetNColumns(self.legendColumns)
-            self.legend.SetColumnSeparation((self.legendBorders[2]-self.legendBorders[0])/self.legendColumns-0.07)
+            self.legend.SetColumnSeparation((self.legendBorders[2]-self.legendBorders[0])/self.legendColumns -0.3)
         else:
             self.legend.Clear()
         hists = self._SortedHistograms(reverse=True)

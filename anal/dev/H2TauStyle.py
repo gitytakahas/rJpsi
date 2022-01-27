@@ -51,7 +51,8 @@ sViolet = Style(lineColor=1, markerColor=kViolet, fillColor=kViolet)
 qcdcol = TColor.GetColor(250,202,255)
 sHTT_QCD = Style(lineColor=1, markerColor=qcdcol, fillColor=qcdcol)
 #dycol =  TColor.GetColor(248,206,104)
-dycol =  TColor.GetColor(248,186,104)
+dycol =  TColor.GetColor(248,186,102)
+orange_1 =  TColor.GetColor(255,204,153)
 sHTT_DYJets = Style(lineColor=1, markerColor=dycol, fillColor=dycol)
 wcol = TColor.GetColor(222,90,106)
 sHTT_WJets = Style(lineColor=1, markerColor=wcol, fillColor=wcol)
@@ -97,8 +98,12 @@ s_lob_1=Style(lineColor=1, markerColor=lob_1, fillColor=lob_1)
 pink_1 = TColor.GetColor(255,204,255)                          
 s_pink_1=Style(lineColor=1, markerColor=pink_1, fillColor=pink_1)   
 
-sHTT_TTJets = Style(lineColor=1, markerColor=tau_1,fillColor=tau_1)
-sHTT_TTJets_v2 = Style(lineColor=1, markerColor=s_others ,fillColor=s_others )
+ttcol = TColor.GetColor(155,152,204)
+sHTT_TTJets = Style(lineColor=1, markerColor=ttcol, fillColor=ttcol)
+
+ttcol_v2 = TColor.GetColor(135,206,250)
+sHTT_TTJets_v2 = Style(lineColor=1, markerColor=ttcol_v2, fillColor=ttcol_v2)
+
 sHTT_Higgs_1 = Style(lineColor=2, markerSize=0, markerColor=2, lineWidth=3, lineStyle=1, fillColor=0)
 sHTT_Higgs_2 = Style(lineColor=3, markerSize=0, markerColor=4, lineWidth=3, lineStyle=1, fillColor=0)
 sHTT_Higgs_3 = Style(lineColor=4, markerSize=0, markerColor=4, lineWidth=3, lineStyle=1, fillColor=0)
@@ -182,17 +187,17 @@ histPref['bg_ul*'] = {'style':sHTT_DYJets, 'layer':10, 'legend':'J/#psi X bkg'}
 histPref['bg_bc'] = {'style':sHTT_QCD, 'layer':1, 'legend':'Bc BG'}
 histPref['bg_norm'] = {'style':sHTT_jtfake, 'layer':1, 'legend':'Bg norm.'}
 histPref['sig_had'] = {'style':sHTT_TTJets_v2, 'layer':4, 'legend':'Signal (3prong)'}
-histPref['bc_jpsi_tau_3p'] = {'style':s_taucol_2, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{h}#nu'}
-histPref['bc_jpsi_tau_N3p'] = {'style':s_taucol_3, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{oth}#nu'}
-histPref['bc_jpsi_tau_mu'] = {'style':s_pink_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{#mu}#nu'}
-histPref['bc_jpsi_mu'] = {'style':s_lob_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#mu#nu'}
+#ALL possible Bc decays
+histPref['bc_jpsi_tau_3p'] = {'style':s_taucol_3, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{h}#nu'}
+histPref['bc_jpsi_tau_N3p'] = {'style':s_lob_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{oth}#nu'}
+histPref['bc_jpsi_tau_mu'] = {'style':s_taucol_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{#mu}#nu'}
+histPref['bc_jpsi_mu'] = {'style':s_pink_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#mu#nu'}
 histPref['bc_charmonium_mu'] = {'style':s_bc_mu_1, 'layer':4, 'legend':'Bc#rightarrow(c#bar{c})_{other}#mu#nu'}
 histPref['bc_psi2s_mu'] = {'style':s_bc_mu_1, 'layer':4, 'legend':'Bc#rightarrow#psi(2s)#mu#nu'}
 histPref['bc_chic0_mu'] = {'style':s_bc_mu_2, 'layer':4, 'legend':'Bc#rightarrow#chi_{c0}#mu#nu'}
 histPref['bc_chic1_mu'] = {'style':s_bc_mu_3, 'layer':4, 'legend':'Bc#rightarrow#chi_{c1}#mu#nu'}
 histPref['bc_chic2_mu'] = {'style':s_bc_mu_4, 'layer':4, 'legend':'Bc#rightarrow#chi_{c2}#mu#nu'}
 histPref['bc_hc_mu'] = {'style':s_bc_mu_5, 'layer':4, 'legend':'Bc#rightarrowh_{c}#mu#nu'}
-
 histPref['bc_psi2s_tau'] = {'style':s_tau_1, 'layer':4, 'legend':'Bc#rightarrow#psi(2s)#tau#nu'}
 histPref['bc_chic0_tau'] = {'style':s_bc_mu_2, 'layer':4, 'legend':'Bc#rightarrow#chi_{c0}#tau#nu'}
 histPref['bc_chic1_tau'] = {'style':s_bc_mu_3, 'layer':4, 'legend':'Bc#rightarrow#chi_{c1}#tau#nu'}
