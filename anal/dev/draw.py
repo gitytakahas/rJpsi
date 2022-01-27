@@ -356,10 +356,9 @@ for channel, dict in channels.iteritems():
             wstr += '*getWeight(b_mass)'
 
 
-        if options.sys.find('hammer')!=-1 and type.find('sig')!=-1: 
+        if options.sys.find('hammer')!=-1 and type.find('bc_jpsi_tau*')!=-1: 
             wstr = ivar['weight'].replace('hammer_ebe', options.sys)
-
-        elif options.sys.find('ctau')!=-1 and type in ['sig_3p', 'sig_others', 'bg_bc']:
+        elif options.sys.find('ctau')!=-1 and type in ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p', 'bc_jpsi_ds','bc_others']:
             wstr = ivar['weight'].replace('weight_ctau', options.sys)
 
         elif options.sys.find('puweight')!=-1 and type.find('data')==-1:
