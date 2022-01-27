@@ -137,7 +137,10 @@ class DisplayManager_compare(object):
         if norm:
 #            print('normalization option enabled!')
             for hh in self.histos:
-                hh.Scale(1./hh.GetSumOfWeights())
+                if hh.GetSumOfWeights()==0:
+                    print 'hist ', hh.GetName() ,'has 0 SumOfWeights' 
+                else:
+                    hh.Scale(1./hh.GetSumOfWeights())
         
 
         

@@ -93,7 +93,7 @@ def drawSignificance(hists, channel, vkey, isRight=True):
         if hist.GetName().find('data')!=-1:
             data_obs = copy.deepcopy(hist)
 
-        if hist.GetName().find('sig_3p')!=-1:
+        if hist.GetName().find('bc_jpsi_tau_3p')!=-1:
             sig = copy.deepcopy(hist)
 
 
@@ -142,7 +142,7 @@ def drawSignificance(hists, channel, vkey, isRight=True):
     
     plot.Draw('apl')
     
-    canvas.SaveAs('plots/' + channel + '/sig_' + vkey  + '.gif')
+    canvas.SaveAs('plots_BcDecay/' + channel + '/sig_' + vkey  + '.gif')
     
         
 
@@ -151,15 +151,17 @@ multihists = {}
 
 ##################################################
 
-prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_LEGACY/'
-prefix_cr ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_LEGACY_cr/'
+
+prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy/job_pt_Legacy_v2/'
+#prefix_signal ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy/job_pt_Legacy_v2/'
+#prefix_cr ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_vprobfsigcr/'
 #prefix_q3 ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_q3/'
 
 datastr = "Data_2018/data.root"
 sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig.root"
 #datastr = "Data_2018/Myroot_training_weightAdded.root"
 #sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
-bkgstr  = "BcJpsiX_ul_2018/bkg.root"
+bkgstr  = "BJpsiX_ul_2018/bkg.root"
 
 bc_sf = 0.45/(3*0.8)
 #sig_sf = 'hammer_ebe*puweight/0.55'
@@ -197,17 +199,40 @@ print('hammer weight = ', hammer_weight, 'id=', binid)
 ddir['data_obs'] =  {'file':datastr, 'weight':'1', 'scale':1, 'order':2999, 'color':1, 'addcut':'1'}
 
 # signal + Bc 
-ddir['sig_3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':1, 'color':ttcol_v2, 'addcut':'n_occurance==1 && tau_isRight_3prong==1'}
+ddir['bc_jpsi_tau_3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':1, 'color':taucol_2, 'addcut':'n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6'}
+ddir['bc_jpsi_tau_mu'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':1, 'color':pink_1, 'addcut':'tau_isRight_3prong==0 && gen_sig_decay==6 && isJpsiTau2Mu==1'}
+ddir['bc_jpsi_tau_N3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':1, 'color':taucol_4, 'addcut':'gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0'}
+ddir['bc_jpsi_mu'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':1, 'color':lob_1, 'addcut':'gen_sig_decay==0'}
+
 
 #ddir['sig_lep'] = {'file':sigstr, 'weight':'puweight*(hammer_ebe/0.55)', 'scale':bc_sf, 'order':3, 'color':ttcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0 && isJpsiTau2Mu==1'}
 #ddir['sig_others'] = {'file':sigstr, 'weight':'puweight*(hammer_ebe/0.55)', 'scale':bc_sf, 'order':3, 'color':wcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0 && isJpsiTau2Mu==0'}
-ddir['sig_others'] = {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':3, 'color':wcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0'}
+#ddir['sig_others'] = {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':3, 'color':wcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0'}
 
 
 #ddir['bg_bc'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':qcdcol, 'addcut':'n_occurance==0 && isJpsiMu==0'}
 #ddir['bg_norm'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jtfake, 'addcut':'n_occurance==0 && isJpsiMu==1'}
-ddir['bg_bc'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':qcdcol, 'addcut':'n_occurance==0'}
+#ddir['bg_bc'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':qcdcol, 'addcut':'n_occurance==0'}
+#ddir['bc_charmonium_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_1, 'addcut':'gen_sig_decay>1&&gen_sig_decay<6'} #in SR 0
+#ddir['bc_psi2s_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_1, 'addcut':'gen_sig_decay==1'} #0
+#ddir['bc_chic0_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_2, 'addcut':'gen_sig_decay==2'} #0
+#ddir['bc_chic1_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_3, 'addcut':'gen_sig_decay==3'} #0
+#ddir['bc_chic2_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_4, 'addcut':'gen_sig_decay==4'} #0
+#ddir['bc_hc_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_5, 'addcut':'gen_sig_decay==5'}
 
+#ddir['bc_chic0_tau'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_2, 'addcut':'gen_sig_decay==12'} #0
+#ddir['bc_chic1_tau'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_3, 'addcut':'gen_sig_decay==13'} #0
+#ddir['bc_chic2_tau'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_4, 'addcut':'gen_sig_decay==14'} #0
+#ddir['bc_hc_tau'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_5, 'addcut':'gen_sig_decay==15'}  #0          
+
+#ddir['bc_psi2s_tau'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':tau_1, 'addcut':'gen_sig_decay==7'} #0
+#ddir['bc_jpsi_pi'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jpsi_1, 'addcut':'gen_sig_decay==8'}
+#ddir['bc_jpsi_3pi'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jpsi_2, 'addcut':'gen_sig_decay==9'}
+ddir['bc_jpsi_ds'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'gen_sig_decay==10'}
+#ddir['bc_jpsi_5pi'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jpsi_4, 'addcut':'gen_sig_decay==11'}
+#ddir['bc_jpsi_pions'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':lob_1, 'addcut':'(gen_sig_decay==8||gen_sig_decay==9||gen_sig_decay==11)'}
+#ddir['bc_others'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'gen_sig_decay==16'}
+ddir['bc_others'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'((gen_sig_decay==8||gen_sig_decay==9||gen_sig_decay==11)||(gen_sig_decay>1&&gen_sig_decay<6)||gen_sig_decay==7|| gen_sig_decay==16)'}#ma
 
 # other B backgrounds 
 ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
@@ -305,7 +330,7 @@ for channel, dict in channels.iteritems():
     print 'cut = ', dict['cut']
     print '-'*80
 
-    ensureDir('plots/' + channel)
+    ensureDir('plots_BcDecay/' + channel)
 
     for type, ivar in ddir.items():
 
@@ -326,7 +351,7 @@ for channel, dict in channels.iteritems():
         var_tuples, hists = returnTuples(type, vardir)    
 
         if not options.create and type.find('bg_ul')!=-1:
-#        if type.find('bg_ul')!=-1:
+        #       #if type.find('bg_ul')!=-1:
             wstr += '*getWeight(b_mass)'
 
 
@@ -410,27 +435,27 @@ for channel, dict in channels.iteritems():
             commonname = vkey + '_' + options.sys
 
 
-        comparisonPlots(Histo, 'plots/' + channel + '/' + commonname  + '.gif')
+        comparisonPlots(Histo, 'plots_BcDecay/' + channel + '/' + commonname  + '.gif')
 
 #        if channel.find('q3')==-1:
 
-        comparisonPlots(Histo, 'plots/' + channel + '/' + commonname  + '_log.gif', True)
+        comparisonPlots(Histo, 'plots_BcDecay/' + channel + '/' + commonname  + '_log.gif', True)
         
 #        Histo.Group('signal_ref', ['sig_3p', 'sig_others', 'sig_3pp'])
             
-        ensureDir('datacard/' + channel)
+        ensureDir('datacard_BcDecay/' + channel)
 
         if vkey in finaldiscriminant:
 
             print(options.sys)
 
 #            if options.sys=="None":
-            Histo.WriteDataCard('datacard/' + channel + '/' + commonname + '.root', True, 'RECREATE', channel)
+            Histo.WriteDataCard('datacard_BcDecay/' + channel + '/' + commonname + '.root', True, 'RECREATE', channel)
 
         if options.sys=='None' and vkey=='xgbs':
             drawSignificance(hists, channel, vkey, True)
         
-        comparisonPlots_alt(hists, titles, True, False, 'plots/' + channel + '/' + commonname + '_compare.pdf', False, True, 'pE')
+        comparisonPlots_alt(hists, titles, True, False, 'plots_BcDecay/' + channel + '/' + commonname + '_compare.pdf', False, True, 'pE')
 
 
     

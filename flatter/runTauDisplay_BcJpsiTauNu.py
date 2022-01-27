@@ -1310,10 +1310,18 @@ for evt in xrange(Nevt):
             elif final_daus==[431, 443] or final_daus==[433, 443]:
                 out.gen_sig_decay[0] = 10 ##Bc -> Jpsi +hadrons
             elif final_daus==[211, 211, 211, 211, 211, 443]:
-                out.gen_sig_decay[0] = 11 ##Bc -> Jpsi  5pi   
-            else :   
+                out.gen_sig_decay[0] = 11 ##Bc -> Jpsi  5pi  
+            elif final_daus==[15, 16, 10441]:
+                out.gen_sig_decay[0] = 12 ##Bc -> chic0 tau nu                                                                                                                                         
+            elif final_daus==[15, 16, 20443]:
+                out.gen_sig_decay[0] = 13 ##Bc -> chic1 tau nu                                                                                                 
+            elif final_daus==[15, 16, 445]:
+                out.gen_sig_decay[0] = 14 ##Bc -> chic2 tau nu                                                                                                             
+            elif final_daus==[15, 16, 10443]:
+                out.gen_sig_decay[0] = 15 ##Bc -> hc tau nu 
+            else :      
                 print "final_daus not recognized: ", final_daus            
-                out.gen_sig_decay[0] = 12 ##Bc no more decays 
+                out.gen_sig_decay[0] = 16 ##Bc no more decays 
     
         out.filt.Fill(8)
         evtid += 1

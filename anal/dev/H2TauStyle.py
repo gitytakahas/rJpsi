@@ -55,12 +55,50 @@ dycol =  TColor.GetColor(248,186,104)
 sHTT_DYJets = Style(lineColor=1, markerColor=dycol, fillColor=dycol)
 wcol = TColor.GetColor(222,90,106)
 sHTT_WJets = Style(lineColor=1, markerColor=wcol, fillColor=wcol)
-ttcol = TColor.GetColor(155,152,204)
-sHTT_TTJets = Style(lineColor=1, markerColor=ttcol, fillColor=ttcol)
 
-ttcol_v2 = TColor.GetColor(135,206,250)
-sHTT_TTJets_v2 = Style(lineColor=1, markerColor=ttcol_v2, fillColor=ttcol_v2)
+taucol = TColor.GetColor(51,102,255)
+s_taucol = Style(lineColor=1, markerColor=taucol, fillColor=taucol)
+taucol_1 = TColor.GetColor(153,153,204)
+s_taucol_1 = Style(lineColor=1, markerColor=taucol_1, fillColor=taucol_1)
+taucol_2 = TColor.GetColor(153,153,255)
+s_taucol_2 = Style(lineColor=1, markerColor=taucol_2, fillColor=taucol_2)
+taucol_3 = TColor.GetColor(204,204,255) 
+s_taucol_3 = Style(lineColor=1, markerColor=taucol_3, fillColor=taucol_3)
+taucol_4 = TColor.GetColor(51,102,153)     
+s_taucol_4 = Style(lineColor=1, markerColor=taucol_4, fillColor=taucol_4)
 
+bc_mu_1 = TColor.GetColor(250,202,255)
+s_bc_mu_1=Style(lineColor=1, markerColor=bc_mu_1, fillColor=bc_mu_1)
+bc_mu_2 = TColor.GetColor(219,166,225)
+s_bc_mu_2=Style(lineColor=1, markerColor=bc_mu_2, fillColor=bc_mu_2)
+bc_mu_3 = TColor.GetColor(232,135,243)
+s_bc_mu_3=Style(lineColor=1, markerColor=bc_mu_3, fillColor=bc_mu_3)
+bc_mu_4 = TColor.GetColor(243,217,246)
+s_bc_mu_4=Style(lineColor=1, markerColor=bc_mu_4, fillColor=bc_mu_4)
+bc_mu_5 = TColor.GetColor(203,83,216)
+s_bc_mu_5=Style(lineColor=1, markerColor=bc_mu_5, fillColor=bc_mu_5)
+jpsi_1 = TColor.GetColor(81,213,218)
+s_jpsi_1=Style(lineColor=1, markerColor=jpsi_1, fillColor=jpsi_1)
+jpsi_2 = TColor.GetColor(32,115,118)
+s_jpsi_2=Style(lineColor=1, markerColor=jpsi_2, fillColor=jpsi_2)
+jpsi_3 = TColor.GetColor(175,231,233)
+s_jpsi_3=Style(lineColor=1, markerColor=jpsi_3, fillColor=jpsi_3)
+jpsi_4 = TColor.GetColor(124,187,189)
+s_jpsi_4=Style(lineColor=1, markerColor=jpsi_4, fillColor=jpsi_4)
+jpsi_5 = TColor.GetColor(1,127,131)
+s_jpsi_5=Style(lineColor=1, markerColor=jpsi_5, fillColor=jpsi_5)
+others = TColor.GetColor(204,255,204)
+s_others = Style(lineColor=1, markerColor=others, fillColor=others)
+tau_1 = TColor.GetColor(247,243,126)
+s_tau_1 = Style(lineColor=1, markerColor=tau_1,fillColor=tau_1)
+
+lob_1 = TColor.GetColor(255,154,154)
+s_lob_1=Style(lineColor=1, markerColor=lob_1, fillColor=lob_1)
+pink_1 = TColor.GetColor(255,204,255)                          
+s_pink_1=Style(lineColor=1, markerColor=pink_1, fillColor=pink_1)   
+
+sHTT_TTJets = Style(lineColor=1, markerColor=tau_1,fillColor=tau_1)
+sHTT_TTJets_v2 = Style(lineColor=1, markerColor=s_others ,fillColor=s_others )
 sHTT_Higgs_1 = Style(lineColor=2, markerSize=0, markerColor=2, lineWidth=3, lineStyle=1, fillColor=0)
 sHTT_Higgs_2 = Style(lineColor=3, markerSize=0, markerColor=4, lineWidth=3, lineStyle=1, fillColor=0)
 sHTT_Higgs_3 = Style(lineColor=4, markerSize=0, markerColor=4, lineWidth=3, lineStyle=1, fillColor=0)
@@ -140,12 +178,33 @@ histPref['data_*'] = {'style':sData, 'layer':2999, 'legend':'Observed'}
 #histPref['ZTT'] = {'style':sHTT_DYJets, 'layer':4, 'legend':'Z#rightarrow#tau#tau'}
 #histPref['DY50'] = {'style':sHTT_DYJets, 'layer':4, 'legend':'Z#rightarrow#tau#tau (M > 50)'}
 #histPref['DY10to50'] = {'style':sHTT_ZL, 'layer':5, 'legend':'Z#rightarrow#tau#tau (10 < M < 50)'}
-histPref['bg_ul*'] = {'style':sHTT_DYJets, 'layer':10, 'legend':'J/#psi inclusive BG'}
+histPref['bg_ul*'] = {'style':sHTT_DYJets, 'layer':10, 'legend':'J/#psi X bkg'}
 histPref['bg_bc'] = {'style':sHTT_QCD, 'layer':1, 'legend':'Bc BG'}
 histPref['bg_norm'] = {'style':sHTT_jtfake, 'layer':1, 'legend':'Bg norm.'}
 histPref['sig_had'] = {'style':sHTT_TTJets_v2, 'layer':4, 'legend':'Signal (3prong)'}
-histPref['sig_3p'] = {'style':sHTT_TTJets_v2, 'layer':4, 'legend':'Signal (3prong)'}
-histPref['sig_lep'] = {'style':sHTT_TTJets, 'layer':4, 'legend':'Signal (Leptonic)'}
+histPref['bc_jpsi_tau_3p'] = {'style':s_taucol_2, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{h}#nu'}
+histPref['bc_jpsi_tau_N3p'] = {'style':s_taucol_3, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{oth}#nu'}
+histPref['bc_jpsi_tau_mu'] = {'style':s_pink_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{#mu}#nu'}
+histPref['bc_jpsi_mu'] = {'style':s_lob_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#mu#nu'}
+histPref['bc_charmonium_mu'] = {'style':s_bc_mu_1, 'layer':4, 'legend':'Bc#rightarrow(c#bar{c})_{other}#mu#nu'}
+histPref['bc_psi2s_mu'] = {'style':s_bc_mu_1, 'layer':4, 'legend':'Bc#rightarrow#psi(2s)#mu#nu'}
+histPref['bc_chic0_mu'] = {'style':s_bc_mu_2, 'layer':4, 'legend':'Bc#rightarrow#chi_{c0}#mu#nu'}
+histPref['bc_chic1_mu'] = {'style':s_bc_mu_3, 'layer':4, 'legend':'Bc#rightarrow#chi_{c1}#mu#nu'}
+histPref['bc_chic2_mu'] = {'style':s_bc_mu_4, 'layer':4, 'legend':'Bc#rightarrow#chi_{c2}#mu#nu'}
+histPref['bc_hc_mu'] = {'style':s_bc_mu_5, 'layer':4, 'legend':'Bc#rightarrowh_{c}#mu#nu'}
+
+histPref['bc_psi2s_tau'] = {'style':s_tau_1, 'layer':4, 'legend':'Bc#rightarrow#psi(2s)#tau#nu'}
+histPref['bc_chic0_tau'] = {'style':s_bc_mu_2, 'layer':4, 'legend':'Bc#rightarrow#chi_{c0}#tau#nu'}
+histPref['bc_chic1_tau'] = {'style':s_bc_mu_3, 'layer':4, 'legend':'Bc#rightarrow#chi_{c1}#tau#nu'}
+histPref['bc_chic2_tau'] = {'style':s_bc_mu_4, 'layer':4, 'legend':'Bc#rightarrow#chi_{c2}#tau#nu'}
+histPref['bc_hc_tau'] = {'style':s_bc_mu_5, 'layer':4, 'legend':'Bc#rightarrowh_{c}#tau#nu'}
+histPref['bc_jpsi_pi'] = {'style':s_jpsi_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#pi'}
+histPref['bc_jpsi_3pi'] = {'style':s_jpsi_2, 'layer':4, 'legend':'Bc#rightarrowJ/#psi3#pi'}
+histPref['bc_jpsi_ds'] = {'style':s_jpsi_3, 'layer':4, 'legend':'Bc#rightarrowJ/#psi D^{(*)+}_{s}'}
+histPref['bc_jpsi_5pi'] = {'style':s_jpsi_4, 'layer':4, 'legend':'Bc#rightarrowJ/#psi5#pi'}
+histPref['bc_jpsi_pions'] = {'style':s_lob_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi pions'}
+histPref['bc_others'] = {'style':s_others, 'layer':4, 'legend':'Bc#rightarrow others'}
+
 histPref['sig_3pp*'] = {'style':sHTT_TTJets, 'layer':3, 'legend':'Signal (3prong + #pi^{0})'}
 histPref['sig_others*'] = {'style':sHTT_WJets, 'layer':2, 'legend':'Signal (others)'} 
 histPref['signal*'] = {'style':sHTT_TTJets_v2, 'layer':1, 'legend':'Signal'} 
