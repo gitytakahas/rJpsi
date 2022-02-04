@@ -5,7 +5,7 @@
 # 
 # Location where output files will be stored
 #
-pnfs="/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/"
+pnfs="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi_Legacy_decayBc/"
 
 
 #
@@ -23,7 +23,7 @@ analysis="BcJpsiTauNu"
 # uberftp -ls gsiftp://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/
 # 
 #sigmc="BcToJPsiMuMu_Legacy_2018_20210520"
-sigmc="BcToJPsiMuMu_Legacy_2018_20220122"
+sigmc="BcToJPsiMuMu_Legacy_2018_20220203"   #"BcToJPsiMuMu_Legacy_2018_20220122"
 bgmc="HbToJPsiMuMu_legacy_2018_20210331"
 bgmc2="JPsiMuMu_Legacy_2018_20220103"
 dataset="Charmonium_legacy_2018_20210331"
