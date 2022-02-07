@@ -39,7 +39,7 @@ void addvariable(TString filename, TString wfile){
     std::cout << "This is signal !!" << std::endl;
     isSignal = true;
   }else if(string(filename).find("Data")!=std::string::npos){
-    std::cout << "This is signal all !!" << std::endl;
+    std::cout << "This is Data !!" << std::endl;
     isData = true;
   }else{
     std::cout << "This is invalid!" << std::endl;

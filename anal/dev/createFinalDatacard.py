@@ -24,11 +24,13 @@ gStyle.SetOptTitle(0)
 gROOT.ProcessLine(".L ~/tool//MultiDraw.cc+");
 
 
-systs = []
+systs_hammer = []
 
 for hammer in range(0, 9):
-    systs.append('hammer_ebe_e' + str(hammer) + '_up')
-    systs.append('hammer_ebe_e' + str(hammer) + '_down')
+    systs_hammer.append('hammer_ebe_e' + str(hammer) + '_up')
+    systs_hammer.append('hammer_ebe_e' + str(hammer) + '_down')
+
+systs_pu = ['puweight_up', 'puweight_down']
 
 
 def applyHists(hists):
@@ -162,7 +164,7 @@ for vkey, ivar in vardir.items():
 print '-'*80
 
 
-ratio = 0.136
+ratio = 0.27
 
 fitCat = 'sr'
 ensureDir('syscompare/' + fitCat)
@@ -198,9 +200,9 @@ for vkey, ivar in vardir.items():
 
 #    hists4ratio = draw(vkey, ['sr', 'sb'], 'bg_ul')
     
-#    draw(vkey, ['cr_lp',  'cr_sb'], 'data_obs', True)
+    draw(vkey, ['cr_lp',  'cr_sb'], 'data_obs', None, True, True)
 
-#    draw(vkey, ['cr_sb',  'cr_sr'], 'data_obs', True)
+    draw(vkey, ['cr_sb',  'cr_sr'], 'data_obs', None, True, True)
 
 
 
@@ -263,7 +265,7 @@ for vkey, ivar in vardir.items():
 
         #### shape variation
 
-        for sys in systs:
+        for sys in systs_hammer:
 
             name_sys = sys.replace('_up','Up').replace('_down', 'Down')
 
@@ -283,6 +285,31 @@ for vkey, ivar in vardir.items():
             
             hists2write.append(sig_3p_sys)
             hists2write.append(sig_others_sys)
+
+
+        for sys in systs_pu:
+
+            name_sys = sys.replace('_up','Up').replace('_down', 'Down')
+
+            hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', sys, True, False)
+
+            bkgHist_sys = hists_sys[1]
+            bkgHist_sys.Scale(ratio)
+
+            setNameTitle(bkgHist_sys, 'dd_bkg_' + name_sys)
+            hists2write.append(bkgHist_sys)
+
+            sig_3p_sys = getHist(vkey, fitCat, 'sig_3p', sys)
+            sig_others_sys = getHist(vkey, fitCat, 'sig_others', sys)
+            bg_bc = getHist(vkey, fitCat, 'bg_bc', sys)
+
+            setNameTitle(sig_3p_sys, 'sig_3p_' + name_sys)
+            setNameTitle(sig_others_sys, 'sig_others_' + name_sys)
+            setNameTitle(bg_bc, 'bg_bc_' + name_sys)
+            
+            hists2write.append(sig_3p_sys)
+            hists2write.append(sig_others_sys)
+            hists2write.append(bg_bc)
 
             
             

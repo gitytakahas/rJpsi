@@ -14,7 +14,7 @@ import numpy as np
 # installed via 
 # >>> pip install particle --user
 ### 
-#from particle import Particle
+from particle import Particle
 
 #gROOT.SetBatch(True)
 
@@ -90,16 +90,16 @@ def returnMass2(tlvs, m1, m2):
 
     return tautlv.M()
 
-#def returnName(pid):
-#    
-#    addstr = None
-#    
-#    try:
-#        addstr = Particle.from_pdgid(pid).name    
-#    except:
-#        addstr = 'None'
-#
-#    return addstr
+def returnName(pid):
+    
+    addstr = None
+    
+    try:
+        addstr = Particle.from_pdgid(pid).name    
+    except:
+        addstr = 'None'
+
+    return addstr
         
 
 
@@ -313,7 +313,8 @@ evtid = 0
 mk = 0.493677
 mp = 0.139571
 
-
+dicts = {}
+dict_counter = 0
 
 for evt in xrange(Nevt):
     chain.GetEntry(evt)
@@ -710,6 +711,32 @@ for evt in xrange(Nevt):
         
         tlvs = [tlv1, tlv2, tlv3]
 
+        mass_kpipi = (tlv_jpsi + tlv1_k + tlv2 + tlv3).M()
+        mass_pikpi = (tlv_jpsi + tlv1 + tlv2_k + tlv3).M()
+        mass_pipik = (tlv_jpsi + tlv1 + tlv2 + tlv3_k).M()
+
+        mass_b_pm = 5.27934
+        
+        masses_b_pm = [mass_kpipi, mass_pikpi, mass_pipik]
+
+        diffes_b_pm = [abs(m - mass_b_pm) for m in masses_b_pm]
+        
+        min_mass_b_pm = min(diffes_b_pm)
+        index_b_pm = diffes_b_pm.index(min_mass_b_pm)
+
+#        print("-"*50)
+#        print("masses_b_pm", masses_b_pm)
+#        print("diffes_b_pm", diffes_b_pm)
+#        print("index_b_pm", index_b_pm)
+#        print("closest_b_pm", masses_b_pm[index_b_pm])
+
+
+        out.jpsi_kpipi[0] = mass_kpipi
+        out.jpsi_pikpi[0] = mass_pikpi
+        out.jpsi_pipik[0] = mass_pipik
+        out.jpsi_kpipi_closest[0] = masses_b_pm[index_b_pm]
+        
+
         out.tau_m12s[0] = math.pow((tlv1+tlv2).M(), 2);
         out.tau_m23s[0] = math.pow((tlv2+tlv3).M(), 2);
         out.tau_m13s[0] = math.pow((tlv1+tlv3).M(), 2);
@@ -868,37 +895,42 @@ for evt in xrange(Nevt):
         out.run[0] = chain.EVENT_run
 
 
-#####        flag_veto = False
-#####
-#####        if options.type == 'bg' and bool(chain.JpsiTau_tau_isRight[tindex]):
-#####            print 'TRACE', '-'*80
-#####
-#####            for igen in range(len(chain.genParticle_pdgId)):
-#####                if abs(chain.genParticle_pdgId[igen])>=511 and abs(chain.genParticle_pdgId[igen])<=545:
-#####
-#####                    print 'TRACE', chain.genParticle_pdgId[igen]
-#####                
-#####                    lp = []
-#####
-#####                    for idau in range(len(chain.genParticle_dau[igen])):
-#####                        print 'TRACE -->', chain.genParticle_dau[igen][idau]
-#####                        lp.append(abs(chain.genParticle_dau[igen][idau]))
-#####                    
-#####                    if 15 in lp and 443 in lp and abs(chain.genParticle_pdgId[igen])==541:
-#####                        print 'THIS IS THE SIGNAL !!!'
-#####                        flag_veto = True
-#####
-#####        if options.type=='bg':
-#####            out.isveto[0] = flag_veto
-#####
-#####            
-#####
-#####        if options.type=='bg':
-#####
-#####            decayTable = []
-#####
-#####            flag_jpsi = False
-#####            
+        if options.type=='bg' and mass_kpipi > 5.25 and mass_kpipi < 5.3: 
+
+#            for idau in range(len(chain.genParticle_dau[igen])):
+#
+#                print '\t -->', chain.genParticle_dau[igen][idau]
+#
+#                flag_pi = []
+#
+#                for ipi, itlv in enumerate([tlv1, tlv2, tlv3]):
+#
+#                    for ipdg in range(len(chain.genParticle_pdgs[igen])):            
+#                                
+#                        _dr = deltaR(itlv.Eta(), itlv.Phi(), chain.genParticle_peta[igen][ipdg], chain.genParticle_pphi[igen][ipdg])
+#                                
+#                        if _dr < 0.1:
+#                            flag_pi.append(ipi)
+#                                    
+#                print '\t', flag_pi
+
+
+
+
+            for igen in range(len(chain.genParticle_pdgId)):
+                if abs(chain.genParticle_pdgId[igen])>=511 and abs(chain.genParticle_pdgId[igen])<=545:
+
+                    print 'TRACE', chain.genParticle_pdgId[igen]
+                
+                    for idau in range(len(chain.genParticle_dau[igen])):
+                        print '\t -->', chain.genParticle_dau[igen][idau]
+                    
+
+
+            decayTable = []
+
+            flag_jpsi = False
+            
 #####            print '-'*80
 #####            print 'evtid = ', evtid 
 #####            print '-'*80
@@ -914,7 +946,7 @@ for evt in xrange(Nevt):
 #####                for ipdg in range(len(chain.genParticle_pdgs[igen])):
 #####            
 #####
-#####                    print '  '*int(chain.genParticle_layers[igen][ipdg]), 'pdg  = ', chain.genParticle_pdgs[igen][ipdg], '(',  returnName(chain.genParticle_pdgs[igen][ipdg]) , '), (pt, eta, phi) = ', '({0:.2f}'.format(chain.genParticle_ppt[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_peta[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_pphi[igen][ipdg]), ')'
+#####                    print '  '*2*int(chain.genParticle_layers[igen][ipdg]), 'pdg  = ', chain.genParticle_pdgs[igen][ipdg], '(',  returnName(chain.genParticle_pdgs[igen][ipdg]) , '), (pt, eta, phi) = ', '({0:.2f}'.format(chain.genParticle_ppt[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_peta[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_pphi[igen][ipdg]), ')'
 #####
 #####                    if abs(chain.genParticle_pdgs[igen][ipdg]) == 13:
 #####                        dr1 = deltaR(tlv_mu1.Eta(), tlv_mu1.Phi(), chain.genParticle_peta[igen][ipdg], chain.genParticle_pphi[igen][ipdg])
@@ -936,88 +968,104 @@ for evt in xrange(Nevt):
 #####                        
 #####                            if _dr < 0.1:
 #####                                print '*'
-#####
-#####                            
-#####
-#####
-#####
-#####            for igen in range(len(chain.genParticle_pdgs)):
-#####
-######                print ''
-######                print 'gen = ', igen
-######                print ''
-#####
-#####                flag_mu1 = False
-#####                flag_mu2 = False
-#####
-#####                addstr = returnName(chain.genParticle_pdgs[igen][0])
-#####
-#####                for ipdg in range(len(chain.genParticle_pdgs[igen])):
-#####            
-#####                    if chain.genParticle_layers[igen][ipdg]==1:
-#####                        addstr += '_' + returnName(chain.genParticle_pdgs[igen][ipdg])
-#####
-#####
-######                    print '  '*int(chain.genParticle_layers[igen][ipdg]), 'pdg  = ', chain.genParticle_pdgs[igen][ipdg], '(',  returnName(chain.genParticle_pdgs[igen][ipdg]) , '), (pt, eta, phi) = ', '({0:.2f}'.format(chain.genParticle_ppt[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_peta[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_pphi[igen][ipdg]), ')'
-#####
-#####
-#####                    if abs(chain.genParticle_pdgs[igen][ipdg]) == 13:
-#####                        dr1 = deltaR(tlv_mu1.Eta(), tlv_mu1.Phi(), chain.genParticle_peta[igen][ipdg], chain.genParticle_pphi[igen][ipdg])
-#####                        dr2 = deltaR(tlv_mu2.Eta(), tlv_mu2.Phi(), chain.genParticle_peta[igen][ipdg], chain.genParticle_pphi[igen][ipdg])
-#####                        
-#####                        if dr1 < 0.05:
-#####                            flag_mu1 = True
-######                            print '*'
-#####                            
-#####                        if dr2 < 0.05:
-#####                            flag_mu2 = True
-######                            print '*'
-#####
-#####                if not (flag_mu1 and flag_mu2): continue
-#####
-#####                flag_jpsi = True 
-#####                decayTable.append(addstr)
-#####
-#####
-#####                for itlv in [tlv1, tlv2, tlv3]:
-#####
-#####                    flag_pi = False
-#####
-#####                    for ipdg in range(len(chain.genParticle_pdgs[igen])):            
-#####
-#####                        _dr = deltaR(itlv.Eta(), itlv.Phi(), chain.genParticle_peta[igen][ipdg], chain.genParticle_pphi[igen][ipdg])
-#####                        
-#####                        if _dr < 0.1:
-#####                            flag_pi = True
-######                            print '*'
-#####                                
-#####                    if flag_pi:
-#####                        decayTable.append(addstr)
-#####
-#####                    else:
-#####
-#####                        flag_pi_other = False
-#####
-#####                        for igen2 in range(len(chain.genParticle_pdgs)):
-#####                            if igen2==igen: continue
-#####
-#####                            addstr = returnName(chain.genParticle_pdgs[igen2][0])
-#####                        
-#####                            for ipdg in range(len(chain.genParticle_pdgs[igen2])):
-#####                            
-#####                                if chain.genParticle_layers[igen2][ipdg]==1:
-#####                                    addstr += '_' + returnName(chain.genParticle_pdgs[igen2][ipdg])
-#####
-#####
-#####                            _dr = deltaR(itlv.Eta(), itlv.Phi(), chain.genParticle_peta[igen2][ipdg], chain.genParticle_pphi[igen2][ipdg])
-#####                            
-#####                            if _dr < 0.1:
-#####                                flag_pi_other = True
-#####                                decayTable.append(addstr)
-#####                                
-#####
-#####                        if not flag_pi_other:
-#####                            decayTable.append('PU')
+
+                            
+
+
+
+            for igen in range(len(chain.genParticle_pdgs)):
+
+                print ''
+                print 'gen = ', igen
+                print ''
+
+                flag_mu1 = False
+                flag_mu2 = False
+
+                addstr = returnName(chain.genParticle_pdgs[igen][0])
+
+                for ipdg in range(len(chain.genParticle_pdgs[igen])):
+            
+                    if chain.genParticle_layers[igen][ipdg]==1:
+                        addstr += '_' + returnName(chain.genParticle_pdgs[igen][ipdg])
+
+
+                    print '  '*2*int(chain.genParticle_layers[igen][ipdg]), 'pdg  = ', chain.genParticle_pdgs[igen][ipdg], '(',  returnName(chain.genParticle_pdgs[igen][ipdg]) , '), (pt, eta, phi) = ', '({0:.2f}'.format(chain.genParticle_ppt[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_peta[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_pphi[igen][ipdg]), ')'
+
+
+                    if abs(chain.genParticle_pdgs[igen][ipdg]) == 13:
+                        dr1 = deltaR(tlv_mu1.Eta(), tlv_mu1.Phi(), chain.genParticle_peta[igen][ipdg], chain.genParticle_pphi[igen][ipdg])
+                        dr2 = deltaR(tlv_mu2.Eta(), tlv_mu2.Phi(), chain.genParticle_peta[igen][ipdg], chain.genParticle_pphi[igen][ipdg])
+                        
+                        if dr1 < 0.05:
+                            flag_mu1 = True
+#                            print '*'
+                            
+                        if dr2 < 0.05:
+                            flag_mu2 = True
+#                            print '*'
+
+                if not (flag_mu1 and flag_mu2): continue
+
+                flag_jpsi = True 
+                decayTable.append(addstr)
+
+
+#                for itlv in [tlv1, tlv2, tlv3]:
+#
+#                    flag_pi = False
+#                    addstr = 'PU'
+#
+#
+#                    for ipdg in range(len(chain.genParticle_pdgs[igen])):            
+#
+#                        _dr = deltaR(itlv.Eta(), itlv.Phi(), chain.genParticle_peta[igen][ipdg], chain.genParticle_pphi[igen][ipdg])
+#                        
+#                        if _dr < 0.1:
+#                            flag_pi = True
+#                            addstr = returnName(chain.genParticle_pdgs[igen][ipdg])
+#                            break
+#                            
+#                                
+#                    decayTable.append(addstr)
+
+
+#                    else:
+#
+#                        flag_pi_other = False
+#
+#                        for igen2 in range(len(chain.genParticle_pdgs)):
+#                            if igen2==igen: continue
+#
+#                            addstr = returnName(chain.genParticle_pdgs[igen2][0])
+#                        
+#                            for ipdg in range(len(chain.genParticle_pdgs[igen2])):
+#                            
+#                                if chain.genParticle_layers[igen2][ipdg]==1:
+#                                    addstr += '_' + returnName(chain.genParticle_pdgs[igen2][ipdg])
+#
+#
+#                            _dr = deltaR(itlv.Eta(), itlv.Phi(), chain.genParticle_peta[igen2][ipdg], chain.genParticle_pphi[igen2][ipdg])
+#                            
+#                            if _dr < 0.1:
+#                                flag_pi_other = True
+#                                decayTable.append(addstr)
+                                
+
+ 
+
+            print len(decayTable), decayTable
+
+            for idt in decayTable:
+                dict_counter += 1
+
+                if idt in dicts: 
+                    print 'This is already there!!!'
+                    dicts[idt] += 1
+                else:
+                    print 'This is new!'
+                    dicts[idt] = 1
+
 #####
 #####
 ######        if options.type=='bg':
@@ -1274,5 +1322,15 @@ for evt in xrange(Nevt):
     out.filt.Fill(9)
 
 print(Nevt, 'evt processed.', evtid, 'evt has matching')
+
+from collections import Counter
+x = Counter(dicts)
+
+for k,l in sorted([(j,i) for i,j in x.items()], reverse=True):
+    print l.ljust(50), k, 'counts out of', str(dict_counter), ' frac = ({0:2f}'.format(float(k)/float(dict_counter)), ')'
+
+
+#for key, idt in dicts.iteritems():
+#    print key.ljust(40), dicts[key], 'counts'
 
 out.endJob()

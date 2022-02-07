@@ -3,7 +3,8 @@ today=`date "+%Y%m%d%H%M"`
 
 # Specify here the output file types 
 #name="mass_pt"
-name="pt_Legacy"
+name="pt_LEGACY_cr"
+#name="pt_vprobfsigcr"
 #name="pt"
 #name="multiple"
 
@@ -73,7 +74,7 @@ done
 # to avoid biasing, we can reweigh based on B pT and eta
 #
 ##############################################
-python create_weights.py --sig_file ${sig_inclusive_ul_all_2018}/Myroot_training.root --bkg_file ${data_ul_2018}/Myroot_training.root --out_dir weight_${name}
+#python create_weights.py --sig_file ${sig_inclusive_ul_all_2018}/Myroot_training.root --bkg_file ${data_ul_2018}/Myroot_training.root --out_dir weight_${name}
 
 
 ##############################################
@@ -84,8 +85,26 @@ python create_weights.py --sig_file ${sig_inclusive_ul_all_2018}/Myroot_training
 # 
 ##############################################
 
-sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_training.root $PWD/weight_${name}/weight.root
-sh updateTuple.sh ${data_ul_2018}/Myroot_training.root $PWD/weight_${name}/weight.root
+#sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_training.root $PWD/weight_${name}/weight.root
+#sh updateTuple.sh ${data_ul_2018}/Myroot_training.root $PWD/weight_${name}/weight.root
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

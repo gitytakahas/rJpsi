@@ -159,7 +159,8 @@ datastr = "Data_2018/data.root"
 sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig.root"
 #datastr = "Data_2018/Myroot_training_weightAdded.root"
 #sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
-bkgstr  = "BcJpsiX_ul_2018/bkg.root"
+#bkgstr  = "BcJpsiX_ul_2018/bkg.root"
+bkgstr  = "BcJpsiX_ul_2018_new/bkg.root"
 
 bc_sf = 0.45/(3*0.8)
 #sig_sf = 'hammer_ebe*puweight/0.55'
@@ -210,13 +211,15 @@ ddir['bg_bc'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order'
 
 
 # other B backgrounds 
-ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
+#ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
+ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight', 'scale':21*7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
 
 
 ##################################################
 
 
-basic = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1'
+#basic = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1'
+basic = 'tau_pt > 3. && mu1_isTight==1 && mu2_isTight==1'
 phiveto = "!(tau_rhomass1_kk < 1.04) && !(tau_rhomass2_kk < 1.04)"
 #xgbs_sr = 'xgbs > 5.35'
 #xgbs_sb = 'xgbs > 4.35 && xgbs < 5.35'
@@ -233,7 +236,7 @@ xgbs_lp = 'xgbs > 3.1 && xgbs < 4.1'
 
 channels = {
 
-    'inclusive':{'cut':'&&'.join([basic])},
+    'validation':{'cut':'&&'.join([basic])},
 
 #    'extrapolate':{'cut':'&&'.join([basic, 'xgbs > 3.5'])},
 
@@ -278,11 +281,12 @@ channels = {
 
 
 #finaldiscriminant = ['xgbs', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
-finaldiscriminant = ['xgbs', 'xgbs_zoom', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
+#finaldiscriminant = ['xgbs', 'xgbs_zoom', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
+finaldiscriminant = ['jpsi_kpipi']
 
 
-#if not options.create:
-#    vardir.pop('b_mass_sf')
+if not options.create:
+    vardir.pop('b_mass_sf')
 
 if options.min:
     for vkey, ivar in vardir.items():
@@ -325,9 +329,9 @@ for channel, dict in channels.iteritems():
 
         var_tuples, hists = returnTuples(type, vardir)    
 
-        if not options.create and type.find('bg_ul')!=-1:
+#        if not options.create and type.find('bg_ul')!=-1:
 #        if type.find('bg_ul')!=-1:
-            wstr += '*getWeight(b_mass)'
+#            wstr += '*getWeight(b_mass)'
 
 
         if options.sys.find('hammer')!=-1 and type.find('sig')!=-1: 

@@ -25,7 +25,7 @@ analysis="BcJpsiTauNu"
 #sigmc="BcToJPsiMuMu_Legacy_2018_20210520"
 sigmc="BcToJPsiMuMu_Legacy_2018_20220122"
 bgmc="HbToJPsiMuMu_legacy_2018_20210331"
-##bgmc2="JPsiMuMu_Legacy_2018_20220103"
+bgmc2="JPsiMuMu_Legacy_2018_20220103"
 dataset="Charmonium_legacy_2018_20210331"
 
 #sigmc="BcToJPsiMuMu_Legacy_q3_2018_20210806"
@@ -50,7 +50,8 @@ nchunk_data=5
 
 
 
-outdir="job_${priority}_Legacy_v2"
+outdir="job_${priority}_LEGACY"
+#outdir="job_${priority}_vprobfsigcr"
 
 #########################################
 # for signal MC
@@ -66,7 +67,7 @@ do
 
     echo "signal", $year
 
-    python getDataset.py --file ${sigmc} --chunk ${nchunk_sig} --analysis ${analysis} --type signal --name BcJpsiTau_inclusive_ul_all_${year} --select UL --year $pustr --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+#    python getDataset.py --file ${sigmc} --chunk ${nchunk_sig} --analysis ${analysis} --type signal --name BcJpsiTau_inclusive_ul_all_${year} --select UL --year $pustr --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 
 
 done
@@ -76,7 +77,7 @@ done
 # for J/psi + X BG
 #########################################
 #python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BcJpsiX_ul_2018 --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
-#python getDataset.py --file ${bgmc2} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BcJpsiX_ul_2018_new --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+python getDataset.py --file ${bgmc2} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BcJpsiX_ul_2018_new --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 
 #########################################
 # Data (2016)

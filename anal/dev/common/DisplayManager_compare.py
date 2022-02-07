@@ -116,7 +116,7 @@ class DisplayManager_compare(object):
         self.draw_ratioLegend = ROOT.TLegend(0.15, 0.79, 0.5, 0.89)
         applyLegendSettings(self.draw_ratioLegend)
 
-        self.pullRange = 0.8
+        self.pullRange = 0.5
 #        self.canvas.Print(self.name + '[')
 
 #    def __del__(self):
@@ -223,7 +223,8 @@ class DisplayManager_compare(object):
                 histPull.SetLineStyle(self.histos[ihist].GetLineStyle())
                 histPull.SetLineWidth(self.histos[ihist].GetLineWidth())
 
-                histPull.GetYaxis().SetRangeUser(-self.pullRange + 1., self.pullRange + 1.5)
+#                histPull.GetYaxis().SetRangeUser(-self.pullRange + 1., self.pullRange + 1.5)
+                histPull.GetYaxis().SetRangeUser(-self.pullRange + 1., 1 + self.pullRange)
 
                 # defaultYtoPixel = 408.  # height in pixels of default canvas
                 defaultYtoPixel = self.canvas.GetPad(1).YtoPixel(0.)

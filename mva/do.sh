@@ -1,7 +1,8 @@
 today=`date "+%Y%m%d%H%M"`
 
 #name="nomass_pt"
-name="pt_Legacy"
+#name="pt_Legacy"
+name="pt_LEGACY"
 #name="multiple"
 
 # location of the input files

@@ -119,6 +119,12 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
         self.addBranch('pi3_trigMatch',                  '?')
         self.addBranch('pi3_trigMatch_dr',                  'f')
 
+        self.addBranch('jpsi_kpipi',                  'f')
+        self.addBranch('jpsi_pikpi',                  'f')
+        self.addBranch('jpsi_pipik',                  'f')
+        self.addBranch('jpsi_kpipi_closest',                  'f')
+
+
 
 
 #        self.addBranch('tau_ppp',                  'f')
