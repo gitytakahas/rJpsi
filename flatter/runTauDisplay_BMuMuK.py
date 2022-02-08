@@ -11,7 +11,7 @@ import copy
 import random
 from scipy.constants import c as speed_of_light
 import numpy as np
-
+from particle import Particle
 import json
 
 # from https://github.com/scikit-hep/particle/
@@ -105,6 +105,18 @@ def returnMass2(tlvs, m1, m2):
 #
 #    return addstr
     
+
+def returnName(pid):
+    
+    addstr = None
+    
+    try:
+        addstr = Particle.from_pdgid(pid).name    
+    except:
+        addstr = 'None'
+
+    return addstr
+
 def build_uncertainties(sf):
     keys = ["nominal"]
     keys += ["up_syst", "down_syst"] if "syst" in sf else []
@@ -248,11 +260,18 @@ parser.add_option("-y", "--year", default='2018', type="string", help="year", de
 #parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/BcToJPsiMuMu_Legacy_2018_20210430/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v2/210430_140808/0000/flatTuple_100.root', type="string", help="file", dest="file")
 #parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/JpsiX_Legacy_2018_20210826/JpsiX_MuMu_J_211119/cgalloni-Autumn18_10_2_9_miniAOD-39a089a8e7301f392b8b059e430f83ef/210826_070112/0000/flatTuple_5.root', type="string", help="file", dest="file")   
 parser.add_option("-f", "--file", default="root://storage01.lcg.cscs.ch/pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas//DIGI_JpsiK_multiple_2018_20210907/DIGI_JpsiX_MuMu_20210905/cgalloni-UL18_MINIAOD_v1_noDuplCheck-cb0e7829b1b4ca4eee675686c1769096/210907_055844/0000/flatTuple_1.root", type="string", help="file", dest="file") 
-
+parser.add_option('-c', '--create', action="store_true", default=False, dest='create')
 
 (options, args) = parser.parse_args()
 
 print(options)
+
+if not options.create:
+    json_open = open('json_jpsik.json', 'r')
+    idtable = json.load(json_open)
+    print('JSON decay table is read !')
+
+    print idtable 
 
 
 #with open('correction/Efficiency_muon_generalTracks_Run2018_UL_trackerMuon.json') as f:
@@ -360,6 +379,7 @@ chain.SetBranchStatus('EVENT_*', 1)
 putool = None
 
 if options.type!='data':
+    chain.SetBranchStatus('*genParticle*', 1)
     chain.SetBranchStatus('JpsiK_*gen*', 1)
     chain.SetBranchStatus('JpsiK_genPV_vx', 1)
     chain.SetBranchStatus('JpsiK_genPV_vy', 1)
@@ -394,6 +414,9 @@ mk = 0.493677
 mp = 0.139571
 
 
+dicts = {}
+dict_counter = 0
+
 
 for evt in xrange(Nevt):
     chain.GetEntry(evt)
@@ -404,7 +427,7 @@ for evt in xrange(Nevt):
     out.multi.Fill(len(chain.JpsiK_pi_pt))
 
     if len(chain.JpsiK_pi_pt)==0: 
-        print('This is not possible !!')
+#        print('This is not possible !!')
         continue
 
 
@@ -652,6 +675,96 @@ for evt in xrange(Nevt):
         #out.JpsiK_st_doca3d=init_float
         #out.JpsiK_st_doca3d=chain.JpsiK_st_doca3d
   
+
+        if options.type=='bg':
+
+            decayTable = []
+
+
+            for igen in range(len(chain.genParticle_pdgs)):
+
+                flag_mu1 = False
+                flag_mu2 = False
+
+
+                for ipdg in range(len(chain.genParticle_pdgs[igen])):
+            
+
+                    if abs(chain.genParticle_pdgs[igen][ipdg]) == 13:
+                        dr1 = deltaR(tlv_mu1.Eta(), tlv_mu1.Phi(), chain.genParticle_peta[igen][ipdg], chain.genParticle_pphi[igen][ipdg])
+                        dr2 = deltaR(tlv_mu2.Eta(), tlv_mu2.Phi(), chain.genParticle_peta[igen][ipdg], chain.genParticle_pphi[igen][ipdg])
+                        
+                        if dr1 < 0.05:
+                            flag_mu1 = True
+#                            print '*'
+                            
+                        if dr2 < 0.05:
+                            flag_mu2 = True
+#                            print '*'
+
+                if not (flag_mu1 and flag_mu2): continue
+
+
+#                print '-'*80
+#                print 'gen = ', igen
+#                print '-'*80
+
+
+#                for ipdg in range(len(chain.genParticle_pdgs[igen])):
+            
+#                    print '  '*2*int(chain.genParticle_layers[igen][ipdg]), 'pdg  = ', chain.genParticle_pdgs[igen][ipdg], '(',  returnName(chain.genParticle_pdgs[igen][ipdg]) , '), (pt, eta, phi) = ', '({0:.2f}'.format(chain.genParticle_ppt[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_peta[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_pphi[igen][ipdg]), '), isfinal=',  chain.genParticle_isfinal[igen][ipdg]
+
+
+
+                # first identify the layer at which B+/- is created
+
+                _layerid = -1 
+                addstr = 'None'
+
+                for ipdg in range(len(chain.genParticle_pdgs[igen])):
+
+                    if abs(chain.genParticle_pdgs[igen][ipdg]) in [511, 521, 531, 541]: 
+                        addstr = returnName(chain.genParticle_pdgs[igen][ipdg])
+                        _layerid = chain.genParticle_layers[igen][ipdg]
+                        break
+
+                    
+                for ipdg in range(len(chain.genParticle_pdgs[igen])):
+                    if chain.genParticle_layers[igen][ipdg]==_layerid+1:
+                        addstr += '_' + returnName(chain.genParticle_pdgs[igen][ipdg])
+
+
+#                print '\t ==========>', addstr
+                decayTable.append(addstr)
+
+
+
+
+            if len(decayTable)!=1:
+                out.procid[0] = -9
+            else:
+
+                for idt in decayTable:
+                    dict_counter += 1
+            
+                    if idt in dicts: 
+#                    print 'This is already there!!!'
+                        dicts[idt] += 1
+                    else:
+                        #                    print 'This is new!'
+                        dicts[idt] = 1 
+
+
+                    if not options.create:
+
+                        if idt in idtable:
+                            out.procid[0] = idtable[idt]['id']
+                        else:
+                            out.procid[0] = -1
+                    else:
+                        out.procid[0] = -99
+
+
 
 
 #####        flag_veto = False
@@ -907,4 +1020,37 @@ for evt in xrange(Nevt):
 
 print(Nevt, 'evt processed.', evtid, 'evt has matching')
 
+from collections import Counter
+x = Counter(dicts)
+
+
+if options.create:
+    dict2save = {}
+
+id_counter = 0
+
+for k,l in sorted([(j,i) for i,j in x.items()], reverse=True):
+    print str(id_counter).ljust(10), l.ljust(50), str(k).ljust(10), 'counts out of', str(dict_counter).ljust(10), ' frac = ({0:2f}'.format(float(k)/float(dict_counter)), ')'
+
+
+    if options.create:
+        dict2save[l] = {'count':k, 'frac':float(k)/float(dict_counter), 'id':id_counter}
+    else:
+        if l in idtable:
+            print 'id =', idtable[l]
+
+
+    id_counter += 1
+
+
+#for key, idt in dicts.iteritems():
+#    print key.ljust(40), dicts[key], 'counts'
+
+if options.create:
+
+    with open('json_jpsik.json', 'w') as outfile:
+        json.dump(dict2save, outfile)
+
 out.endJob()
+
+

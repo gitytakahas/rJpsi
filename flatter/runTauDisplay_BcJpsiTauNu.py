@@ -124,7 +124,7 @@ parser.add_option('-c', '--create', action="store_true", default=False, dest='cr
 print(options)
 
 if not options.create:
-    json_open = open('json_idtable.json', 'r')
+    json_open = open('json_jpsitanu.json', 'r')
     idtable = json.load(json_open)
     print('JSON decay table is read !')
 
@@ -1075,14 +1075,14 @@ for evt in xrange(Nevt):
                 if not (flag_mu1 and flag_mu2): continue
 
 
-#                print '-'*80
-#                print 'gen = ', igen
-#                print '-'*80
+                print '-'*80
+                print 'gen = ', igen
+                print '-'*80
 
 
-#                for ipdg in range(len(chain.genParticle_pdgs[igen])):
+                for ipdg in range(len(chain.genParticle_pdgs[igen])):
             
-#                    print '  '*2*int(chain.genParticle_layers[igen][ipdg]), 'pdg  = ', chain.genParticle_pdgs[igen][ipdg], '(',  returnName(chain.genParticle_pdgs[igen][ipdg]) , '), (pt, eta, phi) = ', '({0:.2f}'.format(chain.genParticle_ppt[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_peta[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_pphi[igen][ipdg]), '), isfinal=',  chain.genParticle_isfinal[igen][ipdg]
+                    print '  '*2*int(chain.genParticle_layers[igen][ipdg]), 'pdg  = ', chain.genParticle_pdgs[igen][ipdg], '(',  returnName(chain.genParticle_pdgs[igen][ipdg]) , '), (pt, eta, phi) = ', '({0:.2f}'.format(chain.genParticle_ppt[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_peta[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_pphi[igen][ipdg]), '), isfinal=',  chain.genParticle_isfinal[igen][ipdg]
 
 
 
@@ -1104,7 +1104,7 @@ for evt in xrange(Nevt):
                         addstr += '_' + returnName(chain.genParticle_pdgs[igen][ipdg])
 
 
-#                print '\t ==========>', addstr
+                print '\t EVENT', chain.EVENT_event, ' ==========>', addstr
                 decayTable.append(addstr)
 
 
@@ -1484,7 +1484,7 @@ for k,l in sorted([(j,i) for i,j in x.items()], reverse=True):
 
 if options.create:
 
-    with open('json_idtable.json', 'w') as outfile:
+    with open('json_jpsitanu.json', 'w') as outfile:
         json.dump(dict2save, outfile)
 
 out.endJob()
