@@ -209,4 +209,4 @@ for ijob, files in enumerate(listoffiles):
 
     command = 'sbatch -p short --account=t3 --error=' + jobdir + '/err.' + str(ijob) + ' --output=' + jobdir + '/out.' + str(ijob) + ' ' + jobscript
     print(command)
-    os.system(command)
+#    os.system(command)

@@ -115,13 +115,20 @@ parser.add_option("-p", "--priority", default='pt', type="string", help="priorit
 parser.add_option("-t", "--type", default='signal', type="string", help="type", dest="type")
 parser.add_option("-y", "--year", default='UL2017', type="string", help="year", dest="year")
 parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas//BcToJPsiMuMu_Legacy_2018_20220122/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v2/220122_060817/0000/flatTuple_81.root', type="string", help="file", dest="file")
-
+parser.add_option('-c', '--create', action="store_true", default=False, dest='create')
 
 
 
 (options, args) = parser.parse_args()
 
 print(options)
+
+if not options.create:
+    json_open = open('json_idtable.json', 'r')
+    idtable = json.load(json_open)
+    print('JSON decay table is read !')
+
+    print idtable 
 
 
 out = TreeProducerBcJpsiTauNu(options.out, options.type)
@@ -776,17 +783,17 @@ for evt in xrange(Nevt):
         tlvs = [tlv1, tlv2, tlv3]
 
         mass_kpipi = (tlv_jpsi + tlv1_k + tlv2 + tlv3).M()
-        mass_pikpi = (tlv_jpsi + tlv1 + tlv2_k + tlv3).M()
-        mass_pipik = (tlv_jpsi + tlv1 + tlv2 + tlv3_k).M()
+#        mass_pikpi = (tlv_jpsi + tlv1 + tlv2_k + tlv3).M()
+#        mass_pipik = (tlv_jpsi + tlv1 + tlv2 + tlv3_k).M()
 
-        mass_b_pm = 5.27934
-        
-        masses_b_pm = [mass_kpipi, mass_pikpi, mass_pipik]
-
-        diffes_b_pm = [abs(m - mass_b_pm) for m in masses_b_pm]
-        
-        min_mass_b_pm = min(diffes_b_pm)
-        index_b_pm = diffes_b_pm.index(min_mass_b_pm)
+#        mass_b_pm = 5.27934
+#        
+#        masses_b_pm = [mass_kpipi, mass_pikpi, mass_pipik]
+#
+#        diffes_b_pm = [abs(m - mass_b_pm) for m in masses_b_pm]
+#        
+#        min_mass_b_pm = min(diffes_b_pm)
+#        index_b_pm = diffes_b_pm.index(min_mass_b_pm)
 
 #        print("-"*50)
 #        print("masses_b_pm", masses_b_pm)
@@ -796,9 +803,15 @@ for evt in xrange(Nevt):
 
 
         out.jpsi_kpipi[0] = mass_kpipi
-        out.jpsi_pikpi[0] = mass_pikpi
-        out.jpsi_pipik[0] = mass_pipik
-        out.jpsi_kpipi_closest[0] = masses_b_pm[index_b_pm]
+#        out.jpsi_pikpi[0] = mass_pikpi
+#        out.jpsi_pipik[0] = mass_pipik
+        out.jpsi_isrestos[0] = (pi2_q*pi3_q==-1)
+        out.jpsi_kpipi_psi2smass[0] = (tlv_jpsi + tlv2 + tlv3).M()
+        out.jpsi_kpipi_rho[0] = (tlv2 + tlv3).M()
+        out.jpsi_kpipi_ks1[0] = (tlv1_k + tlv2).M()
+        out.jpsi_kpipi_ks2[0] = (tlv1_k + tlv3).M()
+#        out.jpsi_kpipi_closest[0] = masses_b_pm[index_b_pm]
+
         
 
         out.tau_m12s[0] = math.pow((tlv1+tlv2).M(), 2);
@@ -959,7 +972,8 @@ for evt in xrange(Nevt):
         out.run[0] = chain.EVENT_run
 
 
-        if options.type=='bg' and mass_kpipi > 5.25 and mass_kpipi < 5.3: 
+#        if options.type=='bg' and mass_kpipi > 5.25 and mass_kpipi < 5.3: 
+        if options.type=='bg':
 
 #            for idau in range(len(chain.genParticle_dau[igen])):
 #
@@ -981,19 +995,19 @@ for evt in xrange(Nevt):
 
 
 
-            for igen in range(len(chain.genParticle_pdgId)):
-                if abs(chain.genParticle_pdgId[igen])>=511 and abs(chain.genParticle_pdgId[igen])<=545:
-
-                    print 'TRACE', chain.genParticle_pdgId[igen]
-                
-                    for idau in range(len(chain.genParticle_dau[igen])):
-                        print '\t -->', chain.genParticle_dau[igen][idau]
+#            for igen in range(len(chain.genParticle_pdgId)):
+#                if abs(chain.genParticle_pdgId[igen])>=511 and abs(chain.genParticle_pdgId[igen])<=545:
+#
+#                    print 'TRACE', chain.genParticle_pdgId[igen]
+#                
+#                    for idau in range(len(chain.genParticle_dau[igen])):
+#                        print '\t -->', chain.genParticle_dau[igen][idau]
                     
 
 
             decayTable = []
 
-            flag_jpsi = False
+#            flag_jpsi = False
             
 #####            print '-'*80
 #####            print 'evtid = ', evtid 
@@ -1039,23 +1053,12 @@ for evt in xrange(Nevt):
 
             for igen in range(len(chain.genParticle_pdgs)):
 
-                print ''
-                print 'gen = ', igen
-                print ''
-
                 flag_mu1 = False
                 flag_mu2 = False
 
-                addstr = returnName(chain.genParticle_pdgs[igen][0])
 
                 for ipdg in range(len(chain.genParticle_pdgs[igen])):
             
-                    if chain.genParticle_layers[igen][ipdg]==1:
-                        addstr += '_' + returnName(chain.genParticle_pdgs[igen][ipdg])
-
-
-                    print '  '*2*int(chain.genParticle_layers[igen][ipdg]), 'pdg  = ', chain.genParticle_pdgs[igen][ipdg], '(',  returnName(chain.genParticle_pdgs[igen][ipdg]) , '), (pt, eta, phi) = ', '({0:.2f}'.format(chain.genParticle_ppt[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_peta[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_pphi[igen][ipdg]), ')'
-
 
                     if abs(chain.genParticle_pdgs[igen][ipdg]) == 13:
                         dr1 = deltaR(tlv_mu1.Eta(), tlv_mu1.Phi(), chain.genParticle_peta[igen][ipdg], chain.genParticle_pphi[igen][ipdg])
@@ -1071,7 +1074,37 @@ for evt in xrange(Nevt):
 
                 if not (flag_mu1 and flag_mu2): continue
 
-                flag_jpsi = True 
+
+#                print '-'*80
+#                print 'gen = ', igen
+#                print '-'*80
+
+
+#                for ipdg in range(len(chain.genParticle_pdgs[igen])):
+            
+#                    print '  '*2*int(chain.genParticle_layers[igen][ipdg]), 'pdg  = ', chain.genParticle_pdgs[igen][ipdg], '(',  returnName(chain.genParticle_pdgs[igen][ipdg]) , '), (pt, eta, phi) = ', '({0:.2f}'.format(chain.genParticle_ppt[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_peta[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_pphi[igen][ipdg]), '), isfinal=',  chain.genParticle_isfinal[igen][ipdg]
+
+
+
+                # first identify the layer at which B+/- is created
+
+                _layerid = -1 
+                addstr = 'None'
+
+                for ipdg in range(len(chain.genParticle_pdgs[igen])):
+
+                    if abs(chain.genParticle_pdgs[igen][ipdg]) in [511, 521, 531, 541]: 
+                        addstr = returnName(chain.genParticle_pdgs[igen][ipdg])
+                        _layerid = chain.genParticle_layers[igen][ipdg]
+                        break
+
+                    
+                for ipdg in range(len(chain.genParticle_pdgs[igen])):
+                    if chain.genParticle_layers[igen][ipdg]==_layerid+1:
+                        addstr += '_' + returnName(chain.genParticle_pdgs[igen][ipdg])
+
+
+#                print '\t ==========>', addstr
                 decayTable.append(addstr)
 
 
@@ -1118,17 +1151,31 @@ for evt in xrange(Nevt):
 
  
 
-            print len(decayTable), decayTable
+            if len(decayTable)!=1:
+                out.procid[0] = -9
+            else:
 
-            for idt in decayTable:
-                dict_counter += 1
+                for idt in decayTable:
+                    dict_counter += 1
+            
+                    if idt in dicts: 
+#                    print 'This is already there!!!'
+                        dicts[idt] += 1
+                    else:
+                        #                    print 'This is new!'
+                        dicts[idt] = 1 
 
-                if idt in dicts: 
-                    print 'This is already there!!!'
-                    dicts[idt] += 1
-                else:
-                    print 'This is new!'
-                    dicts[idt] = 1
+
+                    if not options.create:
+
+                        if idt in idtable:
+                            out.procid[0] = idtable[idt]['id']
+                        else:
+                            out.procid[0] = -1
+                    else:
+                        out.procid[0] = -99
+
+
 
 #####
 #####
@@ -1412,11 +1459,33 @@ print(Nevt, 'evt processed.', evtid, 'evt has matching')
 from collections import Counter
 x = Counter(dicts)
 
+
+if options.create:
+    dict2save = {}
+
+id_counter = 0
+
 for k,l in sorted([(j,i) for i,j in x.items()], reverse=True):
-    print l.ljust(50), k, 'counts out of', str(dict_counter), ' frac = ({0:2f}'.format(float(k)/float(dict_counter)), ')'
+    print str(id_counter).ljust(10), l.ljust(50), str(k).ljust(10), 'counts out of', str(dict_counter).ljust(10), ' frac = ({0:2f}'.format(float(k)/float(dict_counter)), ')'
+
+
+    if options.create:
+        dict2save[l] = {'count':k, 'frac':float(k)/float(dict_counter), 'id':id_counter}
+    else:
+        if l in idtable:
+            print 'id =', idtable[l]
+
+
+    id_counter += 1
 
 
 #for key, idt in dicts.iteritems():
 #    print key.ljust(40), dicts[key], 'counts'
 
+if options.create:
+
+    with open('json_idtable.json', 'w') as outfile:
+        json.dump(dict2save, outfile)
+
 out.endJob()
+

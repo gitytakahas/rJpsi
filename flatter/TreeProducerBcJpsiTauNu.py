@@ -130,10 +130,14 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
         self.addBranch('pi3_trigMatch_dr',                  'f')
 
         self.addBranch('jpsi_kpipi',                  'f')
-        self.addBranch('jpsi_pikpi',                  'f')
-        self.addBranch('jpsi_pipik',                  'f')
-        self.addBranch('jpsi_kpipi_closest',                  'f')
-
+#        self.addBranch('jpsi_pikpi',                  'f')
+#        self.addBranch('jpsi_pipik',                  'f')
+#        self.addBranch('jpsi_kpipi_closest',                  'f')
+        self.addBranch('jpsi_kpipi_rho',                  'f')
+        self.addBranch('jpsi_kpipi_ks1',                  'f')
+        self.addBranch('jpsi_kpipi_ks2',                  'f')
+        self.addBranch('jpsi_kpipi_psi2smass',                  'f')
+        self.addBranch('jpsi_isrestos',                  'f')
 
 
 
@@ -243,6 +247,7 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
             self.addBranch('tau_genphi',                  'f')
             self.addBranch('n_occurance',                  'i')
             self.addBranch('decayid',                  'i')
+            self.addBranch('procid',                  'i')
 
             if dataType in ['signal']:
                 self.addBranch('hammer_ebe',                  'f')
