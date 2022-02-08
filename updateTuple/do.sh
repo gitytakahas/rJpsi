@@ -3,15 +3,15 @@ today=`date "+%Y%m%d%H%M"`
 
 # Specify here the output file types 
 #name="mass_pt"
-name="pt_LEGACY_cr"
-#name="pt_vprobfsigcr"
+
+name="pt_Legacy_v2"
 #name="pt"
 #name="multiple"
 
-prefix="/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_${name}"
+prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi_Legacy_decayBc/job_${name}"
 
 sig_inclusive_ul_all_2018="${prefix}/BcJpsiTau_inclusive_ul_all_2018"
-bkg_ul_2018="${prefix}/BcJpsiX_ul_2018"
+bkg_ul_2018="${prefix}/BJpsiX_ul_2018"
 data_ul_2018="${prefix}/Data_2018"
 
 
@@ -31,7 +31,7 @@ function hadding (){
 #
 ##############################################
 
-for dir in $sig_inclusive_ul_all_2018 $bkg_ul_2018 $data_ul_2018
+for dir in $sig_inclusive_ul_all_2018 # $bkg_ul_2018 $data_ul_2018
 do
 
     echo "hadding ...", $dir

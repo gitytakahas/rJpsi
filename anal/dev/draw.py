@@ -1,4 +1,4 @@
-import copy, os,  math, sys
+import copy, os,  math, sys, shutil
 from numpy import array
 from officialStyle import officialStyle
 from array import array
@@ -24,7 +24,8 @@ gStyle.SetOptTitle(0)
 gROOT.ProcessLine(".L ~/tool//MultiDraw.cc+");
 
 
-file_hammer = TFile('/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi//job_pt_LEGACY/BcJpsiTau_inclusive_ul_all_2018/Myroot_0.root')
+file_hammer = TFile('/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_LEGACY/BcJpsiTau_inclusive_ul_all_2018/Myroot_0.root')
+
 hist_hammer = file_hammer.Get('hammer')
 
 
@@ -35,6 +36,7 @@ parser = OptionParser(usage)
 parser.add_option("-s", "--sys", default="None", type="string", dest="sys")
 parser.add_option('-m', '--min', action="store_true", default=False, dest='min')
 parser.add_option('-c', '--create', action="store_true", default=False, dest='create')
+parser.add_option('-b', '--blind', action="store_true", default=False, dest='blind')
 
 (options, args) = parser.parse_args() 
 
@@ -93,7 +95,7 @@ def drawSignificance(hists, channel, vkey, isRight=True):
         if hist.GetName().find('data')!=-1:
             data_obs = copy.deepcopy(hist)
 
-        if hist.GetName().find('sig_3p')!=-1:
+        if hist.GetName().find('bc_jpsi_tau_3p')!=-1:
             sig = copy.deepcopy(hist)
 
 
@@ -142,7 +144,7 @@ def drawSignificance(hists, channel, vkey, isRight=True):
     
     plot.Draw('apl')
     
-    canvas.SaveAs('plots/' + channel + '/sig_' + vkey  + '.gif')
+    canvas.SaveAs('plots' + dir_postfix + '/' + channel + '/sig_' + vkey  + '.gif')
     
         
 
@@ -151,15 +153,17 @@ multihists = {}
 
 ##################################################
 
-prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_LEGACY/'
-prefix_cr ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_LEGACY_cr/'
+
+prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy/job_pt_Legacy_v2/'
+#prefix_signal ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy/job_pt_Legacy_v2/'
+#prefix_cr ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_vprobfsigcr/'
 #prefix_q3 ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_q3/'
 
 datastr = "Data_2018/data.root"
-sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig.root"
+sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig_DecayBc.root"
 #datastr = "Data_2018/Myroot_training_weightAdded.root"
 #sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
-bkgstr  = "BcJpsiX_ul_2018/bkg.root"
+bkgstr  = "BJpsiX_ul_2018/bkg.root"
 
 bc_sf = 0.45/(3*0.8)
 #sig_sf = 'hammer_ebe*puweight/0.55'
@@ -193,21 +197,52 @@ hammer_weight = 'hammer_ebe/' + str(hammer_sf)
 
 print('hammer weight = ', hammer_weight, 'id=', binid)
 
-# data 
+sysMuonID_up = False
+sysMuonID_down = False
+sysMuonReco_up = False
+sysMuonReco_down = False
+
+mu_ID_weight =  "*mu1_SFID"+ ("_up" if sysMuonID_up else "_down" if sysMuonID_down else  "") +"*mu2_SFID"+ ("_up" if sysMuonID_up else "_down" if sysMuonID_down else  "")
+mu_Reco_weight =  "*mu1_SFReco"+ ("_up" if sysMuonReco_up else "_down" if sysMuonReco_down else  "") +"*mu2_SFReco"+ ("_up" if sysMuonReco_up else "_down" if sysMuonReco_down else  "")
+mu_weight =mu_ID_weight+mu_Reco_weight
+# data  
 ddir['data_obs'] =  {'file':datastr, 'weight':'1', 'scale':1, 'order':2999, 'color':1, 'addcut':'1'}
 
-# signal + Bc 
-ddir['sig_3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':1, 'color':ttcol_v2, 'addcut':'n_occurance==1 && tau_isRight_3prong==1'}
-
+# signal + Bc : All possible channel decays
 #ddir['sig_lep'] = {'file':sigstr, 'weight':'puweight*(hammer_ebe/0.55)', 'scale':bc_sf, 'order':3, 'color':ttcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0 && isJpsiTau2Mu==1'}
 #ddir['sig_others'] = {'file':sigstr, 'weight':'puweight*(hammer_ebe/0.55)', 'scale':bc_sf, 'order':3, 'color':wcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0 && isJpsiTau2Mu==0'}
-ddir['sig_others'] = {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':3, 'color':wcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0'}
-
-
+#ddir['sig_others'] = {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':3, 'color':wcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0'}
 #ddir['bg_bc'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':qcdcol, 'addcut':'n_occurance==0 && isJpsiMu==0'}
 #ddir['bg_norm'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jtfake, 'addcut':'n_occurance==0 && isJpsiMu==1'}
-ddir['bg_bc'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':qcdcol, 'addcut':'n_occurance==0'}
 
+ddir['bc_jpsi_tau_3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight, 'scale':bc_sf, 'order':1, 'color':taucol_1, 'addcut':'n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6'}
+#ddir['bc_jpsi_tau_mu'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':1, 'color':taucol_1, 'addcut':'tau_isRight_3prong==0 && gen_sig_decay==6 && isJpsiTau2Mu==1'} # merged in Bc others
+ddir['bc_jpsi_tau_N3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight, 'scale':bc_sf, 'order':1, 'color':lob_1, 'addcut':'gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0'}
+#ddir['bc_jpsi_mu'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':1, 'color':pink_1, 'addcut':'gen_sig_decay==0'} # merged in Bc others  
+
+#ddir['bc_charmonium_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_1, 'addcut':'gen_sig_decay>1&&gen_sig_decay<6'} #in SR 0
+#ddir['bc_psi2s_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_1, 'addcut':'gen_sig_decay==1'} #0
+#ddir['bc_chic0_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_2, 'addcut':'gen_sig_decay==2'} #0
+#ddir['bc_chic1_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_3, 'addcut':'gen_sig_decay==3'} #0
+#ddir['bc_chic2_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_4, 'addcut':'gen_sig_decay==4'} #0
+#ddir['bc_hc_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_5, 'addcut':'gen_sig_decay==5'}
+
+#ddir['bc_chic0_tau'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_2, 'addcut':'gen_sig_decay==12'} #0
+#ddir['bc_chic1_tau'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_3, 'addcut':'gen_sig_decay==13'} #0
+#ddir['bc_chic2_tau'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_4, 'addcut':'gen_sig_decay==14'} #0
+#ddir['bc_hc_tau'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_5, 'addcut':'gen_sig_decay==15'}  #0          
+
+#ddir['bc_psi2s_tau'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':tau_1, 'addcut':'gen_sig_decay==7'} #0
+#ddir['bc_jpsi_pi'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jpsi_1, 'addcut':'gen_sig_decay==8'}
+#ddir['bc_jpsi_3pi'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jpsi_2, 'addcut':'gen_sig_decay==9'}
+#ddir['bc_jpsi_ds'] = {'file':sigstr, 'weight':'puweight'+ mu_weight, 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'gen_sig_decay==10'}
+#ddir['bc_jpsi_dsp'] = {'file':sigstr, 'weight':'puweight'+ mu_weight, 'scale':bc_sf, 'order':4, 'color':jpsi_4, 'addcut':'gen_sig_decay==20'}
+ddir['bc_jpsi_dst'] = {'file':sigstr, 'weight':'puweight'+ mu_weight, 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'gen_sig_decay==10||gen_sig_decay==20'}
+#ddir['bc_jpsi_5pi'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jpsi_4, 'addcut':'gen_sig_decay==11'}
+#ddir['bc_jpsi_pions'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':lob_1, 'addcut':'(gen_sig_decay==8||gen_sig_decay==9||gen_sig_decay==11)'}
+#ddir['bc_others'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'gen_sig_decay==16'}
+ddir['bc_others'] = {'file':sigstr, 'weight':'puweight'+ mu_weight, 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'!((n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6) || (gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0) ||gen_sig_decay==10 ||gen_sig_decay==20 )'}
+#((gen_sig_decay==8||gen_sig_decay==9||gen_sig_decay==11)||(gen_sig_decay>1&&gen_sig_decay<6)||gen_sig_decay==7|| gen_sig_decay==16 ||( tau_isRight_3prong==0 && gen_sig_decay==6 && isJpsiTau2Mu==1)||gen_sig_decay==0)'}
 
 # other B backgrounds 
 ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
@@ -305,13 +340,22 @@ for channel, dict in channels.iteritems():
     print 'cut = ', dict['cut']
     print '-'*80
 
-    ensureDir('plots/' + channel)
+    dir_postfix='_MUSF_blind'
+    ensureDir('plots'+dir_postfix+'/' + channel)     
+    shutil.copyfile('index.php','plots'+dir_postfix+'/index.php') 
+    shutil.copyfile('index.php','plots'+dir_postfix+'/' + channel +'/index.php')   
+    ensureDir('datacard'+dir_postfix+'/' + channel)
 
     for type, ivar in ddir.items():
 
         wstr = ivar['weight']
     
         filename = None
+
+        if channel.find('sr')!=-1 and options.blind:
+            #blinding by vetoing data in SR
+            if type =='data_obs':
+                ivar['addcut'] = '0'
 
         if channel.find('cr')!=-1:
             filename = prefix_cr + '/' + ivar['file']
@@ -326,14 +370,13 @@ for channel, dict in channels.iteritems():
         var_tuples, hists = returnTuples(type, vardir)    
 
         if not options.create and type.find('bg_ul')!=-1:
-#        if type.find('bg_ul')!=-1:
+        #       #if type.find('bg_ul')!=-1:
             wstr += '*getWeight(b_mass)'
 
 
-        if options.sys.find('hammer')!=-1 and type.find('sig')!=-1: 
+        if options.sys.find('hammer')!=-1 and type.find('bc_jpsi_tau*')!=-1: 
             wstr = ivar['weight'].replace('hammer_ebe', options.sys)
-
-        elif options.sys.find('ctau')!=-1 and type in ['sig_3p', 'sig_others', 'bg_bc']:
+        elif options.sys.find('ctau')!=-1 and type in ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p', 'bc_jpsi_ds','bc_others']:
             wstr = ivar['weight'].replace('weight_ctau', options.sys)
 
         elif options.sys.find('puweight')!=-1 and type.find('data')==-1:
@@ -410,27 +453,27 @@ for channel, dict in channels.iteritems():
             commonname = vkey + '_' + options.sys
 
 
-        comparisonPlots(Histo, 'plots/' + channel + '/' + commonname  + '.gif')
+        comparisonPlots(Histo, 'plots' + dir_postfix + '/' + channel + '/' + commonname  + '.gif')
 
 #        if channel.find('q3')==-1:
 
-        comparisonPlots(Histo, 'plots/' + channel + '/' + commonname  + '_log.gif', True)
+        comparisonPlots(Histo, 'plots' + dir_postfix + '/' + channel + '/' + commonname  + '_log.gif', True)
         
 #        Histo.Group('signal_ref', ['sig_3p', 'sig_others', 'sig_3pp'])
             
-        ensureDir('datacard/' + channel)
+        ensureDir('datacard' + dir_postfix + '/' + channel)
 
         if vkey in finaldiscriminant:
 
             print(options.sys)
 
 #            if options.sys=="None":
-            Histo.WriteDataCard('datacard/' + channel + '/' + commonname + '.root', True, 'RECREATE', channel)
+            Histo.WriteDataCard('datacard' + dir_postfix + '/' + channel + '/' + commonname + '.root', True, 'RECREATE', channel)
 
         if options.sys=='None' and vkey=='xgbs':
             drawSignificance(hists, channel, vkey, True)
         
-        comparisonPlots_alt(hists, titles, True, False, 'plots/' + channel + '/' + commonname + '_compare.pdf', False, True, 'pE')
+        comparisonPlots_alt(hists, titles, True, False, 'plots' + dir_postfix + '/' + channel + '/' + commonname + '_compare.pdf', False, True, 'pE')
 
 
     

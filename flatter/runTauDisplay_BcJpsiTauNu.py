@@ -4,6 +4,7 @@
 
 from TreeProducerBcJpsiTauNu import *
 from correction.PileupTool import *
+from correction.ScaleFactorMuonTool import *
 from DeltaR import deltaR
 import copy
 import random
@@ -20,11 +21,11 @@ from particle import Particle
 
 # Bc lifetime
 # https://pdglive.lbl.gov/DataBlock.action?node=S091T&home=MXXX049
+
 ctau_pdg    = 0.510e-12 * speed_of_light * 1000. # in mm
-ctau_actual = 0.507e-12 * speed_of_light * 1000. # in mm
+ctau_actual = 0.1358 #0.507e-12 * speed_of_light * 1000. # in mm          
 ctau_up     = (0.510+0.009)*1e-12 * speed_of_light * 1000. # in mm
 ctau_down   = (0.510-0.009)*1e-12 * speed_of_light * 1000. # in mm
-
 
 def weight_to_new_ctau(old_ctau, new_ctau, ct):
     '''
@@ -33,6 +34,8 @@ def weight_to_new_ctau(old_ctau, new_ctau, ct):
     new_ctau: target ctau
     ct      : per-event lifetime
     '''
+    #print " weight_to_new_ctau:  old_ctau ", old_ctau , ", new_ctau ", new_ctau ," , ct ", ct
+    weight = 1.
     weight = old_ctau/new_ctau * np.exp( (1./old_ctau - 1./new_ctau) * ct )
     return weight
 
@@ -73,7 +76,6 @@ def returnMass3(tlvs, m1, m2, m3):
 
     return tautlv.M()
 
-
 def returnMass2(tlvs, m1, m2):
     
     ms = [m1, m2]
@@ -110,9 +112,9 @@ parser = OptionParser(usage)
 
 parser.add_option("-o", "--out", default='Myroot.root', type="string", help="output filename", dest="out")
 parser.add_option("-p", "--priority", default='pt', type="string", help="priority", dest="priority")
-parser.add_option("-t", "--type", default='bg', type="string", help="type", dest="type")
+parser.add_option("-t", "--type", default='signal', type="string", help="type", dest="type")
 parser.add_option("-y", "--year", default='UL2017', type="string", help="year", dest="year")
-parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/BcToJPsiMuMu_Legacy_2018_20210509/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v2/210509_061557/0000/flatTuple_8.root', type="string", help="file", dest="file")
+parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas//BcToJPsiMuMu_Legacy_2018_20220122/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v2/220122_060817/0000/flatTuple_81.root', type="string", help="file", dest="file")
 
 
 
@@ -297,7 +299,9 @@ if options.type!='data':
     puhist_down = pufile.Get('hweights_down')
 
     print(pufile, puhist, puhist_up, puhist_down, 'is read ...')
-
+    SF_ID = ScaleFactorMuonTool('central', fileName='Efficiency_muon_trackerMuon_Run2018_UL_ID.json', keyName='NUM_LooseID_DEN_TrackerMuons');
+    SF_Reco = ScaleFactorMuonTool('central', fileName='Efficiency_muon_generalTracks_Run2018_UL_trackerMuon.json', keyName='NUM_TrackerMuons_DEN_genTracks');
+  
 if options.type=='bg':
     chain.SetBranchStatus('genWeightBkgB',1)
 
@@ -390,12 +394,16 @@ for evt in xrange(Nevt):
     ### ctau calculation ! 
 
     if options.type == 'signal':
+        #print " len(chain.JpsiTau_genPV_vx) ", len(chain.JpsiTau_genPV_vx)
         lxyz = math.sqrt((chain.JpsiTau_genPV_vx - chain.JpsiTau_genSV_vx)**2 + (chain.JpsiTau_genPV_vy - chain.JpsiTau_genSV_vy)**2 + (chain.JpsiTau_genPV_vz - chain.JpsiTau_genSV_vz)**2)
 
 
         tlv_B = ROOT.TLorentzVector()
-        tlv_B.SetPtEtaPhiM(chain.JpsiTau_B_pt_gen, chain.JpsiTau_B_eta_gen, chain.JpsiTau_B_phi_gen, chain.JpsiTau_B_mass_gen)
-        
+        ##        tlv_B.SetPtEtaPhiM(chain.JpsiTau_B_pt_gen, chain.JpsiTau_B_eta_gen, chain.JpsiTau_B_phi_gen, chain.JpsiTau_B_mass_gen)
+        for igen in range(len(chain.genParticle_pdgId)):
+            if abs(chain.genParticle_pdgId[igen])==541 and chain.genParticle_status[igen]==2:
+                tlv_B.SetPtEtaPhiM(chain.genParticle_pt[igen], chain.genParticle_eta[igen], chain.genParticle_phi[igen], 6.274)
+#        print "Bmass ",  chain.JpsiTau_B_mass_gen 
 #        print chain.JpsiTau_B_pt_gen, chain.JpsiTau_B_eta_gen, chain.JpsiTau_B_phi_gen, chain.JpsiTau_B_mass_gen
         #    beta_e = tlv_B.E()
         #    beta_p = tlv_B.P()
@@ -412,16 +420,35 @@ for evt in xrange(Nevt):
         #        print lxyz, beta, gamma, weight_central, weight_up, weight_down 
         
         ct = lxyz / (beta * gamma)
-        
+        weight_central =1
+        weight_up =1
+        weight_down =1
+
         weight_central = weight_to_new_ctau(ctau_actual, ctau_pdg , ct*10.)
-        weight_up = weight_to_new_ctau(ctau_actual, ctau_up , ct*10.)
-        weight_down = weight_to_new_ctau(ctau_actual, ctau_down , ct*10.)
-        
+#        weight_up = weight_to_new_ctau(ctau_actual, ctau_up , ct*10.)
+#        weight_down = weight_to_new_ctau(ctau_actual, ctau_down , ct*10.)
+
+        out.lxyz[0] = lxyz
+        out.beta[0] = beta
+        out.gamma[0] = gamma
+        out.ctau[0] = ct 
         out.weight_ctau[0] = weight_central
         out.weight_ctau_up[0] = weight_up
         out.weight_ctau_down[0] = weight_down
-
-#        import pdb; pdb.set_trace()
+        if  ct>5:
+            #print "B mass ",  chain.JpsiTau_B_mass_gen
+            print "new_ctau:  ctau_actual ", ctau_actual, "ctau_pdg " , ctau_pdg ,  " , ct ", ct, ", up ", ctau_up ,", down ", ctau_down 
+            print "exponential factor ", (1./ ctau_actual - 1./ctau_pdg)            
+            print "ctau weights : ", weight_central, " ", weight_up, " ", weight_down 
+            print lxyz, beta, gamma, ct 
+            #print chain.JpsiTau_B_pt_gen, chain.JpsiTau_B_eta_gen, chain.JpsiTau_B_phi_gen, chain.JpsiTau_B_mass_gen  
+            for igen in range(len(chain.genParticle_pdgId)):
+                if abs(chain.genParticle_pdgId[igen])==541:
+                    print "pdg status , pt, eta, phi", chain.genParticle_status[igen], chain.genParticle_pt[igen], chain.genParticle_eta[igen], chain.genParticle_phi[igen]
+                    for idau in range(len(chain.genParticle_dau[igen])):
+                        print '   -> ', (chain.genParticle_dau[igen][idau])           
+            print " PV ", chain.JpsiTau_genPV_vx, chain.JpsiTau_genPV_vy, chain.JpsiTau_genPV_vz, " SV ",  chain.JpsiTau_genSV_vx, chain.JpsiTau_genSV_vy, chain.JpsiTau_genSV_vz,
+                        #        import pdb; pdb.set_trace()
         out.isJpsiMu[0] = bool(chain.JpsiTau_isJpsiMu)
         out.isJpsiTau2Mu[0] = bool(chain.JpsiTau_isJpsiTau2Mu)
       
@@ -510,6 +537,25 @@ for evt in xrange(Nevt):
         out.mu1_isSoft[0] = chain.JpsiTau_mu1_isSoft
         out.mu1_dbiso[0] = chain.JpsiTau_mu1_dbiso
 
+        if options.type!='data':
+            central=SF_Reco.getSF(math.fabs(tlv_mu1.Eta()),tlv_mu1.Pt())['value']
+            uncertainty =SF_Reco.getSF(math.fabs(tlv_mu1.Eta()),tlv_mu1.Pt())['error']
+            out.mu1_SFReco[0]=central
+            out.mu1_SFReco_up[0]=central+uncertainty
+            out.mu1_SFReco_down[0]=central-uncertainty
+            central = SF_ID.getSF(math.fabs(tlv_mu1.Eta()),tlv_mu1.Pt())['value']
+            uncertainty = SF_ID.getSF(math.fabs(tlv_mu1.Eta()),tlv_mu1.Pt())['error']
+            out.mu1_SFID[0]=central
+            out.mu1_SFID_up[0]=central+uncertainty
+            out.mu1_SFID_down[0]=central-uncertainty
+        else :
+            out.mu1_SFReco[0]=1
+            out.mu1_SFReco_up[0]=1 
+            out.mu1_SFReco_down[0]=1
+            out.mu1_SFID[0]=1
+            out.mu1_SFID_up[0]=1
+            out.mu1_SFID_down[0]=1
+
         out.mu2_pt[0] = tlv_mu2.Pt()
         out.mu2_eta[0] = tlv_mu2.Eta()
         out.mu2_phi[0] = tlv_mu2.Phi()
@@ -522,8 +568,26 @@ for evt in xrange(Nevt):
         out.mu2_isTracker[0] = chain.JpsiTau_mu2_isTracker
         out.mu2_isSoft[0] = chain.JpsiTau_mu2_isSoft
         out.mu2_dbiso[0] = chain.JpsiTau_mu2_dbiso
-        
-
+        if options.type!='data':
+            central=SF_Reco.getSF(math.fabs(tlv_mu2.Eta()),tlv_mu2.Pt())['value']
+            uncertainty =SF_Reco.getSF(math.fabs(tlv_mu2.Eta()),tlv_mu2.Pt())['error']
+            out.mu2_SFReco[0]=central
+            out.mu2_SFReco_up[0]=central+uncertainty
+            out.mu2_SFReco_down[0]=central-uncertainty
+            central = SF_ID.getSF(math.fabs(tlv_mu2.Eta()),tlv_mu2.Pt())['value']
+            uncertainty = SF_ID.getSF(math.fabs(tlv_mu2.Eta()),tlv_mu2.Pt())['error']
+            out.mu2_SFID[0]=central
+            out.mu2_SFID_up[0]=central+uncertainty
+            out.mu2_SFID_down[0]=central-uncertainty
+        else :
+            out.mu2_SFReco[0]=1
+            out.mu2_SFReco_up[0]=1
+            out.mu2_SFReco_down[0]=1
+            out.mu2_SFID[0]=1
+            out.mu2_SFID_up[0]=1
+            out.mu2_SFID_down[0]=1
+  
+      
         out.tau_pt[0] = chain.JpsiTau_tau_pt[tindex]
         out.tau_eta[0] = chain.JpsiTau_tau_eta[tindex]
         out.tau_phi[0] = chain.JpsiTau_tau_phi[tindex]
@@ -1307,13 +1371,35 @@ for evt in xrange(Nevt):
                 out.gen_sig_decay[0] = 8 ##Bc -> Jpsi pi
             elif final_daus==[211, 211, 211, 443]:
                 out.gen_sig_decay[0] = 9 ##Bc -> Jpsi  3pi  
-            elif final_daus==[431, 443] or final_daus==[433, 443]:
-                out.gen_sig_decay[0] = 10 ##Bc -> Jpsi +hadrons
+            elif final_daus==[431, 443]:
+                out.gen_sig_decay[0] = 10 ##Bc -> Jpsi Ds+
             elif final_daus==[211, 211, 211, 211, 211, 443]:
-                out.gen_sig_decay[0] = 11 ##Bc -> Jpsi  5pi   
-            else :   
-                print "final_daus not recognized: ", final_daus            
-                out.gen_sig_decay[0] = 12 ##Bc no more decays 
+                out.gen_sig_decay[0] = 11 ##Bc -> Jpsi  5pi  
+            elif final_daus==[15, 16, 10441]:
+                out.gen_sig_decay[0] = 12 ##Bc -> chic0 tau nu                                                                                                                              
+            elif final_daus==[15, 16, 20443]:
+                out.gen_sig_decay[0] = 13 ##Bc -> chic1 tau nu                                                                                                 
+            elif final_daus==[15, 16, 445]:
+                out.gen_sig_decay[0] = 14 ##Bc -> chic2 tau nu                                                                                                             
+            elif final_daus==[15, 16, 10443]:
+                out.gen_sig_decay[0] = 15 ##Bc -> hc tau nu 
+            elif final_daus==[311, 413, 443]:
+                out.gen_sig_decay[0] = 16 ##[B_c+ -> K0 (D*+ -> (D+ -> anti-K0 mu+ nu_mu) pi0) (J/psi -> mu+ mu-)]cc
+            elif final_daus==[443, 10433] or final_daus==[443, 20433]:
+                out.gen_sig_decay[0] = 17 ### [B_c+ -> (D_s1+ -> (D_s*+ -> (D_s+ -> eta mu+ nu_mu) gamma) pi0) (J/psi -> mu+ mu-)]cc 
+            elif final_daus==[321, 423, 443]:
+                out.gen_sig_decay[0] = 18 ##Bc -> K+ D*(2007)0 Jpsi
+            elif final_daus==[321, 421, 443]:
+                out.gen_sig_decay[0] = 19 ##Bc -> K+ D0 Jpsi
+            elif final_daus==[433, 443]:
+                out.gen_sig_decay[0] = 20 ##Bc -> Jpsi Ds*+     
+            elif final_daus==[413, 443]:
+                out.gen_sig_decay[0] = 21 ##Bc -> Jpsi D*(2010)+
+            elif final_daus==[211, 321, 321, 443]:
+                out.gen_sig_decay[0] = 22 ##Bc -> Jpsi pi K K       
+            else :
+                #print "final_daus not recognized: ", final_daus            
+                out.gen_sig_decay[0] = 23 ##Bc no more decays 
     
         out.filt.Fill(8)
         evtid += 1

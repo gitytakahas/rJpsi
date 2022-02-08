@@ -98,8 +98,8 @@ def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False, sf = 0
 
 #            ['bg_bc', 'sig_others', 'sig_3p', 'bg_ul', 'data_obs']
 
-            for proc in ['bg_bc', 'sig_others', 'sig_3p']:
-
+            #for proc in ['bg_bc', 'sig_others', 'sig_3p']:
+            for proc in ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p','bc_jpsi_ds','bc_others']: 
                     
             
 #                if channel=='sr' and target=='data_obs' and proc=='sig_3p':
@@ -108,7 +108,7 @@ def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False, sf = 0
 
                 _hist2 = getHist(vkey, channel, proc, sys) #copy.deepcopy(file.Get(channel + '/' + proc))
 
-                if proc in ['sig_others', 'sig_3p']:
+                if proc in ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p']:
                     _hist2.Scale(sf)
 
                 _hist.Add(_hist2, -1)
@@ -169,7 +169,8 @@ ratio = 0.27
 fitCat = 'sr'
 ensureDir('syscompare/' + fitCat)
 
-
+##Declare here the list of processes 
+processes = ["data_obs","dd_bkg","bc_jpsi_ds","bc_others", "bc_jpsi_tau_N3p", "bc_jpsi_tau_3p"]
 
 for vkey, ivar in vardir.items():
 
@@ -299,20 +300,24 @@ for vkey, ivar in vardir.items():
             setNameTitle(bkgHist_sys, 'dd_bkg_' + name_sys)
             hists2write.append(bkgHist_sys)
 
-            sig_3p_sys = getHist(vkey, fitCat, 'sig_3p', sys)
-            sig_others_sys = getHist(vkey, fitCat, 'sig_others', sys)
-            bg_bc = getHist(vkey, fitCat, 'bg_bc', sys)
+                        
+            sig_3p_sys = getHist(vkey, fitCat, 'bc_jpsi_tau_3p', sys)
+            sig_others_sys = getHist(vkey, fitCat, 'bc_jpsi_tau_N3p', sys)
+            bc_others = getHist(vkey, fitCat, 'bc_others', sys)
+            bc_jpsi_dst = getHist(vkey, fitCat, 'bc_jpsi_dst', sys)
+            
+            setNameTitle(sig_3p_sys, 'bc_jpsi_tau_3p_' + name_sys)
+            setNameTitle(sig_others_sys, 'bc_jpsi_tau_N3p_' + name_sys)
+            setNameTitle(bc_others, 'bc_others_' + name_sys)
+            setNameTitle(bc_jpsi_dst, 'bc_jpsi_dst_' + name_sys)     
 
-            setNameTitle(sig_3p_sys, 'sig_3p_' + name_sys)
-            setNameTitle(sig_others_sys, 'sig_others_' + name_sys)
-            setNameTitle(bg_bc, 'bg_bc_' + name_sys)
             
             hists2write.append(sig_3p_sys)
             hists2write.append(sig_others_sys)
             hists2write.append(bg_bc)
 
             
-            
+        print ("systs are:", systs)            
 #            comparisonPlots(hists, titles, cat + ', ' + syst.replace('_up',''), 'syscompare/' + cat + '/' + syst + '.gif')
             
 
@@ -336,15 +341,19 @@ for vkey, ivar in vardir.items():
         file.cd(fitCat)
         
         listofprocs = [key.GetName() for key in gDirectory.GetListOfKeys()]
-    
+
+        print ("the list of processes is ", listofprocs)
+
         for proc in listofprocs:
 
             if proc.find('Up')==-1: continue
 
             strs = proc.split('_')
-
-            procname = '_'.join(strs[:2])
-            sysname = '_'.join(strs[2:]).replace('Up', '')
+            print ("Printing proc", proc) 
+            procname = [ processes[x] for x in range(len(processes)) if processes[x] in proc][0]
+            print ("procname : ", procname)
+            print ("tentative sysname : ",proc.lstrip(procname+"_"))
+            sysname = ((proc.lstrip(procname+"_")).replace('Up', ''))
 
             print(procname, sysname)
 

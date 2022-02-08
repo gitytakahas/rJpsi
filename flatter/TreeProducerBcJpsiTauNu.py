@@ -23,8 +23,13 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
         self.addBranch('mu1_isTracker', 'i')
         self.addBranch('mu1_isSoft', 'i')
         self.addBranch('mu1_dbiso', 'f')
+        self.addBranch('mu1_SFReco', 'f')
+        self.addBranch('mu1_SFReco_up', 'f')
+        self.addBranch('mu1_SFReco_down', 'f') 
+        self.addBranch('mu1_SFID', 'f')
+        self.addBranch('mu1_SFID_up', 'f')
+        self.addBranch('mu1_SFID_down', 'f')
 
-  
         self.addBranch('mu2_pt',                  'f')
         self.addBranch('mu2_eta',                  'f')
         self.addBranch('mu2_phi',                  'f')
@@ -37,7 +42,12 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
         self.addBranch('mu2_isTracker', 'i')
         self.addBranch('mu2_isSoft', 'i')
         self.addBranch('mu2_dbiso', 'f')
-
+        self.addBranch('mu2_SFReco', 'f')
+        self.addBranch('mu2_SFReco_up', 'f')
+        self.addBranch('mu2_SFReco_down', 'f')
+        self.addBranch('mu2_SFID', 'f')
+        self.addBranch('mu2_SFID_up', 'f')
+        self.addBranch('mu2_SFID_down', 'f')
   
         self.addBranch('tau_pt',                  'f')
         self.addBranch('tau_eta',                  'f')
@@ -297,6 +307,11 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
 
 
 #                self.addBranch('hammer_ebe_toy',                  'v')
+ 
+                self.addBranch('ctau',                  'f') 
+                self.addBranch('beta',                  'f')    
+                self.addBranch('gamma',                  'f')  
+                self.addBranch('lxyz',                  'f')         
                 self.addBranch('weight_ctau',                  'f')
                 self.addBranch('weight_ctau_up',                  'f')
                 self.addBranch('weight_ctau_down',                  'f')
