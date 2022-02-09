@@ -280,12 +280,18 @@ for vkey, ivar in vardir.items():
 
             sig_3p_sys = getHist(vkey, fitCat, 'sig_3p', sys)
             sig_others_sys = getHist(vkey, fitCat, 'sig_others', sys)
+            bc_others = getHist(vkey, fitCat, 'bc_others', sys)
+            bc_jpsi_dst = getHist(vkey, fitCat, 'bc_jpsi_dst', sys)
 
             setNameTitle(sig_3p_sys, 'sig_3p_' + name_sys)
             setNameTitle(sig_others_sys, 'sig_others_' + name_sys)
+            setNameTitle(bc_others, 'bc_others_' + name_sys)
+            setNameTitle(bc_jpsi_dst, 'bc_jpsi_dst_' + name_sys)
             
             hists2write.append(sig_3p_sys)
             hists2write.append(sig_others_sys)
+            hists2write.append(bc_others)
+            hists2write.append(bc_jpsi_dst)
 
 
         for sys in systs_pu:
@@ -314,8 +320,8 @@ for vkey, ivar in vardir.items():
             
             hists2write.append(sig_3p_sys)
             hists2write.append(sig_others_sys)
-            hists2write.append(bg_bc)
-
+            hists2write.append(bc_others)
+            hists2write.append(bc_jpsi_dst)
             
         print ("systs are:", systs)            
 #            comparisonPlots(hists, titles, cat + ', ' + syst.replace('_up',''), 'syscompare/' + cat + '/' + syst + '.gif')
