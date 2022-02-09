@@ -21,7 +21,7 @@ data_ul_2018="${prefix}/Data_2018"
 #
 ##############################################
 
-model_name="pt_LEGACY_val"
+model_name="pt"
 
 #python application.py --file ${bkg_ul_2018}/Myroot.root --prefix bkg_xgbs --model ${model_name} --outdir ${bkg_ul_2018}
 
@@ -42,15 +42,12 @@ python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis.root -
 ##############################################
 
 
-<<<<<<< HEAD
-=======
 #for prio in ${name}
 #do
 #    echo ${prio}
 #hadd -f ${data_ul_2018}/data.root ${data_ul_2018}/Myroot_*xgbs*.root
 hadd -f ${sig_inclusive_ul_all_2018}/sig.root  ${sig_inclusive_ul_all_2018}/Myroot_*xgbs*.root 
 #hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018}/Myroot_*xgbs*.root
->>>>>>> 4fc488d... Add Muon RECO and ID SFs and syst
 
 #hadd -f ${data_ul_2018}/data.root ${data_ul_2018}/Myroot_*xgbs*.root
 #hadd -f ${sig_inclusive_ul_all_2018}/sig.root  ${sig_inclusive_ul_all_2018}/Myroot_*xgbs*.root 
