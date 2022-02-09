@@ -432,8 +432,8 @@ for evt in xrange(Nevt):
         weight_down =1
 
         weight_central = weight_to_new_ctau(ctau_actual, ctau_pdg , ct*10.)
-#        weight_up = weight_to_new_ctau(ctau_actual, ctau_up , ct*10.)
-#        weight_down = weight_to_new_ctau(ctau_actual, ctau_down , ct*10.)
+        weight_up = weight_to_new_ctau(ctau_actual, ctau_up , ct*10.)
+        weight_down = weight_to_new_ctau(ctau_actual, ctau_down , ct*10.)
 
         out.lxyz[0] = lxyz
         out.beta[0] = beta

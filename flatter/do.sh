@@ -22,9 +22,10 @@ analysis="BcJpsiTauNu"
 # You can get it by doing 
 # uberftp -ls gsiftp://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/
 # 
-sigmc="BcToJPsiMuMu_Legacy_2018_20220207"
-bgmc="HbToJPsiMuMu_Legacy_2018_20220207"
-#bgmc2="JPsiMuMu_Legacy_2018_20220103"
+#sigmc="BcToJPsiMuMu_Legacy_2018_20210520"
+sigmc="BcToJPsiMuMu_Legacy_2018_20220208"   #"BcToJPsiMuMu_Legacy_2018_20220122"
+bgmc="HbToJPsiMuMu_Legacy_2018_20220208"
+bgmc2="JPsiMuMu_Legacy_2018_20220103"
 dataset="Charmonium_legacy_2018_20210331"
 
 #sigmc="BcToJPsiMuMu_Legacy_q3_2018_20210806"
@@ -75,8 +76,9 @@ done
 #########################################
 # for J/psi + X BG
 #########################################
-python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BcJpsiX_ul_2018 --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
-#python getDataset.py --file ${bgmc2} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BcJpsiX_ul_2018_new --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+
+python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX_ul_2018 --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+#python getDataset.py --file ${bgmc2} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX_ul_2018_new --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 
 #########################################
 # Data (2016)

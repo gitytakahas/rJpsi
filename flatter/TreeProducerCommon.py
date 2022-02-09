@@ -7,7 +7,7 @@ import ROOT
 
 root_dtype = {
   float: 'D',  int: 'I',  bool: 'O',
-  'f':   'D',  'i': 'I',  '?':  'O',  'b': 'b', 'v':'D', 's':'s'
+  'f':   'D',  'i': 'I',  '?':  'O',  'b': 'b', 'v':'D', 's':'s', 'vec':'D'
 }
 
 num_dtype = {
@@ -121,8 +121,11 @@ class TreeProducerCommon(object):
           elif dtype.lower()=='i': # 'i' is only a 'int32'
             dtype = int            # int is a 'int64' ('i8')
 
-
-        if dtype=='v':
+        if dtype=='vec':
+            setattr(self,name,ROOT.vector('float')())
+            self.tree.Branch(name,getattr(self,name))
+            
+        elif dtype=='v':
             setattr(self,name,array('d', 1000*[0]))
 #            setattr(self,name,array('d', 1000,dtype='f'))
             self.tree.Branch(name, getattr(self,name), '%s[1000]/%s'%(name,root_dtype[dtype]))
@@ -133,6 +136,9 @@ class TreeProducerCommon(object):
 #            setattr(self,name,None)
 
 #            self.tree.Branch(name, getattr(self,name), '%s'%(name))
+        elif dtype=='vec12':
+            setattr(self,name,array('d', 12*[0]))
+            self.tree.Branch(name, getattr(self,name), '%s[12]/%s'%(name,'D'))
         else:
             setattr(self,name,num.zeros(1,dtype=dtype))
             self.tree.Branch(name, getattr(self,name), '%s/%s'%(name,root_dtype[dtype]))
