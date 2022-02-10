@@ -2,7 +2,7 @@ today=`date "+%Y%m%d%H%M"`
 
 #name="pt"
 #name="pt_vprobfsigcr"
-name="pt_Legacy_v2"
+name="pt_LEGACY_v2"
 #name="nomass_pt"
 #name="multiple"
 
@@ -52,7 +52,7 @@ hadd -f ${sig_inclusive_ul_all_2018}/sig.root  ${sig_inclusive_ul_all_2018}/Myro
 #hadd -f ${data_ul_2018}/data.root ${data_ul_2018}/Myroot_*xgbs*.root
 #hadd -f ${sig_inclusive_ul_all_2018}/sig.root  ${sig_inclusive_ul_all_2018}/Myroot_*xgbs*.root 
 #hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018}/Myroot_*xgbs*.root
-hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018_new}/Myroot_*xgbs*.root
+hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018}/Myroot_*xgbs*.root
 
 
 
