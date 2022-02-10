@@ -30,7 +30,7 @@ for hammer in range(0, 9):
     systs_hammer.append('hammer_ebe_e' + str(hammer) + '_up')
     systs_hammer.append('hammer_ebe_e' + str(hammer) + '_down')
 
-systs_pu = ['puweight_up', 'puweight_down']
+systs_mc = ['puweight_up', 'puweight_down', 'muSFID_up', 'muSFID_down', 'muSFReco_up', 'muSFReco_down','weight_ctau_up','weight_ctau_down']
 
 
 def applyHists(hists):
@@ -99,7 +99,7 @@ def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False, sf = 0
 #            ['bg_bc', 'sig_others', 'sig_3p', 'bg_ul', 'data_obs']
 
             #for proc in ['bg_bc', 'sig_others', 'sig_3p']:
-            for proc in ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p','bc_jpsi_ds','bc_others']: 
+            for proc in ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p','bc_jpsi_dst','bc_others']: 
                     
             
 #                if channel=='sr' and target=='data_obs' and proc=='sig_3p':
@@ -128,7 +128,7 @@ def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False, sf = 0
 
 
     if saveFig:
-        _dirname = 'plots/compare/' + '_'.join(channels) + '_' + target
+        _dirname = 'plots_MUSF_blind/compare/' + '_'.join(channels) + '_' + target
         ensureDir(_dirname)
 
         comparisonPlots_alt(hists, titles, True, False, _dirname + '/' + vkey +  '.pdf', True, True, 'hpe')
@@ -170,7 +170,7 @@ fitCat = 'sr'
 ensureDir('syscompare/' + fitCat)
 
 ##Declare here the list of processes 
-processes = ["data_obs","dd_bkg","bc_jpsi_ds","bc_others", "bc_jpsi_tau_N3p", "bc_jpsi_tau_3p"]
+processes = ["data_obs","dd_bkg","bc_jpsi_dst","bc_others", "bc_jpsi_tau_N3p", "bc_jpsi_tau_3p"]
 
 for vkey, ivar in vardir.items():
 
@@ -201,9 +201,9 @@ for vkey, ivar in vardir.items():
 
 #    hists4ratio = draw(vkey, ['sr', 'sb'], 'bg_ul')
     
-    draw(vkey, ['cr_lp',  'cr_sb'], 'data_obs', None, True, True)
+    draw(vkey, ['lp',  'sb'], 'data_obs', None, True, True)
 
-    draw(vkey, ['cr_sb',  'cr_sr'], 'data_obs', None, True, True)
+    draw(vkey, ['sb',  'sr'], 'data_obs', None, True, True)
 
 
 
@@ -278,13 +278,13 @@ for vkey, ivar in vardir.items():
             setNameTitle(bkgHist_sys, 'dd_bkg_' + name_sys)
             hists2write.append(bkgHist_sys)
 
-            sig_3p_sys = getHist(vkey, fitCat, 'sig_3p', sys)
-            sig_others_sys = getHist(vkey, fitCat, 'sig_others', sys)
+            sig_3p_sys = getHist(vkey, fitCat, 'bc_jpsi_tau_3p', sys)
+            sig_others_sys = getHist(vkey, fitCat, 'bc_jpsi_tau_N3p', sys)
             bc_others = getHist(vkey, fitCat, 'bc_others', sys)
             bc_jpsi_dst = getHist(vkey, fitCat, 'bc_jpsi_dst', sys)
 
-            setNameTitle(sig_3p_sys, 'sig_3p_' + name_sys)
-            setNameTitle(sig_others_sys, 'sig_others_' + name_sys)
+            setNameTitle(sig_3p_sys, 'bc_jpsi_tau_3p_' + name_sys)
+            setNameTitle(sig_others_sys, 'bc_jpsi_tau_N3p_' + name_sys)
             setNameTitle(bc_others, 'bc_others_' + name_sys)
             setNameTitle(bc_jpsi_dst, 'bc_jpsi_dst_' + name_sys)
             
@@ -294,7 +294,7 @@ for vkey, ivar in vardir.items():
             hists2write.append(bc_jpsi_dst)
 
 
-        for sys in systs_pu:
+        for sys in systs_mc:
 
             name_sys = sys.replace('_up','Up').replace('_down', 'Down')
 
@@ -323,7 +323,7 @@ for vkey, ivar in vardir.items():
             hists2write.append(bc_others)
             hists2write.append(bc_jpsi_dst)
             
-        print ("systs are:", systs)            
+        #print ("systs are:", systs)            
 #            comparisonPlots(hists, titles, cat + ', ' + syst.replace('_up',''), 'syscompare/' + cat + '/' + syst + '.gif')
             
 
@@ -378,7 +378,7 @@ for vkey, ivar in vardir.items():
 
             applyHists(hists)
 
-            _dirname = 'plots/syscompare'
+            _dirname = 'plots_MUSF_blind/syscompare'
             ensureDir(_dirname)
             comparisonPlots_alt(hists, titles, False, False, _dirname + '/' + vkey + '_' + procname + '_' + sysname + '.pdf', True, True, 'hpe')
 

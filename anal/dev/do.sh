@@ -11,8 +11,8 @@ do
 done
 
 
-#python draw.py --sys puweight_up --min
-#python draw.py --sys puweight_down --min
+python draw.py --sys puweight_up --min
+python draw.py --sys puweight_down --min
 
 python draw.py --sys muSFID_up --min
 python draw.py --sys muSFID_down --min

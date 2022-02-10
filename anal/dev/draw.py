@@ -163,7 +163,7 @@ datastr = "Data_2018/data.root"
 sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig_DecayBc_v2.root"
 #datastr = "Data_2018/Myroot_training_weightAdded.root"
 #sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
-bkgstr  = "BJpsiX_ul_2018/bkg.root"
+bkgstr  = "BJpsiX_ul_2018/bkg_v2.root"
 
 bc_sf = 0.45/(3*0.8)
 #sig_sf = 'hammer_ebe*puweight/0.55'
@@ -241,7 +241,7 @@ ddir['bc_others'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'* weight_cta
 #((gen_sig_decay==8||gen_sig_decay==9||gen_sig_decay==11)||(gen_sig_decay>1&&gen_sig_decay<6)||gen_sig_decay==7|| gen_sig_decay==16 ||( tau_isRight_3prong==0 && gen_sig_decay==6 && isJpsiTau2Mu==1)||gen_sig_decay==0)'}
 
 # other B backgrounds 
-ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
+ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
 
 
 ##################################################
@@ -272,7 +272,7 @@ channels = {
 
     'sb':{'cut':'&&'.join([basic, xgbs_sb])},
 
-#    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
+    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
 
 
 #    'cr_sr':{'cut':'&&'.join([basic, xgbs_sr])},
