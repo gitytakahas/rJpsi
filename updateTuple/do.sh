@@ -31,7 +31,7 @@ function hadding (){
 #
 ##############################################
 
-for dir in $sig_inclusive_ul_all_2018 # $bkg_ul_2018 $data_ul_2018
+for dir in $sig_inclusive_ul_all_2018  $bkg_ul_2018# $data_ul_2018
 do
 
     echo "hadding ...", $dir

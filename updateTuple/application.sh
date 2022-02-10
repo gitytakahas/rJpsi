@@ -10,8 +10,8 @@ name="pt_Legacy_v2"
 prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi_Legacy_decayBc/job_${name}"
 
 sig_inclusive_ul_all_2018="${prefix}/BcJpsiTau_inclusive_ul_all_2018"
-bkg_ul_2018="${prefix}/BcJpsiX_ul_2018"
-bkg_ul_2018_new="${prefix}/BcJpsiX_ul_2018_new"
+bkg_ul_2018="${prefix}/BJpsiX_ul_2018"
+#bkg_ul_2018_new="${prefix}/BJpsiX_ul_2018_new"
 data_ul_2018="${prefix}/Data_2018"
 
 ##############################################
@@ -21,9 +21,9 @@ data_ul_2018="${prefix}/Data_2018"
 #
 ##############################################
 
-model_name="pt"
+model_name="pt_LEGACY_val"
 
-#python application.py --file ${bkg_ul_2018}/Myroot.root --prefix bkg_xgbs --model ${model_name} --outdir ${bkg_ul_2018}
+python application.py --file ${bkg_ul_2018}/Myroot.root --prefix bkg_xgbs --model ${model_name} --outdir ${bkg_ul_2018}
 
 python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive_ul_all_2018}
 #python application.py --file ${data_ul_2018}/Myroot_analysis.root --prefix data_xgbs --model ${model_name} --outdir ${data_ul_2018}
@@ -52,7 +52,7 @@ hadd -f ${sig_inclusive_ul_all_2018}/sig.root  ${sig_inclusive_ul_all_2018}/Myro
 #hadd -f ${data_ul_2018}/data.root ${data_ul_2018}/Myroot_*xgbs*.root
 #hadd -f ${sig_inclusive_ul_all_2018}/sig.root  ${sig_inclusive_ul_all_2018}/Myroot_*xgbs*.root 
 #hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018}/Myroot_*xgbs*.root
-hadd -f ${bkg_ul_2018_new}/bkg.root ${bkg_ul_2018_new}/Myroot_*xgbs*.root
+hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018_new}/Myroot_*xgbs*.root
 
 
 
