@@ -50,7 +50,7 @@ nchunk_data=5
 
 
 
-outdir="job_${priority}_LEGACY"
+outdir="job_${priority}_LEGACY_v2"
 #outdir="job_${priority}_vprobfsigcr"
 
 #########################################
@@ -87,7 +87,7 @@ python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} 
 for year in 2018
 do
     echo "data", $year
-    python getDataset.py --file ${dataset} --chunk ${nchunk_data} --analysis ${analysis} --type data --name Data_${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+#    python getDataset.py --file ${dataset} --chunk ${nchunk_data} --analysis ${analysis} --type data --name Data_${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 done
 
 
