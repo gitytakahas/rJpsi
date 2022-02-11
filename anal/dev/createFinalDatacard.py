@@ -168,7 +168,6 @@ print '-'*80
 ratio = 0.27
 
 fitCat = 'sr'
-ensureDir('syscompare/' + fitCat)
 
 ##Declare here the list of processes 
 processes = ["data_obs","dd_bkg","bc_jpsi_dst","bc_others", "bc_jpsi_tau_N3p", "bc_jpsi_tau_3p"]
