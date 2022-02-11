@@ -31,7 +31,7 @@ void ReadFile(){
 
   std::cout << "Read file";
 
-  f = new TFile("datacard/inclusive/b_mass_sf.root");
+  f = new TFile("datacard_MUSF_blind/inclusive/b_mass_sf.root");
 
   mc = (TH1F*) f->Get("inclusive/bg_ul");
   //  mc->Scale(1./mc->GetSumOfWeights());

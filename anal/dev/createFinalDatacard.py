@@ -32,6 +32,7 @@ for hammer in range(0, 9):
 
 systs_mc = ['puweight_up', 'puweight_down', 'muSFID_up', 'muSFID_down', 'muSFReco_up', 'muSFReco_down','weight_ctau_up','weight_ctau_down']
 
+datacardpath = 'datacard_MUSF_blind/'
 
 def applyHists(hists):
 
@@ -58,10 +59,10 @@ def comparisonPlots_alt(hists, titles, norm=False, isLog=False, pname='sync.pdf'
 
 def getHist(vkey, channel, target, sys=None):
 
-    filename = 'datacard/' + channel + '/' + vkey + '.root'
+    filename = datacardpath + '/' + channel + '/' + vkey + '.root'
         
     if sys!=None:
-        filename = 'datacard/' + channel + '/' + vkey + '_' + sys + '.root'
+        filename = datacardpath + '/' + channel + '/' + vkey + '_' + sys + '.root'
 
     file = TFile(filename)
 
@@ -134,7 +135,7 @@ def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False, sf = 0
         comparisonPlots_alt(hists, titles, True, False, _dirname + '/' + vkey +  '.pdf', True, True, 'hpe')
 
 
-    _dirname = 'datacard/compare/' + '_'.join(channels) + '_' + target
+    _dirname = datacardpath + '/compare/' + '_'.join(channels) + '_' + target
     ensureDir(_dirname)
 
     file_output = TFile(_dirname + '/' + vkey +  '.root', 'recreate')
@@ -221,7 +222,7 @@ for vkey, ivar in vardir.items():
         hists2write = []
 
 
-        file = TFile('datacard/' + fitCat + '/' + vkey + '.root')
+        file = TFile(datacardpath + '/' + fitCat + '/' + vkey + '.root')
         file.cd(fitCat)
         
         listofprocs = [key.GetName() for key in gDirectory.GetListOfKeys()]
@@ -329,7 +330,7 @@ for vkey, ivar in vardir.items():
 
         ### CREATE shape comparisons 
 
-        filename_new = 'datacard/'+ fitCat + '/' + vkey + '_new.root'
+        filename_new = datacardpath + '/'+ fitCat + '/' + vkey + '_new.root'
         file_new = TFile(filename_new, 'recreate')
         file_new.mkdir(fitCat)
         file_new.cd(fitCat)

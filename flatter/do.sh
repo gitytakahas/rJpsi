@@ -35,8 +35,8 @@ dataset="Charmonium_legacy_2018_20210331"
 
 priority="pt"
 nchunk_sig=10
-nchunk_bg=10
-nchunk_data=5
+nchunk_bg=2
+nchunk_data=4
 
 
 
@@ -50,7 +50,7 @@ nchunk_data=5
 
 
 
-outdir="job_${priority}_LEGACY_v2"
+outdir="job_${priority}"
 #outdir="job_${priority}_vprobfsigcr"
 
 #########################################
@@ -87,7 +87,7 @@ python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} 
 for year in 2018
 do
     echo "data", $year
-#    python getDataset.py --file ${dataset} --chunk ${nchunk_data} --analysis ${analysis} --type data --name Data_${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+    python getDataset.py --file ${dataset} --chunk ${nchunk_data} --analysis ${analysis} --type data --name Data_${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 done
 
 
