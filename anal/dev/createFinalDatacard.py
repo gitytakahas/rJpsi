@@ -206,10 +206,6 @@ for vkey, ivar in vardir.items():
     draw(vkey, ['sb',  'sr'], 'data_obs', None, True, True)
 
 
-
-
-
-
     hists4ddbkg_bgmc = draw(vkey, ['sb', 'sr'], 'bg_ul', None, False, True)
 
     hists4ddbkg_vr = draw(vkey, ['lp', 'sb'], 'data_obs', None, True, True)
