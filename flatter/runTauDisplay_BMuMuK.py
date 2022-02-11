@@ -267,7 +267,7 @@ parser.add_option('-c', '--create', action="store_true", default=False, dest='cr
 print(options)
 
 if not options.create:
-    json_open = open('json_jpsik.json', 'r')
+    json_open = open('/work/ytakahas/work/analysis/CMSSW_10_2_10/src/rJpsi/flatter/json_jpsik.json', 'r')
     idtable = json.load(json_open)
     print('JSON decay table is read !')
 
@@ -1048,7 +1048,7 @@ for k,l in sorted([(j,i) for i,j in x.items()], reverse=True):
 
 if options.create:
 
-    with open('json_jpsik.json', 'w') as outfile:
+    with open('/work/ytakahas/work/analysis/CMSSW_10_2_10/src/rJpsi/flatter/json_jpsik.json', 'w') as outfile:
         json.dump(dict2save, outfile)
 
 out.endJob()

@@ -96,7 +96,8 @@ vardir["b_mcorr"] = {'tree':'tree',  'nbin':30, 'xmin':4, 'xmax':12, 'xtitle':'B
 vardir["b_mass"] = {'tree':'tree',  'nbin':35, 'xmin':4., 'xmax':6, 'xtitle':'B mass (GeV)'}
 vardir["b_mass_simple"] = {'tree':'tree',  'nbin':35, 'xmin':4., 'xmax':6, 'xtitle':'B mass simple (GeV)'}
 vardir["b_mass_sf"] = {'tree':'tree', 'nbin':50, 'xmin':3.5, 'xmax':8, 'xtitle':'B mass (GeV)', 'var':'b_mass'}
-vardir["jpsi_kpipi"] = {'tree':'tree',  'nbin':35, 'xmin':5., 'xmax':5.5, 'xtitle':'J/#psi K#pi#pi mass (GeV)'}
+vardir["jpsi_kpipi"] = {'tree':'tree',  'nbin':50, 'xmin':5., 'xmax':5.5, 'xtitle':'J/#psi + K#pi#pi mass (GeV)'}
+vardir["jpsi_k"] = {'tree':'tree', 'nbin':50, 'xmin':5., 'xmax':5.5, 'xtitle':'J/#psi + K mass (GeV)', 'var':'b_mass'}
 
 vardir["dx_b_pv"] = {'tree':'tree',  'nbin':30, 'xmin':-0.4, 'xmax':0.4, 'xtitle':'#Deltax (B, bbPV) (cm)'}
 vardir["dy_b_pv"] = {'tree':'tree',  'nbin':30, 'xmin':-0.4, 'xmax':0.4, 'xtitle':'#Deltay (B, bbPV) (cm)'}
