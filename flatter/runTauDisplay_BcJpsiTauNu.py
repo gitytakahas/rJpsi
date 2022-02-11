@@ -112,9 +112,9 @@ parser = OptionParser(usage)
 
 parser.add_option("-o", "--out", default='Myroot.root', type="string", help="output filename", dest="out")
 parser.add_option("-p", "--priority", default='pt', type="string", help="priority", dest="priority")
-parser.add_option("-t", "--type", default='signal', type="string", help="type", dest="type")
+parser.add_option("-t", "--type", default='bkg', type="string", help="type", dest="type")
 parser.add_option("-y", "--year", default='UL2017', type="string", help="year", dest="year")
-parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas//BcToJPsiMuMu_Legacy_2018_20220122/BcToJPsiMuMu_inclusive_TuneCP5_13TeV-bcvegpy2-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v2/220122_060817/0000/flatTuple_81.root', type="string", help="file", dest="file")
+parser.add_option("-f", "--file", default='root://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas//HbToJPsiMuMu_Legacy_2018_20220208/HbToJPsiMuMu_TuneCP5_13TeV-pythia8-evtgen/RunIISummer20UL18MiniAOD-106X_upgrade2018_realistic_v11_L1v1-v1/220208_162201/0000/flatTuple_9.root', type="string", help="file", dest="file")
 parser.add_option('-c', '--create', action="store_true", default=False, dest='create')
 
 
@@ -432,8 +432,8 @@ for evt in xrange(Nevt):
         weight_down =1
 
         weight_central = weight_to_new_ctau(ctau_actual, ctau_pdg , ct*10.)
-#        weight_up = weight_to_new_ctau(ctau_actual, ctau_up , ct*10.)
-#        weight_down = weight_to_new_ctau(ctau_actual, ctau_down , ct*10.)
+        weight_up = weight_to_new_ctau(ctau_actual, ctau_up , ct*10.)
+        weight_down = weight_to_new_ctau(ctau_actual, ctau_down , ct*10.)
 
         out.lxyz[0] = lxyz
         out.beta[0] = beta

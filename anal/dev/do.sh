@@ -1,7 +1,7 @@
 
 python draw.py --min
 
-python draw.py --min --blind  # to veto data in SR
+#python draw.py --min --blind  # to veto data in SR
 
 for h in $(seq 0 9)
 do
@@ -13,3 +13,12 @@ done
 
 python draw.py --sys puweight_up --min
 python draw.py --sys puweight_down --min
+
+python draw.py --sys muSFID_up --min
+python draw.py --sys muSFID_down --min
+
+python draw.py --sys muSFReco_up --min
+python draw.py --sys muSFReco_down --min
+
+python draw.py --sys weight_ctau_up --min
+python draw.py --sys weight_ctau_down --min
