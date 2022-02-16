@@ -264,7 +264,7 @@ xgbs_lp = 'xgbs > 3.1 && xgbs < 4.1'
 
 channels = {
 
-#    'inclusive':{'cut':'&&'.join([basic])},
+    'inclusive':{'cut':'&&'.join([basic])},
 
 #    'extrapolate':{'cut':'&&'.join([basic, 'xgbs > 3.5'])},
 
@@ -336,7 +336,7 @@ for channel, dict in channels.iteritems():
     print 'cut = ', dict['cut']
     print '-'*80
 
-    dir_postfix='_MUSF_blind'
+    dir_postfix=''
     ensureDir('plots'+dir_postfix+'/' + channel)     
     shutil.copyfile('index.php','plots'+dir_postfix+'/index.php') 
     shutil.copyfile('index.php','plots'+dir_postfix+'/' + channel +'/index.php')   
@@ -345,14 +345,13 @@ for channel, dict in channels.iteritems():
     for type, ivar in ddir.items():
 
         wstr = ivar['weight']
-    
+        waddcut = ivar['addcut']
         filename = None
+    
 
-        if channel.find('sr')!=-1 and options.blind:
-            #blinding by vetoing data in SR
-            if type =='data_obs':
-                ivar['addcut'] = '0'
-
+        if channel=='sr' and options.blind==True and type =='data_obs': 
+            waddcut += '&&0'
+        
 
         if channel.find('cr')!=-1:
             filename = prefix_cr + '/' + ivar['file']
@@ -385,7 +384,11 @@ for channel, dict in channels.iteritems():
         elif options.sys.find('muSFReco')!=-1 and type.find('data')==-1:     
             wstr = ivar['weight'].replace('mu1_SFReco', 'mu1_SFReco_up' if options.sys.find('up')!=-1   else 'mu1_SFReco_down') 
             wstr = ivar['weight'].replace('mu2_SFReco', 'mu2_SFReco_up' if options.sys.find('up')!=-1   else 'mu2_SFReco_down') 
-        cut = '(' + dict['cut'] + ' &&' + ivar['addcut'] + ')*' + wstr
+
+        elif options.sys.find('br_BcJpsiDst')!=-1 and type.find('bc_jpsi_ds')!=-1:
+            wstr += '*1.38' if  options.sys.find('up')!=-1 else '*0.62'
+
+        cut = '(' + dict['cut'] + ' &&' + waddcut + ')*' + wstr
         print(type, cut)
 
 

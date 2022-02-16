@@ -4,7 +4,7 @@ today=`date "+%Y%m%d%H%M"`
 # Specify here the output file types 
 #name="mass_pt"
 
-name="pt_Legacy_v2"
+name="pt_LEGACY_v2"
 #name="pt"
 #name="multiple"
 
@@ -31,7 +31,8 @@ function hadding (){
 #
 ##############################################
 
-for dir in $sig_inclusive_ul_all_2018  $bkg_ul_2018# $data_ul_2018
+#for dir in $sig_inclusive_ul_all_2018 $bkg_ul_2018 # $data_ul_2018         
+for dir in $bkg_ul_2018 # $data_ul_2018
 do
 
     echo "hadding ...", $dir
@@ -57,13 +58,13 @@ done
 for dir in $sig_inclusive_ul_all_2018
 do
     echo "splitting into two ...", $dir
-    sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.2
+    #sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.2
 done
 
 for dir in $data_ul_2018
 do
     echo "splitting into two ...", $dir
-    sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.006
+    #sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.006
 done
 
 
