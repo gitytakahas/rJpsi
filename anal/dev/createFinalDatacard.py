@@ -1,4 +1,4 @@
-import copy, os,  math, sys
+import copy, os,  math, sys, shutil 
 from numpy import array
 from officialStyle import officialStyle
 from array import array
@@ -30,9 +30,9 @@ for hammer in range(0, 9):
     systs_hammer.append('hammer_ebe_e' + str(hammer) + '_up')
     systs_hammer.append('hammer_ebe_e' + str(hammer) + '_down')
 
-systs_mc = ['puweight_up', 'puweight_down', 'muSFID_up', 'muSFID_down', 'muSFReco_up', 'muSFReco_down','weight_ctau_up','weight_ctau_down']
+systs_mc = ['puweight_up', 'puweight_down', 'muSFID_up', 'muSFID_down', 'muSFReco_up', 'muSFReco_down','weight_ctau_up','weight_ctau_down', 'br_BcJpsiDst_up', 'br_BcJpsiDst_down' ]
 
-datacardpath = 'datacard_MUSF_blind/'
+datacardpath = 'datacard/'
 
 def applyHists(hists):
 
@@ -129,14 +129,15 @@ def draw(vkey, channels, target, sys=None, subtract=False, saveFig=False, sf = 0
 
 
     if saveFig:
-        _dirname = 'plots_MUSF_blind/compare/' + '_'.join(channels) + '_' + target
+        _dirname = 'plots/compare/' + '_'.join(channels) + '_' + target
         ensureDir(_dirname)
-
+        shutil.copyfile('index.php',_dirname+'/index.php')
         comparisonPlots_alt(hists, titles, True, False, _dirname + '/' + vkey +  '.pdf', True, True, 'hpe')
 
 
     _dirname = datacardpath + '/compare/' + '_'.join(channels) + '_' + target
     ensureDir(_dirname)
+    shutil.copyfile('index.php',_dirname+'/index.php')
 
     file_output = TFile(_dirname + '/' + vkey +  '.root', 'recreate')
     for _hist in hists2return:
@@ -168,6 +169,7 @@ print '-'*80
 ratio = 0.27
 
 fitCat = 'sr'
+
 
 ##Declare here the list of processes 
 processes = ["data_obs","dd_bkg","bc_jpsi_dst","bc_others", "bc_jpsi_tau_N3p", "bc_jpsi_tau_3p"]
@@ -354,8 +356,8 @@ for vkey, ivar in vardir.items():
             print ("Printing proc", proc) 
             procname = [ processes[x] for x in range(len(processes)) if processes[x] in proc][0]
             print ("procname : ", procname)
-            print ("tentative sysname : ",proc.lstrip(procname+"_"))
-            sysname = ((proc.lstrip(procname+"_")).replace('Up', ''))
+            print ("tentative sysname : ", proc.replace(procname+"_", ""))
+            sysname = ((proc.replace(procname+"_", "")).replace('Up', ''))
 
             print(procname, sysname)
 
@@ -374,8 +376,9 @@ for vkey, ivar in vardir.items():
 
             applyHists(hists)
 
-            _dirname = 'plots_MUSF_blind/syscompare'
+            _dirname = 'plots/syscompare'
             ensureDir(_dirname)
+            shutil.copyfile('index.php',_dirname+'/index.php')
             comparisonPlots_alt(hists, titles, False, False, _dirname + '/' + vkey + '_' + procname + '_' + sysname + '.pdf', True, True, 'hpe')
 
 
