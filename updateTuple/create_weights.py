@@ -83,9 +83,9 @@ print('# of bkg =', chain_bg.GetEntries())
 #sig = sproducer('sig', 'tau_index==0', chain_sig, 'puweight*hammer_ebe')
 #bkg = sproducer('bkg', '1.', chain_bg, 'puweight')
 
-sig = sproducer('sig', 'tau_isRight_3prong==1', chain_sig, 'puweight*hammer_ebe/0.55')
+sig = sproducer('sig', 'tau_isRight_3prong==1', chain_sig, 'puweight*mu1_SFID*mu2_SFID*mu1_SFReco*mu2_SFReco*weight_ctau*hammer_ebe/0.55')
 sig.Scale(1./sig.GetSumOfWeights())
-bkg = sproducer('bkg', '1.', chain_bg, '1')
+bkg = sproducer('bkg', 'tau_isRight_3prong==0', chain_bg, 'puweight*mu1_SFID*mu2_SFID*mu1_SFReco*mu2_SFReco*genWeightBkgB')
 bkg.Scale(1./bkg.GetSumOfWeights())
 
 #weight = TH2F('weight', 'weight', 20,0, 2.5, 20, 2, 30)

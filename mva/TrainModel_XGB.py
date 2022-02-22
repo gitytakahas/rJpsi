@@ -284,8 +284,13 @@ if __name__ == '__main__':
     print('features = ', features)
     features = sorted(features)
 
-    branches_bg = features + ['weight']
-    branches_sig = features + ['tau_isRight_3prong', 'weight']
+    var_common = ['puweight', 'mu1_SFID', 'mu2_SFID', 'mu1_SFReco', 'mu2_SFReco', 'tau_isRight_3prong']
+    var_sig = ['weight_ctau', 'hammer_ebe']
+    var_bg = ['weight', 'genWeightBkgB']
+
+
+    branches_bg = features + var_common + var_bg
+    branches_sig = features + var_common + var_sig
 #    branches_bg = features
 #    branches_sig = features + ['tau_isRight_3prong']
 #    branches = features
@@ -298,10 +303,13 @@ if __name__ == '__main__':
     ddf['bkg'].replace([np.inf, -np.inf], 0.0, inplace=True)
 
     # only allow 3prong
-    print(ddf['sig'])
+#    print(ddf['sig'])
     ddf['sig'].query("tau_isRight_3prong==1", inplace=True)
-    print(ddf['sig'])
+#    print(ddf['sig'])
     
+    ddf['bkg'].query("tau_isRight_3prong==0", inplace=True)
+
+
     nSig = ddf['sig'].shape[0]
 #    nBkg = 30000
     nBkg = 120000
@@ -310,7 +318,7 @@ if __name__ == '__main__':
     #nSig = 10000
     #nBkg = 10000
 
-    print('nSig=', nSig, 'nBkg=', nBkg)
+#    print('nSig=', nSig, 'nBkg=', nBkg)
     ddf['sig'] = ddf['sig'].sample(frac=1)[:nSig]
     ddf['bkg'] = ddf['bkg'].sample(frac=1)[:nBkg]
 
@@ -321,14 +329,19 @@ if __name__ == '__main__':
 
     df = pd.concat([ddf['sig'],ddf['bkg']]).sort_index(axis=1).sample(frac=1).reset_index(drop=True)
 #    df['weights'] = np.where(df['isSignal'], 1.0/df['BToKEE_fit_massErr'].replace(np.nan, 1.0), 1.0)
-#    df['weights'] = np.where(df['isSignal']==0, df['weight'], 1.0)
+    df['weights'] = np.where(df['isSignal']==0, df['weight']*df['puweight']*df['mu1_SFID']*df['mu2_SFID']*df['mu1_SFReco']*df['mu2_SFReco']*df['genWeightBkgB'], df['puweight']*df['mu1_SFID']*df['mu2_SFID']*df['mu1_SFReco']*df['mu2_SFReco']*df['weight_ctau']*df['hammer_ebe'])
 #    df['weights'] = np.where(df['isSignal']==0, 1.0, 1.0)
-    df['weights'] = df['weight']
+#    df['weights'] = df['weight']
 #    df['weights'] = 1.0
 
     X = df[features]
     y = df['isSignal']
     W = df['weights']
+
+#    import pdb; pdb.set_trace()
+#    print(ddf['bkg']['weights'][0], ':', ddf['bkg']['puweight'], ddf['bkg']['mu1_SFID'], '')
+#    print '-'*80
+#    print(ddf['bkg'])
 
     suffix = args.suffix
     n_boost_rounds = 800

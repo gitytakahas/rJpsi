@@ -6,6 +6,7 @@
 # Location where output files will be stored
 #
 pnfs="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi_Legacy_decayBc/"
+#pnfs="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/"
 
 
 #
@@ -25,19 +26,15 @@ analysis="BcJpsiTauNu"
 #sigmc="BcToJPsiMuMu_Legacy_2018_20210520"
 sigmc="BcToJPsiMuMu_Legacy_2018_20220208"   #"BcToJPsiMuMu_Legacy_2018_20220122"
 bgmc="HbToJPsiMuMu_Legacy_2018_20220208"
-bgmc2="JPsiMuMu_Legacy_2018_20220103"
+bgmc2="JPsiMuMu_Legacy_2018_20220221"
 dataset="Charmonium_legacy_2018_20210331"
 
-#sigmc="BcToJPsiMuMu_Legacy_q3_2018_20210806"
-#bgmc="HbToJPsiMuMu_Legacy_q3_2018_20210806"
-#dataset="Charmonium_Legacy_q3_2018_20210518"
 
 
 priority="pt"
 nchunk_sig=10
 nchunk_bg=2
 nchunk_data=4
-
 
 
 # uncomment here in case of "multpile" options
@@ -78,7 +75,7 @@ done
 #########################################
 
 python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX_ul_2018 --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
-#python getDataset.py --file ${bgmc2} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX_ul_2018_new --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+python getDataset.py --file ${bgmc2} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX_ul_2018_new --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 
 #########################################
 # Data (2016)

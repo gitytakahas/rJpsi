@@ -280,6 +280,17 @@ for vkey, ivar in vardir.items():
                 hists2write.append(bc_jpsi_dst)
             
 
+            ### BG derivation
+
+            for ibin in range(1, hists2write[-1].GetXaxis().GetNbins()+1):
+                print '@@@ writing bg_bin' + str(ibin), 'with', hists2write[-1].GetXaxis().GetNbins(), hists2write[-1].GetXaxis().GetXmin(), hists2write[-1].GetXaxis().GetXmax()
+                dummy = TH1F('bg_bin' + str(ibin), 'bg_bin' + str(ibin), hists2write[-1].GetXaxis().GetNbins(), hists2write[-1].GetXaxis().GetXmin(), hists2write[-1].GetXaxis().GetXmax() )
+
+                dummy.SetBinContent(ibin, 1)
+                dummy.SetBinError(ibin, 0)
+
+                hists2write.append(copy.deepcopy(dummy))
+
             datacards[fitCat] = copy.deepcopy(hists2write)
 
 

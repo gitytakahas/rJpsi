@@ -4,14 +4,13 @@ today=`date "+%Y%m%d%H%M"`
 # Specify here the output file types 
 #name="mass_pt"
 
-name="pt_LEGACY_v2"
-#name="pt"
-#name="multiple"
+name="pt"
 
 prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi_Legacy_decayBc/job_${name}"
 
 sig_inclusive_ul_all_2018="${prefix}/BcJpsiTau_inclusive_ul_all_2018"
 bkg_ul_2018="${prefix}/BJpsiX_ul_2018"
+bkg_ul_2018_new="${prefix}/BJpsiX_ul_2018_new"
 data_ul_2018="${prefix}/Data_2018"
 
 
@@ -31,12 +30,11 @@ function hadding (){
 #
 ##############################################
 
-#for dir in $sig_inclusive_ul_all_2018 $bkg_ul_2018 # $data_ul_2018         
-for dir in $bkg_ul_2018 # $data_ul_2018
+for dir in $sig_inclusive_ul_all_2018 $bkg_ul_2018_new $bkg_ul_2018 # $data_ul_2018         
 do
 
     echo "hadding ...", $dir
-    hadding $dir Myroot.root Myroot_*.root
+#    hadding $dir Myroot.root Myroot_*.root
 
 done
 
@@ -54,17 +52,10 @@ done
 #
 ##############################################
 
-#for dir in $sig_inclusive_ul_all_2018 $bkg_ul_2018
 for dir in $sig_inclusive_ul_all_2018
 do
     echo "splitting into two ...", $dir
-    #sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.2
-done
-
-for dir in $data_ul_2018
-do
-    echo "splitting into two ...", $dir
-    #sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.006
+#    sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.2
 done
 
 
@@ -75,7 +66,7 @@ done
 # to avoid biasing, we can reweigh based on B pT and eta
 #
 ##############################################
-#python create_weights.py --sig_file ${sig_inclusive_ul_all_2018}/Myroot_training.root --bkg_file ${data_ul_2018}/Myroot_training.root --out_dir weight_${name}
+#python create_weights.py --sig_file ${sig_inclusive_ul_all_2018}/Myroot_training.root --bkg_file ${bkg_ul_2018_new}/Myroot.root --out_dir weight_${name}
 
 
 ##############################################
@@ -86,9 +77,10 @@ done
 # 
 ##############################################
 
-#sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_training.root $PWD/weight_${name}/weight.root
-#sh updateTuple.sh ${data_ul_2018}/Myroot_training.root $PWD/weight_${name}/weight.root
+sh updateTuple.sh ${bkg_ul_2018_new}/Myroot.root $PWD/weight_${name}/weight.root
 
+#sh updateTuple.sh ${data_ul_2018}/Myroot_training.root $PWD/weight_${name}/weight.root
+#sh updateTuple.sh ${sig_inclusive_ul_all_2018}/Myroot_training.root $PWD/weight_${name}/weight.root
 
 
 

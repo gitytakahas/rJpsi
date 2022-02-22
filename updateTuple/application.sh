@@ -1,8 +1,8 @@
 today=`date "+%Y%m%d%H%M"`
 
-#name="pt"
+name="pt"
 #name="pt_vprobfsigcr"
-name="pt_LEGACY_v2"
+#name="pt_LEGACY_v2"
 #name="nomass_pt"
 #name="multiple"
 
@@ -21,11 +21,11 @@ data_ul_2018="${prefix}/Data_2018"
 #
 ##############################################
 
-model_name="pt_LEGACY_val"
+model_name="pt_val"
 
-python application.py --file ${bkg_ul_2018}/Myroot.root --prefix bkg_xgbs --model ${model_name} --outdir ${bkg_ul_2018}
+#python application.py --file ${bkg_ul_2018}/Myroot.root --prefix bkg_xgbs --model ${model_name} --outdir ${bkg_ul_2018}
 
-python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive_ul_all_2018}
+#python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive_ul_all_2018}
 #python application.py --file ${data_ul_2018}/Myroot_analysis.root --prefix data_xgbs --model ${model_name} --outdir ${data_ul_2018}
 
 #python application.py --file ${bkg_ul_2018_new}/Myroot.root --prefix data_xgbs --model ${model_name} --outdir ${bkg_ul_2018_new}
@@ -46,14 +46,15 @@ python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis.root -
 #do
 #    echo ${prio}
 #hadd -f ${data_ul_2018}/data.root ${data_ul_2018}/Myroot_*xgbs*.root
-hadd -f ${sig_inclusive_ul_all_2018}/sig.root  ${sig_inclusive_ul_all_2018}/Myroot_*xgbs*.root 
 #hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018}/Myroot_*xgbs*.root
 
-#hadd -f ${data_ul_2018}/data.root ${data_ul_2018}/Myroot_*xgbs*.root
 #hadd -f ${sig_inclusive_ul_all_2018}/sig.root  ${sig_inclusive_ul_all_2018}/Myroot_*xgbs*.root 
 #hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018}/Myroot_*xgbs*.root
-hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018}/Myroot_*xgbs*.root
 
+
+hadd -f ${sig_inclusive_ul_all_2018}/sig.root  ${sig_inclusive_ul_all_2018}/Myroot_*xgbs*.root 
+hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018}/Myroot_*xgbs*.root
+hadd -f ${data_ul_2018}/data.root ${data_ul_2018}/Myroot_*xgbs*.root
 
 
 

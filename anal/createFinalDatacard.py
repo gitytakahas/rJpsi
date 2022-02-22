@@ -1,15 +1,15 @@
 import copy, os,  math, sys, shutil 
 from numpy import array
-from officialStyle import officialStyle
+from common.officialStyle import officialStyle
 from array import array
 import common.MultiDraw
 import numpy as np
 from varConfig import vardir
-from DataMCPlot import *
-from DisplayManager_postfit import DisplayManager
+from common.DataMCPlot import *
+from common.DisplayManager_postfit import DisplayManager
 from common.DisplayManager_compare import DisplayManager_compare
-from helper import *
-from H2TauStyle import *
+from common.helper import *
+from common.H2TauStyle import *
 
 
 lumi=59.6

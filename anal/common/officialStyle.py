@@ -16,8 +16,8 @@ def officialStyle(style):
     style.SetPadColor       (0)
     style.SetPadBorderSize  (10)
     style.SetPadBorderMode  (0)
-    style.SetPadBottomMargin(0.13)
-    style.SetPadTopMargin   (0.095)
+    style.SetPadBottomMargin(0.16)
+    style.SetPadTopMargin   (0.08)
     style.SetPadLeftMargin  (0.15)
     style.SetPadRightMargin (0.05)
     style.SetPadGridX       (0)
@@ -25,19 +25,22 @@ def officialStyle(style):
     style.SetPadTickX       (1)
     style.SetPadTickY       (1)
 
+    style.SetHatchesSpacing(4)
+    style.SetHatchesLineWidth(2)
+
     # Frames
     style.SetLineWidth(3)
     style.SetFrameFillStyle ( 0)
     style.SetFrameFillColor ( 0)
     style.SetFrameLineColor ( 1)
     style.SetFrameLineStyle ( 0)
-    style.SetFrameLineWidth ( 3)
+    style.SetFrameLineWidth ( 2)
     style.SetFrameBorderSize(10)
     style.SetFrameBorderMode( 0)
 
     # Histograms
-    style.SetHistFillColor(2)
-    style.SetHistFillStyle(0)
+#    style.SetHistFillColor(2)
+    style.SetHistFillStyle(1001)
     style.SetHistLineColor(1)
     style.SetHistLineStyle(0)
     style.SetHistLineWidth(3)
@@ -55,22 +58,19 @@ def officialStyle(style):
 
     style.SetTitleBorderSize(0)
     style.SetTitleFillColor (0)
-    style.SetTitleX         (0.4)
+    style.SetTitleX         (0.2)
 
-#    style.SetTitleSize  (0.055,"X")
-    style.SetTitleSize  (0.05,"X")
+    style.SetTitleSize  (0.055,"X")
     style.SetTitleOffset(1.200,"X")
     style.SetLabelOffset(0.005,"X")
     style.SetLabelSize  (0.050,"X")
-#    style.SetLabelSize  (0.030,"X")
     style.SetLabelFont  (42   ,"X")
 
     style.SetStripDecimals(False)
     style.SetLineStyleString(11,"20 10")
 
-#    style.SetTitleSize  (0.055,"Y")
-    style.SetTitleSize  (0.05,"Y")
-    style.SetTitleOffset(1.400,"Y")
+    style.SetTitleSize  (0.055,"Y")
+    style.SetTitleOffset(1.200,"Y")
     style.SetLabelOffset(0.010,"Y")
     style.SetLabelSize  (0.050,"Y")
     style.SetLabelFont  (42   ,"Y")
@@ -83,7 +83,7 @@ def officialStyle(style):
     style.SetTitleFont  (42,"X")
     style.SetTitleFont  (42,"Y")
 
-    style.SetOptStat    (11111111)
+    style.SetOptStat    (0)
 
 
 def CMSPrelim(dataset, channel, lowX, lowY):

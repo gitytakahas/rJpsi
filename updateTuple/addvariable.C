@@ -27,7 +27,7 @@ void addvariable(TString filename, TString wfile){
 
   //  int id = std::stoi((string) idstr);
 
-  //  bool isBG = false;
+  bool isBG = false;
   bool isSignal = false;
   bool isData = false;
 
@@ -41,6 +41,9 @@ void addvariable(TString filename, TString wfile){
   }else if(string(filename).find("Data")!=std::string::npos){
     std::cout << "This is Data !!" << std::endl;
     isData = true;
+  }else if(string(filename).find("BJpsiX")!=std::string::npos){
+    std::cout << "This is BG !!" << std::endl;
+    isBG = true;
   }else{
     std::cout << "This is invalid!" << std::endl;
   }
@@ -57,10 +60,7 @@ void addvariable(TString filename, TString wfile){
 
   std::cout << "... done" << std::endl;
 
-  Double_t b_pt, b_eta, b_puweight, b_hammer;
-  //  Double_t b_toy[3000];
-  //  Double_t b_bkgBweight;
-  //  Int_t b_tau_index;
+  Double_t b_pt, b_eta;
 
   //  TString _output;
   string output = (string)filename;
@@ -71,25 +71,20 @@ void addvariable(TString filename, TString wfile){
   auto len = tbr.length();
 
   if(pos != std::string::npos){
-    //    if(idstr=="-1"){
     output.replace(pos, len, "_weightAdded.root");
-      //    output.replace(output.begin(), output.end(), '.root', '_default.root');
-    //}else{
-    //      output.replace(pos, len, "_hammer" + idstr + ".root");
-    //    }
   }
 
   std::cout << "output file = " <<  output << std::endl;
 
     
-  if(isSignal){
-    lTree->SetBranchAddress( "puweight", &b_puweight);
-    lTree->SetBranchAddress( "hammer_ebe", &b_hammer);
-    //    lTree->SetBranchAddress( "hammer_ebe_toy", &b_toy);
-    //    _output = tdir + "/transient_large_" + idstr + ".root";
-  }
+//  if(isSignal){
+//    lTree->SetBranchAddress( "puweight", &b_puweight);
+//    lTree->SetBranchAddress( "hammer_ebe", &b_hammer);
+//    //    lTree->SetBranchAddress( "hammer_ebe_toy", &b_toy);
+//    //    _output = tdir + "/transient_large_" + idstr + ".root";
+//  }
 
-  if(isData){
+  if(isBG){
     lTree->SetBranchAddress( "b_pt", &b_pt);
     lTree->SetBranchAddress( "b_eta", &b_eta);
   }
@@ -119,21 +114,22 @@ void addvariable(TString filename, TString wfile){
 //      lweight = histw*b_puweight*b_bkgBweight;
 //
 //    }else 
-    if(isSignal){
+//    if(isSignal){
+//
+//      //if(id==-1)
+//      lweight = b_hammer*b_puweight/0.55;
+////      else{
+////	lweight = b_toy[id]*b_puweight;
+////      }
+//
+//    }else if(isData){
 
-      //if(id==-1)
-      lweight = b_hammer*b_puweight/0.55;
-//      else{
-//	lweight = b_toy[id]*b_puweight;
-//      }
-
-    }else if(isData){
-
+    if(isBG){
       Float_t histw = hist->GetBinContent(hist->GetXaxis()->FindBin(TMath::Abs(b_eta)), hist->GetYaxis()->FindBin(b_pt));      
       lweight = histw;
-
-      //      std::cout << "Invalid data type" << std::endl;
     }
+      //      std::cout << "Invalid data type" << std::endl;
+      //    }
 
     lOTree->Fill();    
   }
