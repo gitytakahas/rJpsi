@@ -250,6 +250,12 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
             self.addBranch('procid',                  'i')
 
             if dataType in ['signal']:
+
+                self.addBranch('gen_dipion_unrolled',                'f')
+                self.addBranch('gen_dipion_unrolled_coarse',                'f')
+                self.addBranch('gen_dipion1_mass',                'f')
+                self.addBranch('gen_dipion2_mass',                'f')
+                
                 self.addBranch('hammer_ebe',                  'f')
                 self.addBranch('hammer_wratio',                  'f')
                 self.addBranch('hammer_ebe_lattice',                  'f')

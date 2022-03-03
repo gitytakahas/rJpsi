@@ -394,6 +394,12 @@ for channel, dict in channels.iteritems():
         elif options.sys.find('br_BcJpsiDst')!=-1 and type.find('bc_jpsi_ds')!=-1:
             wstr += '*1.38' if  options.sys.find('up')!=-1 else '*0.62'
 
+        elif options.sys.find('tauBr_up')!=-1 and type.find('bc_jpsi_tau_3p')!=-1:
+            wstr += '*getTauBrWeight_up(gen_dipion_unrolled)'
+
+        elif options.sys.find('tauBr_down')!=-1 and type.find('bc_jpsi_tau_3p')!=-1:
+            wstr += '*getTauBrWeight_down(gen_dipion_unrolled)'
+
         cut = '(' + dict['cut'] + ' &&' + waddcut + ')*' + wstr
         print(type, cut)
 

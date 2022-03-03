@@ -25,6 +25,10 @@
 TFile *f;
 TH1F *mc;
 TH1F *weight;
+
+TFile *tauf;
+TH1F *taubr_up;
+TH1F *taubr_down;
 //TH1F *weight;
 
 void ReadFile(){
@@ -42,8 +46,32 @@ void ReadFile(){
   weight->Divide(mc);
 
   //  f->Close();
+ 
 
   std::cout << "... end" << std::endl;
+
+}
+
+
+void ReadFileTau(){
+
+  std::cout << "Read file";
+
+  tauf = new TFile("datacard/tauola/correction.root");
+
+  //  mc = (TH1F*) f->Get("inclusive/bg_ul");
+  //  mc->Scale(1./mc->GetSumOfWeights());
+
+  taubr_up = (TH1F*) tauf->Get("envelope_up");  
+  taubr_down = (TH1F*) tauf->Get("envelope_down");  
+  //  weight->Scale(1./weight->GetSumOfWeights());  
+  
+  //  weight->Divide(mc);
+
+  //  f->Close();
+ 
+
+  std::cout << "taubrfile ... end" << std::endl;
 
 }
 
@@ -57,6 +85,39 @@ Float_t getWeight(float val){
   //  std::cout <<"binid=" << binid << std::endl;
   
   Float_t w = weight->GetBinContent(binid);
+  //  Float_t w = 1.;
+
+  //  std::cout << "weight: b mass = "<<  val << ", w = "  << w << std::endl;
+  return w;
+
+}
+
+
+Float_t getTauBrWeight_up(float val){
+
+  //  std::cout << "getWeight for " << val << std::endl;
+
+  Int_t binid = taubr_up->GetXaxis()->FindBin(val);
+  
+  //  std::cout <<"binid=" << binid << std::endl;
+  
+  Float_t w = taubr_up->GetBinContent(binid);
+  //  Float_t w = 1.;
+
+  //  std::cout << "weight: b mass = "<<  val << ", w = "  << w << std::endl;
+  return w;
+
+}
+
+Float_t getTauBrWeight_down(float val){
+
+  //  std::cout << "getWeight for " << val << std::endl;
+
+  Int_t binid = taubr_down->GetXaxis()->FindBin(val);
+  
+  //  std::cout <<"binid=" << binid << std::endl;
+  
+  Float_t w = taubr_down->GetBinContent(binid);
   //  Float_t w = 1.;
 
   //  std::cout << "weight: b mass = "<<  val << ", w = "  << w << std::endl;
@@ -91,4 +152,5 @@ void functionmacro(){
   std::cout << "Initialize functionmacro.C ..." << std::endl;
   std::cout << std::endl;
   ReadFile();
+  ReadFileTau();
 }

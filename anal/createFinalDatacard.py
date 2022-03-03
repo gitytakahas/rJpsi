@@ -30,7 +30,9 @@ for hammer in range(0, 9):
     systs_hammer.append('hammer_ebe_e' + str(hammer) + '_up')
     systs_hammer.append('hammer_ebe_e' + str(hammer) + '_down')
 
-systs_mc = ['puweight_up', 'puweight_down', 'muSFID_up', 'muSFID_down', 'muSFReco_up', 'muSFReco_down','weight_ctau_up','weight_ctau_down', 'br_BcJpsiDst_up', 'br_BcJpsiDst_down' ]
+systs_mc = ['puweight_up', 'puweight_down', 'muSFID_up', 'muSFID_down', 'muSFReco_up', 'muSFReco_down','weight_ctau_up','weight_ctau_down', 'br_BcJpsiDst_up', 'br_BcJpsiDst_down', 'tauBr_up', 'tauBr_down']
+
+systs_mc_tau = ['tauBr_up', 'tauBr_down']
 
 datacardpath = 'datacard/'
 
@@ -320,6 +322,15 @@ for vkey, ivar in vardir.items():
             hists2write.append(sig_others_sys)
             hists2write.append(bc_others)
             hists2write.append(bc_jpsi_dst)
+
+
+        for sys in systs_mc_tau:
+
+            sig_3p_sys = getHist(vkey, fitCat, 'bc_jpsi_tau_3p', sys)
+            setNameTitle(sig_3p_sys, 'bc_jpsi_tau_3p_' + name_sys)
+            hists2write.append(sig_3p_sys)
+
+
             
         #print ("systs are:", systs)            
 #            comparisonPlots(hists, titles, cat + ', ' + syst.replace('_up',''), 'syscompare/' + cat + '/' + syst + '.gif')

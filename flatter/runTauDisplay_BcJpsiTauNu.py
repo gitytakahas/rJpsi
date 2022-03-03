@@ -295,6 +295,9 @@ if options.type!='data':
     chain.SetBranchStatus('JpsiTau_st_decayid',1)
     chain.SetBranchStatus('JpsiTau_isJpsi*', 1)
 
+if options.type=='signal':
+    chain.SetBranchStatus('truth_tau_dipion1_mass', 1)
+    chain.SetBranchStatus('truth_tau_dipion2_mass', 1)
 #    putool = PileupWeightTool(options.year, 'central')
 #    putool_up = PileupWeightTool(options.year, 'up')
 #    putool_down = PileupWeightTool(options.year, 'down')
@@ -970,6 +973,24 @@ for evt in xrange(Nevt):
         out.evt[0] = chain.EVENT_event
         out.lumi[0] = chain.EVENT_lumiBlock
         out.run[0] = chain.EVENT_run
+        
+#        if options.type == 'signal':
+#
+#            for igen in range(len(chain.genParticle_pdgs)):
+#
+#                print '-'*80
+#                print 'gen = ', igen
+#                print '-'*80
+#
+#                for ipdg in range(len(chain.genParticle_pdgs[igen])):
+#            
+#                    print '  '*2*int(chain.genParticle_layers[igen][ipdg]), 'pdg  = ', chain.genParticle_pdgs[igen][ipdg], '(',  returnName(chain.genParticle_pdgs[igen][ipdg]) , '), (pt, eta, phi) = ', '({0:.2f}'.format(chain.genParticle_ppt[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_peta[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_pphi[igen][ipdg]), '), isfinal=',  chain.genParticle_isfinal[igen][ipdg]
+
+
+
+
+
+
 
 
 #        if options.type=='bg' and mass_kpipi > 5.25 and mass_kpipi < 5.3: 
@@ -1233,6 +1254,24 @@ for evt in xrange(Nevt):
                 out.genWeightBkgB[0] = chain.genWeightBkgB
 
             if options.type in ['signal'] and chain.JpsiTau_st_n_occurance == 1:
+
+                if isRight_3prong:
+                    if len(chain.truth_tau_dipion1_mass)==1:
+                        out.gen_dipion1_mass[0] = chain.truth_tau_dipion1_mass[0]
+                        out.gen_dipion2_mass[0] = chain.truth_tau_dipion2_mass[0]
+                        out.gen_dipion_unrolled[0] = int((min([chain.truth_tau_dipion2_mass[0], 1.3]) - 0.2)/0.11) + 11*int((min([chain.truth_tau_dipion1_mass[0], 1.3]) - 0.2)/0.11)
+                        out.gen_dipion_unrolled_coarse[0] = int((min([chain.truth_tau_dipion2_mass[0], 1.3]) - 0.2)/0.22) + 6*int((min([chain.truth_tau_dipion1_mass[0], 1.3]) - 0.2)/0.22)
+                    else:
+                        out.gen_dipion1_mass[0] = -1
+                        out.gen_dipion2_mass[0] = -1
+                        out.gen_dipion_unrolled[0] = -1 
+                        out.gen_dipion_unrolled_coarse[0] = -1
+                else:
+                        out.gen_dipion1_mass[0] = -9
+                        out.gen_dipion2_mass[0] = -9
+                        out.gen_dipion_unrolled[0] = -9 
+                        out.gen_dipion_unrolled_coarse[0] = -9
+                    
 
 #                import pdb; pdb.set_trace()
 

@@ -25,3 +25,6 @@ python draw.py --sys weight_ctau_down --min
 
 python draw.py --sys br_BcJpsiDst_up --min 
 python draw.py --sys br_BcJpsiDst_down --min 
+
+python draw.py --sys tauBr_up --min 
+python draw.py --sys tauBr_down --min 
