@@ -151,7 +151,8 @@ multihists = {}
 ##################################################
 
 
-prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_decayBc/job_pt/'
+prefix_yuta ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_decayBc/job_pt/'
+prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy_decayBc_FromYuta_20220317/job_pt/'
 #prefix_signal ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy/job_pt_Legacy_v2/'
 #prefix_cr ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_vprobfsigcr/'
 #prefix_q3 ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_q3/'
@@ -163,7 +164,7 @@ sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig.root"
 bkgstr  = "BJpsiX_ul_2018/bkg.root"
 
 
-file_hammer = TFile(prefix + '/' + sigstr.replace('sig.root', 'Myroot_0.root'))
+file_hammer = TFile(prefix_yuta + '/' + sigstr.replace('sig.root', 'Myroot_0.root'))
 hist_hammer = file_hammer.Get('hammer')
 
 
@@ -253,9 +254,24 @@ basic = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1'
 #xgbs_sr = 'xgbs > 5.35'
 #xgbs_sb = 'xgbs > 4.35 && xgbs < 5.35'
 #xgbs_lp = 'xgbs > 3.35 && xgbs < 4.35'
-xgbs_sr = 'xgbs > 4.3'
-xgbs_sb = 'xgbs > 3.3 && xgbs < 4.3'
-xgbs_lp = 'xgbs > 2.3 && xgbs < 3.3'
+#xgbs_sr = 'xgbs > 4.3'
+#xgbs_sb = 'xgbs > 3.3 && xgbs < 4.3'
+#xgbs_lp = 'xgbs > 2.3 && xgbs < 3.3'
+
+sr_up_bound= '10'  
+sr_down_bound= '4.3'
+sr_down_bound_xl = '3.8'
+sr_down_bound_xs = '4.6'
+sb_up_bound = '3.5' 
+sb_down_bound = '2.5'
+lb_up_bound = '2.5'
+lb_down_bound = '2.0'
+
+xgbs_sr = 'xgbs > '+sr_down_bound  
+xgbs_sr_xl = 'xgbs > '+sr_down_bound_xl 
+xgbs_sr_xs = 'xgbs > '+sr_down_bound_xs  
+xgbs_sb = 'xgbs > '+sb_down_bound +' && xgbs < '+sb_up_bound 
+xgbs_lp = 'xgbs > '+lb_down_bound +' && xgbs < '+lb_up_bound
 
 psi2s = ' jpsi_isrestos==1 && (jpsi_kpipi_psi2smass > 3.62 && jpsi_kpipi_psi2smass < 3.75)'
 
@@ -267,7 +283,7 @@ psi2s = ' jpsi_isrestos==1 && (jpsi_kpipi_psi2smass > 3.62 && jpsi_kpipi_psi2sma
 
 channels = {
 
-#    'inclusive':{'cut':'&&'.join([basic])},
+    'inclusive':{'cut':'&&'.join([basic])},
 
 #    'inclusive_psi2s':{'cut':'&&'.join([basic, psi2s])},
 
@@ -276,10 +292,11 @@ channels = {
 
     'sr':{'cut':'&&'.join([basic, xgbs_sr])},
 
-    'sb':{'cut':'&&'.join([basic, xgbs_sb])},
+#    'sb':{'cut':'&&'.join([basic, xgbs_sb])},
 
-    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
-
+#    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
+#    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
+#    'sr_xs':{'cut':'&&'.join([basic, xgbs_sr_xs])},  
 
 #    'cr_sr':{'cut':'&&'.join([basic, xgbs_sr])},
 #    'cr_sb':{'cut':'&&'.join([basic, xgbs_sb])},
@@ -394,11 +411,14 @@ for channel, dict in channels.iteritems():
         elif options.sys.find('br_BcJpsiDst')!=-1 and type.find('bc_jpsi_ds')!=-1:
             wstr += '*1.38' if  options.sys.find('up')!=-1 else '*0.62'
 
-        elif options.sys.find('tauBr_up')!=-1 and type.find('bc_jpsi_tau_3p')!=-1:
-            wstr += '*getTauBrWeight_up(gen_dipion_unrolled)'
+        elif options.sys.find('tauBr')!=-1 and type.find('bc_jpsi_tau_3p')!=-1:
+            wstr += '*getTauBrWeight_up(gen_dipion_unrolled)' if options.sys.find('up')!=-1 else '*getTauBrWeight_down(gen_dipion_unrolled)'
+        
+        elif options.sys.find('tauReco')!=-1 and type.find('bc')!=-1:
+            wstr += '*1.03' if options.sys.find('up')!=-1 else '*0.97'
+        elif options.sys.find('xgbsEff')!=-1 and type.find('bc')!=-1:
+            wstr += '*1.05' if options.sys.find('up')!=-1 else '*0.95'
 
-        elif options.sys.find('tauBr_down')!=-1 and type.find('bc_jpsi_tau_3p')!=-1:
-            wstr += '*getTauBrWeight_down(gen_dipion_unrolled)'
 
         cut = '(' + dict['cut'] + ' &&' + waddcut + ')*' + wstr
         print(type, cut)

@@ -28,3 +28,9 @@ python draw.py --sys br_BcJpsiDst_down --min
 
 python draw.py --sys tauBr_up --min 
 python draw.py --sys tauBr_down --min 
+
+python draw.py --sys tauReco_up --min
+python draw.py --sys tauReco_down --min
+
+python draw.py --sys xgbsEff_up --min     
+python draw.py --sys xgbsEff_down --min
