@@ -42,6 +42,7 @@ print(options)
 if not options.create:
     gROOT.Macro('common/functionmacro.C+')
 
+
 def returnTuples(prefix, vardir):
 
     var_tuples = []
@@ -158,17 +159,20 @@ prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy_decayBc_FromY
 #prefix_q3 ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_q3/'
 
 datastr = "Data_2018/data.root"
-sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig.root"
+sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig_20220324.root"
 #datastr = "Data_2018/Myroot_training_weightAdded.root"
 #sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
 bkgstr  = "BJpsiX_ul_2018/bkg.root"
 
 
-file_hammer = TFile(prefix_yuta + '/' + sigstr.replace('sig.root', 'Myroot_0.root'))
+#file_hammer = TFile(prefix_yuta + '/' + sigstr.replace('sig.root', 'Myroot_0.root'))
+file_hammer = TFile('/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_decayBc/job_pt/BcJpsiTau_inclusive_ul_all_2018/Myroot_0.root')
 hist_hammer = file_hammer.Get('hammer')
 
 
-bc_sf = 0.45/(3*0.8)
+#bc_sf =  0.0787644 ##0.45/(3*0.8)##
+
+bc_sf =  0.45/(3)
 #sig_sf = 'hammer_ebe*puweight/0.55'
 #sig_sf = 'hammer_ebe*puweight/0.55'
 
@@ -291,10 +295,13 @@ channels = {
 #    'extrapolate':{'cut':'&&'.join([basic, 'xgbs > 3.5'])},
 
     'sr':{'cut':'&&'.join([basic, xgbs_sr])},
+   
+#    'sr_bptg20':{'cut':'&&'.join([basic, xgbs_sr ,'b_pt>20' ])},
 
-#    'sb':{'cut':'&&'.join([basic, xgbs_sb])},
+    'sb':{'cut':'&&'.join([basic, xgbs_sb])},
+#    'sb_bptg20':{'cut':'&&'.join([basic, xgbs_sb ,'b_pt>20' ])},
 
-#    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
+    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
 #    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
 #    'sr_xs':{'cut':'&&'.join([basic, xgbs_sr_xs])},  
 
@@ -375,6 +382,8 @@ for channel, dict in channels.iteritems():
         if channel=='sr' and options.blind==True and type =='data_obs': 
             waddcut += '&&0'
         
+        #if channel.find('bptg20')!=-1 and type.find('bc')!=-1:
+        #    wstr += '*getBWeight(b_pt,b_eta)'
 
         if channel.find('cr')!=-1:
             filename = prefix_cr + '/' + ivar['file']
@@ -394,19 +403,19 @@ for channel, dict in channels.iteritems():
 
 
         if options.sys.find('hammer')!=-1 and type.find('bc_jpsi_tau')!=-1: 
-            wstr = ivar['weight'].replace('hammer_ebe', options.sys)
+            wstr = wstr.replace('hammer_ebe', options.sys)
         elif options.sys.find('ctau')!=-1 and type.find('bc')!=-1:
-            wstr = ivar['weight'].replace('weight_ctau', options.sys)
-            print "CTAU_SYST, wieght is " , ivar['weight']
+            wstr = wstr.replace('weight_ctau', options.sys)
+            print "CTAU_SYST, wieght is " , wstr
         elif options.sys.find('puweight')!=-1 and type.find('data')==-1:
-            wstr = ivar['weight'].replace('puweight', options.sys)
+            wstr = wstr.replace('puweight', options.sys)
 
         elif options.sys.find('muSFID')!=-1 and type.find('data')==-1:
-            wstr = ivar['weight'].replace('mu1_SFID', 'mu1_SFID_up' if options.sys.find('up')!=-1 else 'mu1_SFID_down') 
-            wstr = ivar['weight'].replace('mu2_SFID', 'mu2_SFID_up' if options.sys.find('up')!=-1 else 'mu2_SFID_down')
+            wstr = wstr.replace('mu1_SFID', 'mu1_SFID_up' if options.sys.find('up')!=-1 else 'mu1_SFID_down') 
+            wstr = wstr.replace('mu2_SFID', 'mu2_SFID_up' if options.sys.find('up')!=-1 else 'mu2_SFID_down')
         elif options.sys.find('muSFReco')!=-1 and type.find('data')==-1:     
-            wstr = ivar['weight'].replace('mu1_SFReco', 'mu1_SFReco_up' if options.sys.find('up')!=-1   else 'mu1_SFReco_down') 
-            wstr = ivar['weight'].replace('mu2_SFReco', 'mu2_SFReco_up' if options.sys.find('up')!=-1   else 'mu2_SFReco_down') 
+            wstr = wstr.replace('mu1_SFReco', 'mu1_SFReco_up' if options.sys.find('up')!=-1   else 'mu1_SFReco_down') 
+            wstr = wstr.replace('mu2_SFReco', 'mu2_SFReco_up' if options.sys.find('up')!=-1   else 'mu2_SFReco_down') 
 
         elif options.sys.find('br_BcJpsiDst')!=-1 and type.find('bc_jpsi_ds')!=-1:
             wstr += '*1.38' if  options.sys.find('up')!=-1 else '*0.62'
