@@ -9,6 +9,7 @@
 #include "TMath.h"
 #include "TFile.h"
 #include "TH1.h"
+#include "TH2.h"
 #include <iostream>
 #include "TROOT.h"
 
@@ -29,7 +30,9 @@ TH1F *weight;
 TFile *tauf;
 TH1F *taubr_up;
 TH1F *taubr_down;
-//TH1F *weight;
+TH1F *Bcweight1D_up;
+TH1F *Bcweight1D_down;
+TFile *fmap;
 
 void ReadFile(){
 
@@ -47,7 +50,6 @@ void ReadFile(){
 
   //  f->Close();
  
-
   std::cout << "... end" << std::endl;
 
 }
@@ -57,7 +59,7 @@ void ReadFileTau(){
 
   std::cout << "Read file";
 
-  tauf = new TFile("datacard/tauola/correction.root");
+  tauf = new TFile("tauola/correction.root");
 
   //  mc = (TH1F*) f->Get("inclusive/bg_ul");
   //  mc->Scale(1./mc->GetSumOfWeights());
@@ -73,6 +75,23 @@ void ReadFileTau(){
 
   std::cout << "taubrfile ... end" << std::endl;
 
+}
+
+void ReadFileBcWeight(){
+  std::cout << "Read file";
+
+  fmap = new TFile("correction_complete_BcPt.root");
+  Bcweight1D_up = (TH1F*) fmap->Get("mc_weight_up");   
+  Bcweight1D_down = (TH1F*) fmap->Get("mc_weight_down");
+}
+
+Float_t getBcWeight(float pt, float direction){
+  Float_t Bcw = 1; 
+  Float_t binweight=1; 
+  if (direction > 0.5 ) binweight = Bcweight1D_up->GetBinContent(Bcweight1D_up->FindBin(pt));  
+  if (direction < -0.5 ) binweight = Bcweight1D_down->GetBinContent(Bcweight1D_down->FindBin(pt));  
+  Bcw=binweight; 
+  return Bcw;				       
 }
 
 
@@ -142,15 +161,11 @@ Float_t deltaPhi(Float_t p1, Float_t p2){
 
 
 
-
-
-
-
-
 void functionmacro(){
   std::cout << std::endl;
   std::cout << "Initialize functionmacro.C ..." << std::endl;
   std::cout << std::endl;
   ReadFile();
   ReadFileTau();
+  ReadFileBcWeight();
 }

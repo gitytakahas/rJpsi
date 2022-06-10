@@ -30,7 +30,7 @@ for hammer in range(0, 9):
     systs_hammer.append('hammer_ebe_e' + str(hammer) + '_up')
     systs_hammer.append('hammer_ebe_e' + str(hammer) + '_down')
 
-systs_mc = ['puweight_up', 'puweight_down', 'muSFID_up', 'muSFID_down', 'muSFReco_up', 'muSFReco_down','weight_ctau_up','weight_ctau_down', 'br_BcJpsiDst_up', 'br_BcJpsiDst_down', 'tauBr_up', 'tauBr_down', 'tauReco_up', 'tauReco_down', 'xgbsEff_up', 'xgbsEff_down']
+systs_mc = ['puweight_up', 'puweight_down', 'muSFID_up', 'muSFID_down', 'muSFReco_up', 'muSFReco_down','weight_ctau_up','weight_ctau_down', 'br_BcJpsiDst_up', 'br_BcJpsiDst_down', 'tauBr_up', 'tauBr_down', 'tauReco_up', 'tauReco_down', 'xgbsEff_up', 'xgbsEff_down', 'BcPt_up' , 'BcPt_down']
 
 systs_mc_tau = [] #['tauBr_up', 'tauBr_down']
 
@@ -168,7 +168,8 @@ for vkey, ivar in vardir.items():
 print '-'*80
 
 
-ratio =  0.05407
+#ratio =  0.05407
+ratio =0.07765
 fitCat = 'sr'
 
 

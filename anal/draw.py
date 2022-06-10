@@ -170,9 +170,9 @@ file_hammer = TFile('/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_d
 hist_hammer = file_hammer.Get('hammer')
 
 
-#bc_sf =  0.0787644 ##0.45/(3*0.8)##
+bc_sf =  0.0787644 ##0.45/(3*0.8)##
 
-bc_sf =  0.45/(3)
+#bc_sf =  0.45/(3)
 #sig_sf = 'hammer_ebe*puweight/0.55'
 #sig_sf = 'hammer_ebe*puweight/0.55'
 
@@ -288,7 +288,10 @@ psi2s = ' jpsi_isrestos==1 && (jpsi_kpipi_psi2smass > 3.62 && jpsi_kpipi_psi2sma
 channels = {
 
     'inclusive':{'cut':'&&'.join([basic])},
-
+#    'inclusive_blind':{'cut':'&&'.join([basic])},
+#    'inclusive_blind_all':{'cut':'&&'.join([basic])},
+#    'inclusive_blind_all_bptg10':{'cut':'&&'.join([basic,'b_pt>10'])},
+#    'inclusive_bptg10':{'cut':'&&'.join([basic,'b_pt>10'])},
 #    'inclusive_psi2s':{'cut':'&&'.join([basic, psi2s])},
 
 
@@ -299,9 +302,35 @@ channels = {
 #    'sr_bptg20':{'cut':'&&'.join([basic, xgbs_sr ,'b_pt>20' ])},
 
     'sb':{'cut':'&&'.join([basic, xgbs_sb])},
+    'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
 #    'sb_bptg20':{'cut':'&&'.join([basic, xgbs_sb ,'b_pt>20' ])},
 
-    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
+#    'sr_highMass':{'cut':'&&'.join([basic, xgbs_sr, 'b_mass>6.5'])},
+#    'sb_highMass':{'cut':'&&'.join([basic, xgbs_sb, 'b_mass>6.5'])},
+#    'lp_highMass':{'cut':'&&'.join([basic, xgbs_lp, 'b_mass>6.5'])},      
+#    'inclusive_highMass':{'cut':'&&'.join([basic, 'b_mass>6.5'])}, 
+#    'sr_highMassV2':{'cut':'&&'.join([basic, xgbs_sr, 'b_mass>6'])},
+#    'sb_highMassV2':{'cut':'&&'.join([basic, xgbs_sb, 'b_mass>6'])},
+#    'lp_highMassV2':{'cut':'&&'.join([basic, xgbs_lp, 'b_mass>6'])},
+#    'inclusive_highMassV2':{'cut':'&&'.join([basic, 'b_mass>6'])},
+
+#    'sr_lowMassV2':{'cut':'&&'.join([basic, xgbs_sr,'b_mass>3.5','b_mass<4'])},
+#    'sb_lowMassV2':{'cut':'&&'.join([basic, xgbs_sb,'b_mass>3.5', 'b_mass<4'])},
+#    'lp_lowMassV2':{'cut':'&&'.join([basic, xgbs_lp,'b_mass>3.5', 'b_mass<4'])},
+#    'inclusive_lowMassV2':{'cut':'&&'.join([basic,'b_mass>3.5', 'b_mass<4'])},
+#    'sr_lowMass':{'cut':'&&'.join([basic, xgbs_sr, 'b_mass<4'])},
+#    'sb_lowMass':{'cut':'&&'.join([basic, xgbs_sb, 'b_mass<4'])},
+#    'lp_lowMass':{'cut':'&&'.join([basic, xgbs_lp, 'b_mass<4'])},
+#    'inclusive_lowMass':{'cut':'&&'.join([basic, 'b_mass<4'])},
+#    'sr_mediumMassV2':{'cut':'&&'.join([basic, xgbs_sr,'b_mass>4','b_mass<6'])},   
+#    'sb_mediumMassV2':{'cut':'&&'.join([basic, xgbs_sb,'b_mass>4', 'b_mass<6'])},
+#    'lp_mediumMassV2':{'cut':'&&'.join([basic, xgbs_lp,'b_mass>4', 'b_mass<6'])},
+#    'inclusive_mediumMassV2':{'cut':'&&'.join([basic,'b_mass>4', 'b_mass<6'])},       
+#    'sr_mediumMass':{'cut':'&&'.join([basic, xgbs_sr,'b_mass>4','b_mass<6.5'])},
+#    'sb_mediumMass':{'cut':'&&'.join([basic, xgbs_sb,'b_mass>4', 'b_mass<6.5'])},
+#    'lp_mediumMass':{'cut':'&&'.join([basic, xgbs_lp,'b_mass>4', 'b_mass<6.5'])},
+#    'inclusive_mediumMass':{'cut':'&&'.join([basic,'b_mass>4', 'b_mass<6.5'])},
+#    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
 #    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
 #    'sr_xs':{'cut':'&&'.join([basic, xgbs_sr_xs])},  
 
@@ -326,7 +355,7 @@ channels = {
 ##    
 #    'cr_hp_sr':{'cut':'&&'.join([basic, taumass, xgbs_sr])},
 #    'cr_hp_sb':{'cut':'&&'.join([basic, '!' + taumass, xgbs_sr])},
-##
+#
 ##    # lp xgbs sideband
 #    'cr_lp_sr':{'cut':'&&'.join([basic, taumass, xgbs_sb])},
 #    'cr_lp_sb':{'cut':'&&'.join([basic, '!' + taumass, xgbs_sb])},
@@ -339,8 +368,8 @@ channels = {
 
 
 #finaldiscriminant = ['xgbs', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
-finaldiscriminant = ['xgbs', 'xgbs_zoom', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
-
+finaldiscriminant = ['xgbs', 'xgbs_zoom', 'b_mass', 'b_mass_high', 'b_mass_low', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi', 'b_eta', 'b_pt']
+#finaldiscriminant = ['xgbs', 'xgbs_zoom']
 
 #if not options.create:
 #    vardir.pop('b_mass_sf')
@@ -381,9 +410,15 @@ for channel, dict in channels.iteritems():
 
         if channel=='sr' and options.blind==True and type =='data_obs': 
             waddcut += '&&0'
-        
+
+        if channel.find('inclusive_blind_all')!=-1 :#   and type =='data_obs':
+            waddcut += '&&xgbs<4.3'        
+
+        if channel.find('inclusive_blind')!=-1  and type =='data_obs':
+            waddcut += '&&xgbs<4.3'
         #if channel.find('bptg20')!=-1 and type.find('bc')!=-1:
-        #    wstr += '*getBWeight(b_pt,b_eta)'
+        #if  type.find('bc')!=-1:
+        #    wstr += '*getBcWeight(b_pt,b_eta)'
 
         if channel.find('cr')!=-1:
             filename = prefix_cr + '/' + ivar['file']
@@ -427,6 +462,8 @@ for channel, dict in channels.iteritems():
             wstr += '*1.03' if options.sys.find('up')!=-1 else '*0.97'
         elif options.sys.find('xgbsEff')!=-1 and type.find('bc')!=-1:
             wstr += '*1.05' if options.sys.find('up')!=-1 else '*0.95'
+        elif options.sys.find('BcPt')!=-1 and type.find('bc')!=-1:
+            wstr += '*getBcWeight(B_pt_gen,1)'if options.sys.find('up')!=-1 else '*getBcWeight(B_pt_gen,-1)'
 
 
         cut = '(' + dict['cut'] + ' &&' + waddcut + ')*' + wstr
