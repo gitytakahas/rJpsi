@@ -42,6 +42,7 @@ print(options)
 if not options.create:
     gROOT.Macro('common/functionmacro.C+')
 
+
 def returnTuples(prefix, vardir):
 
     var_tuples = []
@@ -151,23 +152,27 @@ multihists = {}
 ##################################################
 
 
-prefix ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_decayBc/job_pt/'
+prefix_yuta ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_decayBc/job_pt/'
+prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy_decayBc_FromYuta_20220317/job_pt/'
 #prefix_signal ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy/job_pt_Legacy_v2/'
 #prefix_cr ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_vprobfsigcr/'
 #prefix_q3 ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_q3/'
 
 datastr = "Data_2018/data.root"
-sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig.root"
+sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig_20220324.root"
 #datastr = "Data_2018/Myroot_training_weightAdded.root"
 #sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
 bkgstr  = "BJpsiX_ul_2018/bkg.root"
 
 
-file_hammer = TFile(prefix + '/' + sigstr.replace('sig.root', 'Myroot_0.root'))
+#file_hammer = TFile(prefix_yuta + '/' + sigstr.replace('sig.root', 'Myroot_0.root'))
+file_hammer = TFile('/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_decayBc/job_pt/BcJpsiTau_inclusive_ul_all_2018/Myroot_0.root')
 hist_hammer = file_hammer.Get('hammer')
 
 
-bc_sf = 0.45/(3*0.8)
+bc_sf =  0.0787644 ##0.45/(3*0.8)##
+
+#bc_sf =  0.45/(3)
 #sig_sf = 'hammer_ebe*puweight/0.55'
 #sig_sf = 'hammer_ebe*puweight/0.55'
 
@@ -253,9 +258,24 @@ basic = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1'
 #xgbs_sr = 'xgbs > 5.35'
 #xgbs_sb = 'xgbs > 4.35 && xgbs < 5.35'
 #xgbs_lp = 'xgbs > 3.35 && xgbs < 4.35'
-xgbs_sr = 'xgbs > 4.3'
-xgbs_sb = 'xgbs > 3.3 && xgbs < 4.3'
-xgbs_lp = 'xgbs > 2.3 && xgbs < 3.3'
+#xgbs_sr = 'xgbs > 4.3'
+#xgbs_sb = 'xgbs > 3.3 && xgbs < 4.3'
+#xgbs_lp = 'xgbs > 2.3 && xgbs < 3.3'
+
+sr_up_bound= '10'  
+sr_down_bound= '4.3'
+sr_down_bound_xl = '3.8'
+sr_down_bound_xs = '4.6'
+sb_up_bound = '3.5' 
+sb_down_bound = '2.5'
+lb_up_bound = '2.5'
+lb_down_bound = '2.0'
+
+xgbs_sr = 'xgbs > '+sr_down_bound  
+xgbs_sr_xl = 'xgbs > '+sr_down_bound_xl 
+xgbs_sr_xs = 'xgbs > '+sr_down_bound_xs  
+xgbs_sb = 'xgbs > '+sb_down_bound +' && xgbs < '+sb_up_bound 
+xgbs_lp = 'xgbs > '+lb_down_bound +' && xgbs < '+lb_up_bound
 
 psi2s = ' jpsi_isrestos==1 && (jpsi_kpipi_psi2smass > 3.62 && jpsi_kpipi_psi2smass < 3.75)'
 
@@ -267,19 +287,52 @@ psi2s = ' jpsi_isrestos==1 && (jpsi_kpipi_psi2smass > 3.62 && jpsi_kpipi_psi2sma
 
 channels = {
 
-#    'inclusive':{'cut':'&&'.join([basic])},
-
+    'inclusive':{'cut':'&&'.join([basic])},
+#    'inclusive_blind':{'cut':'&&'.join([basic])},
+#    'inclusive_blind_all':{'cut':'&&'.join([basic])},
+#    'inclusive_blind_all_bptg10':{'cut':'&&'.join([basic,'b_pt>10'])},
+#    'inclusive_bptg10':{'cut':'&&'.join([basic,'b_pt>10'])},
 #    'inclusive_psi2s':{'cut':'&&'.join([basic, psi2s])},
 
 
 #    'extrapolate':{'cut':'&&'.join([basic, 'xgbs > 3.5'])},
 
     'sr':{'cut':'&&'.join([basic, xgbs_sr])},
+   
+#    'sr_bptg20':{'cut':'&&'.join([basic, xgbs_sr ,'b_pt>20' ])},
 
     'sb':{'cut':'&&'.join([basic, xgbs_sb])},
+    'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
+#    'sb_bptg20':{'cut':'&&'.join([basic, xgbs_sb ,'b_pt>20' ])},
 
-    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
+#    'sr_highMass':{'cut':'&&'.join([basic, xgbs_sr, 'b_mass>6.5'])},
+#    'sb_highMass':{'cut':'&&'.join([basic, xgbs_sb, 'b_mass>6.5'])},
+#    'lp_highMass':{'cut':'&&'.join([basic, xgbs_lp, 'b_mass>6.5'])},      
+#    'inclusive_highMass':{'cut':'&&'.join([basic, 'b_mass>6.5'])}, 
+#    'sr_highMassV2':{'cut':'&&'.join([basic, xgbs_sr, 'b_mass>6'])},
+#    'sb_highMassV2':{'cut':'&&'.join([basic, xgbs_sb, 'b_mass>6'])},
+#    'lp_highMassV2':{'cut':'&&'.join([basic, xgbs_lp, 'b_mass>6'])},
+#    'inclusive_highMassV2':{'cut':'&&'.join([basic, 'b_mass>6'])},
 
+#    'sr_lowMassV2':{'cut':'&&'.join([basic, xgbs_sr,'b_mass>3.5','b_mass<4'])},
+#    'sb_lowMassV2':{'cut':'&&'.join([basic, xgbs_sb,'b_mass>3.5', 'b_mass<4'])},
+#    'lp_lowMassV2':{'cut':'&&'.join([basic, xgbs_lp,'b_mass>3.5', 'b_mass<4'])},
+#    'inclusive_lowMassV2':{'cut':'&&'.join([basic,'b_mass>3.5', 'b_mass<4'])},
+#    'sr_lowMass':{'cut':'&&'.join([basic, xgbs_sr, 'b_mass<4'])},
+#    'sb_lowMass':{'cut':'&&'.join([basic, xgbs_sb, 'b_mass<4'])},
+#    'lp_lowMass':{'cut':'&&'.join([basic, xgbs_lp, 'b_mass<4'])},
+#    'inclusive_lowMass':{'cut':'&&'.join([basic, 'b_mass<4'])},
+#    'sr_mediumMassV2':{'cut':'&&'.join([basic, xgbs_sr,'b_mass>4','b_mass<6'])},   
+#    'sb_mediumMassV2':{'cut':'&&'.join([basic, xgbs_sb,'b_mass>4', 'b_mass<6'])},
+#    'lp_mediumMassV2':{'cut':'&&'.join([basic, xgbs_lp,'b_mass>4', 'b_mass<6'])},
+#    'inclusive_mediumMassV2':{'cut':'&&'.join([basic,'b_mass>4', 'b_mass<6'])},       
+#    'sr_mediumMass':{'cut':'&&'.join([basic, xgbs_sr,'b_mass>4','b_mass<6.5'])},
+#    'sb_mediumMass':{'cut':'&&'.join([basic, xgbs_sb,'b_mass>4', 'b_mass<6.5'])},
+#    'lp_mediumMass':{'cut':'&&'.join([basic, xgbs_lp,'b_mass>4', 'b_mass<6.5'])},
+#    'inclusive_mediumMass':{'cut':'&&'.join([basic,'b_mass>4', 'b_mass<6.5'])},
+#    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
+#    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
+#    'sr_xs':{'cut':'&&'.join([basic, xgbs_sr_xs])},  
 
 #    'cr_sr':{'cut':'&&'.join([basic, xgbs_sr])},
 #    'cr_sb':{'cut':'&&'.join([basic, xgbs_sb])},
@@ -302,7 +355,7 @@ channels = {
 ##    
 #    'cr_hp_sr':{'cut':'&&'.join([basic, taumass, xgbs_sr])},
 #    'cr_hp_sb':{'cut':'&&'.join([basic, '!' + taumass, xgbs_sr])},
-##
+#
 ##    # lp xgbs sideband
 #    'cr_lp_sr':{'cut':'&&'.join([basic, taumass, xgbs_sb])},
 #    'cr_lp_sb':{'cut':'&&'.join([basic, '!' + taumass, xgbs_sb])},
@@ -315,8 +368,8 @@ channels = {
 
 
 #finaldiscriminant = ['xgbs', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
-finaldiscriminant = ['xgbs', 'xgbs_zoom', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
-
+finaldiscriminant = ['xgbs', 'xgbs_zoom', 'b_mass', 'b_mass_high', 'b_mass_low', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi', 'b_eta', 'b_pt']
+#finaldiscriminant = ['xgbs', 'xgbs_zoom']
 
 #if not options.create:
 #    vardir.pop('b_mass_sf')
@@ -357,7 +410,15 @@ for channel, dict in channels.iteritems():
 
         if channel=='sr' and options.blind==True and type =='data_obs': 
             waddcut += '&&0'
-        
+
+        if channel.find('inclusive_blind_all')!=-1 :#   and type =='data_obs':
+            waddcut += '&&xgbs<4.3'        
+
+        if channel.find('inclusive_blind')!=-1  and type =='data_obs':
+            waddcut += '&&xgbs<4.3'
+        #if channel.find('bptg20')!=-1 and type.find('bc')!=-1:
+        #if  type.find('bc')!=-1:
+        #    wstr += '*getBcWeight(b_pt,b_eta)'
 
         if channel.find('cr')!=-1:
             filename = prefix_cr + '/' + ivar['file']
@@ -377,28 +438,33 @@ for channel, dict in channels.iteritems():
 
 
         if options.sys.find('hammer')!=-1 and type.find('bc_jpsi_tau')!=-1: 
-            wstr = ivar['weight'].replace('hammer_ebe', options.sys)
+            wstr = wstr.replace('hammer_ebe', options.sys)
         elif options.sys.find('ctau')!=-1 and type.find('bc')!=-1:
-            wstr = ivar['weight'].replace('weight_ctau', options.sys)
-            print "CTAU_SYST, wieght is " , ivar['weight']
+            wstr = wstr.replace('weight_ctau', options.sys)
+            print "CTAU_SYST, wieght is " , wstr
         elif options.sys.find('puweight')!=-1 and type.find('data')==-1:
-            wstr = ivar['weight'].replace('puweight', options.sys)
+            wstr = wstr.replace('puweight', options.sys)
 
         elif options.sys.find('muSFID')!=-1 and type.find('data')==-1:
-            wstr = ivar['weight'].replace('mu1_SFID', 'mu1_SFID_up' if options.sys.find('up')!=-1 else 'mu1_SFID_down') 
-            wstr = ivar['weight'].replace('mu2_SFID', 'mu2_SFID_up' if options.sys.find('up')!=-1 else 'mu2_SFID_down')
+            wstr = wstr.replace('mu1_SFID', 'mu1_SFID_up' if options.sys.find('up')!=-1 else 'mu1_SFID_down') 
+            wstr = wstr.replace('mu2_SFID', 'mu2_SFID_up' if options.sys.find('up')!=-1 else 'mu2_SFID_down')
         elif options.sys.find('muSFReco')!=-1 and type.find('data')==-1:     
-            wstr = ivar['weight'].replace('mu1_SFReco', 'mu1_SFReco_up' if options.sys.find('up')!=-1   else 'mu1_SFReco_down') 
-            wstr = ivar['weight'].replace('mu2_SFReco', 'mu2_SFReco_up' if options.sys.find('up')!=-1   else 'mu2_SFReco_down') 
+            wstr = wstr.replace('mu1_SFReco', 'mu1_SFReco_up' if options.sys.find('up')!=-1   else 'mu1_SFReco_down') 
+            wstr = wstr.replace('mu2_SFReco', 'mu2_SFReco_up' if options.sys.find('up')!=-1   else 'mu2_SFReco_down') 
 
         elif options.sys.find('br_BcJpsiDst')!=-1 and type.find('bc_jpsi_ds')!=-1:
             wstr += '*1.38' if  options.sys.find('up')!=-1 else '*0.62'
 
-        elif options.sys.find('tauBr_up')!=-1 and type.find('bc_jpsi_tau_3p')!=-1:
-            wstr += '*getTauBrWeight_up(gen_dipion_unrolled)'
+        elif options.sys.find('tauBr')!=-1 and type.find('bc_jpsi_tau_3p')!=-1:
+            wstr += '*getTauBrWeight_up(gen_dipion_unrolled)' if options.sys.find('up')!=-1 else '*getTauBrWeight_down(gen_dipion_unrolled)'
+        
+        elif options.sys.find('tauReco')!=-1 and type.find('bc')!=-1:
+            wstr += '*1.03' if options.sys.find('up')!=-1 else '*0.97'
+        elif options.sys.find('xgbsEff')!=-1 and type.find('bc')!=-1:
+            wstr += '*1.05' if options.sys.find('up')!=-1 else '*0.95'
+        elif options.sys.find('BcPt')!=-1 and type.find('bc')!=-1:
+            wstr += '*getBcWeight(B_pt_gen,1)'if options.sys.find('up')!=-1 else '*getBcWeight(B_pt_gen,-1)'
 
-        elif options.sys.find('tauBr_down')!=-1 and type.find('bc_jpsi_tau_3p')!=-1:
-            wstr += '*getTauBrWeight_down(gen_dipion_unrolled)'
 
         cut = '(' + dict['cut'] + ' &&' + waddcut + ')*' + wstr
         print(type, cut)
