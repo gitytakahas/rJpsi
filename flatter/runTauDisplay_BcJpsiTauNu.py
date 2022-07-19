@@ -295,12 +295,8 @@ if options.type!='data':
     chain.SetBranchStatus('JpsiTau_st_decayid',1)
     chain.SetBranchStatus('JpsiTau_isJpsi*', 1)
 
-if options.type=='signal':
-    chain.SetBranchStatus('truth_tau_dipion1_mass', 1)
-    chain.SetBranchStatus('truth_tau_dipion2_mass', 1)
-#    putool = PileupWeightTool(options.year, 'central')
-#    putool_up = PileupWeightTool(options.year, 'up')
-#    putool_down = PileupWeightTool(options.year, 'down')
+    SF_ID = ScaleFactorMuonTool('central', fileName='Efficiency_muon_trackerMuon_Run2018_UL_ID.json', keyName='NUM_LooseID_DEN_TrackerMuons');
+    SF_Reco = ScaleFactorMuonTool('central', fileName='Efficiency_muon_generalTracks_Run2018_UL_trackerMuon.json', keyName='NUM_TrackerMuons_DEN_genTracks');
 
 
 if options.type in ['signal','bg']:
@@ -356,9 +352,16 @@ if options.type in ['signal','bg']:
 
     print(puhist, puhist_up, puhist_down, 'is made ...')
 
+
     SF_ID = ScaleFactorMuonTool('central', fileName='Efficiency_muon_trackerMuon_Run2018_UL_ID.json', keyName='NUM_LooseID_DEN_TrackerMuons');
     SF_Reco = ScaleFactorMuonTool('central', fileName='Efficiency_muon_generalTracks_Run2018_UL_trackerMuon.json', keyName='NUM_TrackerMuons_DEN_genTracks');
   
+
+if options.type=='signal':
+    chain.SetBranchStatus('truth_tau_dipion1_mass', 1)
+    chain.SetBranchStatus('truth_tau_dipion2_mass', 1)
+     
+
 if options.type=='bg':
     chain.SetBranchStatus('genWeightBkgB',1)
 
