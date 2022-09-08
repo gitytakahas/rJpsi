@@ -71,12 +71,12 @@ if options.signal:
 
 #import pdb; pdb.set_trace()
 
-print jlist
+print(jlist)
 #print len(onlyfiles), 'files detected'
 
 #jlist=list(chunks(onlyfiles, options.chunk))
 
-print len(jlist), 'jobs created'
+print(len(jlist), 'jobs created')
 
 #sys.exit(1)
 

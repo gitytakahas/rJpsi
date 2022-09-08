@@ -195,6 +195,7 @@ vardir["tau_dr_jpsi"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':2*math.pi,
 #vardir["xgbs_fine"] = {'tree':'tree',  'nbin':30, 'xmin':6, 'xmax':12, 'xtitle':'XGB output score fine', 'var':'xgbs', 'isRight':True}
 vardir["xgbs"] = {'tree':'tree',  'nbin':100, 'xmin':-15, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
 vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':60, 'xmin':3.1, 'xmax':9.1, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
+vardir["xgbs_sigscan"] = {'tree':'tree',  'nbin':600, 'xmin':3.1, 'xmax':7., 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
 #vardir["xgbs_log"] = {'tree':'tree',  'nbin':30, 'xmin':-15, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isLog':True}
 #vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':9., 'xmax':11, 'xtitle':'zoom XGB output score', 'var':'xgbs', 'isLog':True}
 #vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':7., 'xmax':12, 'xtitle':'zoom XGB output score', 'var':'xgbs', 'isLog':True}

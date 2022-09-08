@@ -60,6 +60,9 @@
 ./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TVectorFfwd.h
 ./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TVectorDfwd.h
 ./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TFitResultPtr.h
+./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TH2.h
+./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TMatrixFBasefwd.h
+./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TMatrixDBasefwd.h
 ./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TROOT.h
 ./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/RooWorkspace.h
 ./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/RooPrintable.h
@@ -108,8 +111,6 @@
 ./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TMatrixF.h
 ./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TMatrixT.h
 ./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TMatrixTBase.h
-./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TMatrixFBasefwd.h
-./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TMatrixDBasefwd.h
 ./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TMatrixTUtils.h
 ./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TMatrixFfwd.h
 ./common/functionmacro_C.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc700/lcg/root/6.12.07-gnimlf5/include/TMatrixFUtils.h

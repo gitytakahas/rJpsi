@@ -57,7 +57,7 @@ void ReadFile(){
 
 void ReadFileTau(){
 
-  std::cout << "Read file";
+  std::cout << "Read tau BR file";
 
   tauf = new TFile("tauola/correction.root");
 
@@ -73,16 +73,19 @@ void ReadFileTau(){
   //  f->Close();
  
 
-  std::cout << "taubrfile ... end" << std::endl;
+  std::cout << ".... end" << std::endl;
 
 }
 
 void ReadFileBcWeight(){
-  std::cout << "Read file";
+
+  std::cout << "Read Bc weight file";
 
   fmap = new TFile("correction_complete_BcPt.root");
   Bcweight1D_up = (TH1F*) fmap->Get("mc_weight_up");   
   Bcweight1D_down = (TH1F*) fmap->Get("mc_weight_down");
+
+  std::cout << ".... end" << std::endl;
 }
 
 Float_t getBcWeight(float pt, float direction){
@@ -165,7 +168,7 @@ void functionmacro(){
   std::cout << std::endl;
   std::cout << "Initialize functionmacro.C ..." << std::endl;
   std::cout << std::endl;
-  ReadFile();
+  //  ReadFile();
   ReadFileTau();
   ReadFileBcWeight();
 }

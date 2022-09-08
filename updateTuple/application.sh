@@ -1,18 +1,16 @@
 today=`date "+%Y%m%d%H%M"`
 
 name="pt"
-#name="pt_vprobfsigcr"
-#name="pt_LEGACY_v2"
-#name="nomass_pt"
-#name="multiple"
+year="2017"
+
 
 # input files
-prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi_Legacy_decayBc/job_${name}"
+prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/job_${name}_${year}"
 
-sig_inclusive_ul_all_2018="${prefix}/BcJpsiTau_inclusive_ul_all_2018"
-bkg_ul_2018="${prefix}/BJpsiX_ul_2018"
-#bkg_ul_2018_new="${prefix}/BJpsiX_ul_2018_new"
-data_ul_2018="${prefix}/Data_2018"
+sig_inclusive="${prefix}/BcJpsiTau_inclusive"
+bkg="${prefix}/BJpsiX"
+#bkg_ul_${year}_new="${prefix}/BJpsiX_ul_${year}_new"
+data="${prefix}/Data"
 
 ##############################################
 #
@@ -21,18 +19,19 @@ data_ul_2018="${prefix}/Data_2018"
 #
 ##############################################
 
-model_name="pt_val"
+model_name="${name}_2018_val"
 
-#python application.py --file ${bkg_ul_2018}/Myroot.root --prefix bkg_xgbs --model ${model_name} --outdir ${bkg_ul_2018}
+python application.py --file ${bkg}/Myroot.root --prefix bkg_xgbs --model ${model_name} --outdir ${bkg}
 
-#python application.py --file ${sig_inclusive_ul_all_2018}/Myroot_analysis.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive_ul_all_2018}
-#python application.py --file ${data_ul_2018}/Myroot_analysis.root --prefix data_xgbs --model ${model_name} --outdir ${data_ul_2018}
+if [ $year = "2018" ]
+then
+    python application.py --file ${sig_inclusive}/Myroot_analysis.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive}
+else
+    python application.py --file ${sig_inclusive}/Myroot.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive}
+fi
 
-#python application.py --file ${bkg_ul_2018_new}/Myroot.root --prefix data_xgbs --model ${model_name} --outdir ${bkg_ul_2018_new}
 
-#python getDataset_data.py --path ${data_ul_2018} --odir ${data_ul_2018} --jdir data_application_${today} --name data_xgbs_2018 --chunk 5 --model $model_name
-
-
+python getDataset_data.py --path ${data} --odir ${data} --jdir data_application_${today}_${year} --name data_xgbs_${year} --chunk 1 --model $model_name
 
 
 ##############################################
@@ -42,24 +41,7 @@ model_name="pt_val"
 ##############################################
 
 
-#for prio in ${name}
-#do
-#    echo ${prio}
-#hadd -f ${data_ul_2018}/data.root ${data_ul_2018}/Myroot_*xgbs*.root
-#hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018}/Myroot_*xgbs*.root
-
-#hadd -f ${sig_inclusive_ul_all_2018}/sig.root  ${sig_inclusive_ul_all_2018}/Myroot_*xgbs*.root 
-#hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018}/Myroot_*xgbs*.root
-
-
-hadd -f ${sig_inclusive_ul_all_2018}/sig.root  ${sig_inclusive_ul_all_2018}/Myroot_*xgbs*.root 
-hadd -f ${bkg_ul_2018}/bkg.root ${bkg_ul_2018}/Myroot_*xgbs*.root
-hadd -f ${data_ul_2018}/data.root ${data_ul_2018}/Myroot_*xgbs*.root
-
-
-
-
-
-#python getDataset_data.py --path ${sig_inclusive_ul_all_2018} --odir ${sig_inclusive_ul_all_2018} --jdir signal_hammer_application_${today} --name sig_xgbs6_hammer --chunk 5 --model $model_name --signal
-
+#hadd -f ${data}/data.root ${data}/Myroot_*xgbs*.root
+#hadd -f ${bkg}/bkg.root ${bkg}/Myroot_*xgbs*.root
+#hadd -f ${sig_inclusive}/sig.root  ${sig_inclusive}/Myroot_*xgbs*.root 
 
