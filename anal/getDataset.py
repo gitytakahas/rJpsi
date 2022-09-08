@@ -55,7 +55,8 @@ print others
 
 ########################
 
-for year in ['2018']:
+#for year in ['2018']:
+for year in ['2016', '2017']:
     for ijob, sys in enumerate(syss):
 
         jobscript = jobdir + '/job_' + year + '_' + sys + '.sh'

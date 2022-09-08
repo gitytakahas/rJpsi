@@ -159,11 +159,11 @@ multihists = {}
 
 prefix = init.get('common', 'filedir') + '/job_pt_' + options.year + '/'
 
-datastr = init.get('common', 'data_prefix') + '_' + options.year + '/data.root'
-sigstr  = init.get('common', 'sig_prefix') + '_' + options.year + '/sig.root'
-bkgstr  = init.get('common', 'bkg_prefix') + '_' + options.year + '/bkg.root'
+datastr = init.get('common', 'data_prefix') + '/data.root'
+sigstr  = init.get('common', 'sig_prefix') + '/sig.root'
+bkgstr  = init.get('common', 'bkg_prefix') + '/bkg.root'
 
-file_hammer = TFile(prefix + '/BcJpsiTau_inclusive_ul_all_' + options.year + '/Myroot_0.root')
+file_hammer = TFile(prefix + '/BcJpsiTau_inclusive/Myroot_0.root')
 hist_hammer = file_hammer.Get('hammer')
 
 
@@ -346,7 +346,7 @@ channels = {
 
 
 #finaldiscriminant = ['xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
-finaldiscriminant = ['xgbs', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple']
+finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple']
 
 
 if options.min:
