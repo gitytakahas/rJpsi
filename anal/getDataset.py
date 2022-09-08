@@ -19,7 +19,7 @@ print d_today
 
 
 
-jobdir = cdir + '/job'
+jobdir = cdir + '/job_' + d_today
 outdir = '/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/results/'
 ensureDir(outdir)
 
@@ -50,8 +50,7 @@ for other in others:
     for ud in ['up', 'down']:
         syss.append(other + '_' + ud)
 
-
-print others
+#print others
 
 ########################
 
@@ -66,7 +65,7 @@ for year in ['2016', '2017']:
         with open(jobscript) as f:
             data_lines = f.read()
         
-        data_lines = data_lines.replace('SYSTEMATIC',sys).replace('OUTDIRECTORY', outdir)
+        data_lines = data_lines.replace('SYSTEMATIC',sys).replace('OUTDIRECTORY', outdir).replace('YEARTOBEFILLED', year)
         
         with open(jobscript, mode="w") as f:
             f.write(data_lines)
