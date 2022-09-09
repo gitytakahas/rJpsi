@@ -154,12 +154,14 @@ multihists = {}
 
 prefix_yuta ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_decayBc/job_pt/'
 prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy_decayBc_FromYuta_20220317/job_pt/'
+#prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy_vprob_fls3d_invertedOR_v3/job_pt/'
 #prefix_signal ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy/job_pt_Legacy_v2/'
 #prefix_cr ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_vprobfsigcr/'
 #prefix_q3 ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_q3/'
 
 datastr = "Data_2018/data.root"
 sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig_20220324.root"
+#sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig.root"    
 #datastr = "Data_2018/Myroot_training_weightAdded.root"
 #sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
 bkgstr  = "BJpsiX_ul_2018/bkg.root"
@@ -264,7 +266,7 @@ basic = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1'
 
 sr_up_bound= '10'  
 sr_down_bound= '4.3'
-sr_down_bound_xl = '3.8'
+sr_down_bound_xl = '3.7'
 sr_down_bound_xs = '4.6'
 sb_up_bound = '3.5' 
 sb_down_bound = '2.5'
@@ -331,7 +333,7 @@ channels = {
 #    'lp_mediumMass':{'cut':'&&'.join([basic, xgbs_lp,'b_mass>4', 'b_mass<6.5'])},
 #    'inclusive_mediumMass':{'cut':'&&'.join([basic,'b_mass>4', 'b_mass<6.5'])},
 #    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
-#    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
+    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
 #    'sr_xs':{'cut':'&&'.join([basic, xgbs_sr_xs])},  
 
 #    'cr_sr':{'cut':'&&'.join([basic, xgbs_sr])},

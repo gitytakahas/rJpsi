@@ -30,10 +30,12 @@ for hammer in range(0, 9):
     systs_hammer.append('hammer_ebe_e' + str(hammer) + '_up')
     systs_hammer.append('hammer_ebe_e' + str(hammer) + '_down')
 
-systs_mc = ['puweight_up', 'puweight_down', 'muSFID_up', 'muSFID_down', 'muSFReco_up', 'muSFReco_down','weight_ctau_up','weight_ctau_down', 'br_BcJpsiDst_up', 'br_BcJpsiDst_down', 'tauBr_up', 'tauBr_down', 'tauReco_up', 'tauReco_down', 'xgbsEff_up', 'xgbsEff_down', 'BcPt_up' , 'BcPt_down']
+systs_mc = ['puweight_up', 'puweight_down', 'muSFID_up', 'muSFID_down', 'muSFReco_up', 'muSFReco_down','weight_ctau_up','weight_ctau_down', 'br_BcJpsiDst_up', 'br_BcJpsiDst_down', 'tauBr_up', 'tauBr_down', 
+            'tauReco_up', 'tauReco_down', 'xgbsEff_up', 'xgbsEff_down', 'BcPt_up' , 'BcPt_down']
 
 systs_mc_tau = [] #['tauBr_up', 'tauBr_down']
 
+systs_bkg = ["bkgExtra_up","bkgExtra_down", "bkgExtraFunc_up","bkgExtraFunc_down"]
 datacardpath = 'datacard/'
 
 def applyHists(hists):
@@ -204,14 +206,16 @@ for vkey, ivar in vardir.items():
 #    ratio12 = draw(vkey, ['hp_sb'], 'data_obs', True, ratio2)
 
 #    hists4ratio = draw(vkey, ['sr', 'sb'], 'bg_ul')
-    
+
+    print("lp-sb comparison")    
     draw(vkey, ['lp',  'sb'], 'data_obs', None, True, True)
-
+    print("sb-sr comparison")
     draw(vkey, ['sb',  'sr'], 'data_obs', None, True, True)
-
-
+    print("sb-sr_xl comparison")
+    draw(vkey, ['sb',  'sr_xl'], 'data_obs', None, True, True)
+    print("sb-sr comparison hist preparation bkg ")
     hists4ddbkg_bgmc = draw(vkey, ['sb', 'sr'], 'bg_ul', None, False, True)
-
+    print("lp-sb comparison hist preparation data")
     hists4ddbkg_vr = draw(vkey, ['lp', 'sb'], 'data_obs', None, True, True)
     
 
@@ -329,6 +333,33 @@ for vkey, ivar in vardir.items():
             sig_3p_sys = getHist(vkey, fitCat, 'bc_jpsi_tau_3p', sys)
             setNameTitle(sig_3p_sys, 'bc_jpsi_tau_3p_' + name_sys)
             hists2write.append(sig_3p_sys)
+
+        for sys in systs_bkg:
+
+            name_sys = sys.replace('_up','Up').replace('_down', 'Down')
+            hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', None, True, False)
+            bkgHist_sys = hists_sys[1]
+            bkgHist_sys.Scale(ratio)
+            p0 = 0.871 if bkgHist_sys.GetNbinsX()< 40 else  0.850166  
+            p1 = 0.009 if bkgHist_sys.GetNbinsX()< 40 else  0.0018
+            for bin in range(0, bkgHist_sys.GetNbinsX()):
+                if name_sys.find("Func")!=-1:
+                    if name_sys.find("Up")!=-1:
+                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) * ( (p0+ p1*bin)))
+                    else:
+                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) * ( ( 2 - p0 - p1*bin)))
+                else: 
+                
+                    file_ratio =  TFile("syst_bkg/"+vkey+"_ratio.root", 'open')
+                    ratio_hist=file_ratio.Get("data_obs_sr_xl")
+                    if name_sys.find("Up")!=-1:   
+                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(ratio_hist.GetBinContent(bin)))
+                    else:
+                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(2-ratio_hist.GetBinContent(bin)))
+                    file_ratio.Close()
+            setNameTitle(bkgHist_sys, 'dd_bkg_' + name_sys)
+            hists2write.append(bkgHist_sys)
+            
 
 
             

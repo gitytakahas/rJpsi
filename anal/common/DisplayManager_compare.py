@@ -1,3 +1,4 @@
+
 import ROOT
 import copy
 import math
@@ -171,7 +172,13 @@ class DisplayManager_compare(object):
             if self.isLog:
                 h.GetYaxis().SetRangeUser(0.00001, ymax * 100)
 #                h.GetYaxis().SetRangeUser(0.1, ymax * 100)
-            
+            if i>0: 
+                ks = h.KolmogorovTest(self.histos[0], "p")
+                #ad=0
+#               ad = h.AndersonDarlingTest(self.histos[0], options) 
+                #cs=h.Chi2Test(self.histos[0],"WW")
+                print("Goodness of fit test result : ks ", ks )#, ", cs ", cs )#, ", ad  ", ad )#,", advalue", advalue )
+
 
 #            self.Legend.AddEntry(h, title + ': ' + '{0:.1f}'.format(h.Integral()), 'lep')
 
@@ -188,7 +195,8 @@ class DisplayManager_compare(object):
 
 #            print h.GetName(), title, _doption
 #            self.Legend.AddEntry(h, title + ' (' + str(int(h.GetEntries())) + ')', 'lep')
-            self.Legend.AddEntry(h, title + ' (' + str(int(h.GetEntries())) + ', ' +  '{0:.1f}'.format(h.GetSumOfWeights()) + ')', 'lep')
+            self.Legend.AddEntry(h, (title + ' (' + str(int(h.GetEntries())) + ', ' +  '{0:.1f}'.format(h.GetSumOfWeights()) + ')') +', ks {:.2f}'.format(ks) if i>0 and (self.name.endswith("tau_rhomass_unrolled") or self.name.endswith("tau_rhomass_unrolled_coarse") )  else '' , 'lep')  
+             #self.Legend.AddEntry(h, (title + ' (' + str(int(h.GetEntries())) + ', ' +  '{0:.1f}'.format(h.GetSumOfWeights()) + ')') +', ks {:.2f}, cs {:.2f}'.format(ks,cs) if i>0 else '' , 'lep')
 #            self.Legend.AddEntry(h, title + ' (' + str(int(h.GetSumOfWeights())) + ')', 'lep')
 
             if i == 0:
@@ -215,6 +223,8 @@ class DisplayManager_compare(object):
             self.canvas.cd(2)
 
             for ihist in range(1, len(self.histos)):
+                #ks=self.histos[ihist].KolmogorovTest(self.histos[0])
+                #print("Kolmogorov Smirnov test result : ks ", ks )
                 histPull = copy.deepcopy(self.histos[ihist])
                 pull_histos.append(histPull)
                 histPull.Divide(self.histos[0])
@@ -258,14 +268,23 @@ class DisplayManager_compare(object):
                 else:
                     histPull.Draw("same ep")
 
+                
+                if ihist== 1 and ( self.name.find("tau_rhomass_unrolled")!=-1 and self.name.find("plots/compare")!=-1) :
+                    namefile = self.name
+                    namefile=namefile.replace('.pdf', '_ratio.root')
+                    print (" CAMILLA creating root file ", namefile) 
+                    outHistFile = ROOT.TFile.Open(namefile , "RECREATE") 
+                    outHistFile.cd ()
+                    histPull.Write()
+                    outHistFile.Close ()
                 line = ROOT.TLine(histPull.GetXaxis().GetXmin(), 1., histPull.GetXaxis().GetXmax(), 1.)
                 line.SetLineStyle(2)
                 line.Draw()
 
-                self.draw_ratioLegend.AddEntry(histPull, titles[ihist])
+                self.draw_ratioLegend.AddEntry(histPull, titles[ihist])#+", ks {:.2f}".format(ks) )
 
 
-#            self.draw_ratioLegend.Draw()
+            #self.draw_ratioLegend.Draw()
 
             # This is a little bit ugly though ...
 
@@ -282,6 +301,6 @@ class DisplayManager_compare(object):
         l1.Draw("same")
         l2=add_Preliminary()
         l2.Draw("same")
-
+        print ("Printing canvas ",self.name) 
         self.canvas.Print(self.name)
         self.canvas.Print(self.name.replace('.pdf', '.gif'))
