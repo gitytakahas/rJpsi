@@ -1,7 +1,7 @@
 
 python draw.py --min
 
-python draw.py --min --blind True # to veto data in SR
+#python draw.py --min --blind True # to veto data in SR
 
 for h in $(seq 0 9)
 do
