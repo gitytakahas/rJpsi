@@ -3,14 +3,16 @@ today=`date "+%Y%m%d%H%M"`
 #name="nomass_pt"
 #name="pt_Legacy"
 name="pt"
+year="2018"
 #name="multiple"
 
 # location of the input files
-prefix="/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_decayBc/job_${name}"
+prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/job_${name}_${year}"
 
 
-sig_inclusive_ul_all_2018="${prefix}/BcJpsiTau_inclusive_ul_all_2018/Myroot_training.root" 
-bkg_ul_2018_new="${prefix}/BJpsiX_ul_2018_new/Myroot_weightAdded.root"
+sig_inclusive_all="${prefix}/BcJpsiTau_inclusive_ul_all_${year}/Myroot_training.root" 
+#sig_inclusive_ul_all_2018="${prefix}/BcJpsiTau_inclusive_ul_all_2018/Myroot.root" 
+bkg_new="${prefix}/BJpsiX_ul_inclusive_${year}/Myroot_weightAdded.root"
 #data_ul_2018="${prefix}/Data_2018/Myroot_training_weightAdded.root"
 
 ##############################################
@@ -21,9 +23,15 @@ bkg_ul_2018_new="${prefix}/BJpsiX_ul_2018_new/Myroot_weightAdded.root"
 
 source $PWD/setup.sh 
 
-ls -lart ${sig_inclusive_ul_all_2018}
-ls -lart ${bkg_ul_2018_new}
-#ls -lart ${data_ul_2018}
+ls -lart ${sig_inclusive_all}
+ls -lart ${bkg_new}
+
+python TrainModel_XGB.py -s ${sig_inclusive_all} -b ${bkg_new} --dir ${name}_${year}_val -o
+
 
 #python TrainModel_XGB.py -s ${sig_inclusive_ul_all_2018} -b ${bkg_ul_2018} --dir ${name}
-python TrainModel_XGB.py -s ${sig_inclusive_ul_all_2018} -b ${bkg_ul_2018_new} --dir ${name}_val -o
+#python TrainModel_XGB.py -s ${sig_inclusive_ul_all_2018} -b ${bkg_ul_2018_new} --dir ${name}_orig_novalid_morestat -o
+#python TrainModel_XGB.py -s ${sig_inclusive_ul_all_2018} -b ${bkg_ul_2018_new} --dir ${name}_test
+#python TrainModel_XGB.py -s ${sig_inclusive_ul_all_2018} -b ${bkg_ul_2018_new} --dir ${name}_test_sumofdnn2
+#python TrainModel_XGB.py -s ${sig_inclusive_ul_all_2018} -b ${bkg_ul_2018_new} --dir ${name}_test_removed_ncand_iso
+

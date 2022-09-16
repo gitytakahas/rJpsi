@@ -80,7 +80,8 @@ def rocCurve(hS, hB, title, option=None):
 rocs = []
 
 
-for version in ['v1', 'v2']:
+#for version in ['pt_orig_novalid', 'pt_orig_novalid_morestat']:
+for version in ['pt_test_sumofdnn2', 'pt_test']:
 
     graph = TGraph()
     graph.SetName(version)
@@ -88,7 +89,7 @@ for version in ['v1', 'v2']:
 
     idx = 0
 
-    for line in open('model_multiple_' + version + '/training_results_roc_csv_None.csv', 'r').readlines():
+    for line in open('model_' + version + '/training_results_roc_csv_None.csv', 'r').readlines():
         
         line = line.rstrip()
         

@@ -10,38 +10,43 @@ from common.DisplayManager_postfit import DisplayManager
 from common.DisplayManager_compare import DisplayManager_compare
 from common.helper import *
 from common.H2TauStyle import *
-
-
-lumi=59.6
+import ConfigParser
+from optparse import OptionParser, OptionValueError
 
 #gROOT.SetBatch(False)
 gROOT.SetBatch(True)
 officialStyle(gStyle)
 gStyle.SetOptTitle(0)
-#gStyle.SetOptStat(0)
-
 
 gROOT.ProcessLine(".L ~/tool//MultiDraw.cc+");
+gROOT.Macro('common/functionmacro.C+')
 
-
-
-
-from optparse import OptionParser, OptionValueError
 usage = "usage: python compare.py" 
 parser = OptionParser(usage) 
 
 parser.add_option("-s", "--sys", default="None", type="string", dest="sys")
 parser.add_option('-m', '--min', action="store_true", default=False, dest='min')
-parser.add_option('-c', '--create', action="store_true", default=False, dest='create')
 parser.add_option('-b', '--blind', action="store_true", default=False, dest='blind')
+parser.add_option("-y", "--year", default="2018", type="string", dest="year")
+parser.add_option("-o", "--outdir", default=".", type="string", dest="outdir")
+#parser.add_option('-c', '--create', action="store_true", default=False, dest='create')
 
 (options, args) = parser.parse_args() 
 
-print(options)
+#print(options)
 
-if not options.create:
-    gROOT.Macro('common/functionmacro.C+')
+print '-'*80
+print 'sys=', options.sys
+print 'min=', options.min
+print 'blind=', options.blind
+print 'year=', options.year
+print '-'*80
 
+
+init = ConfigParser.SafeConfigParser()
+init.read("./settings.ini")
+lumi = init.get('common', 'lumi_' + options.year)
+#filedir = init.get('common', 'filedir')
 
 def returnTuples(prefix, vardir):
 
@@ -85,7 +90,7 @@ def comparisonPlots_alt(hists, titles, norm=False, isLog=False, pname='sync.pdf'
     
     display.Draw(hists, titles, norm, prefix)
 
-def drawSignificance(hists, channel, vkey, isRight=True):
+def drawSignificance(hists, channel, vkey, pathname, isRight=True):
     
     data_obs = None
     
@@ -142,7 +147,7 @@ def drawSignificance(hists, channel, vkey, isRight=True):
     
     plot.Draw('apl')
     
-    canvas.SaveAs('plots' + dir_postfix + '/' + channel + '/sig_' + vkey  + '.gif')
+    canvas.SaveAs(pathname + '/sig_' + vkey  + '.gif')
     
         
 
@@ -151,34 +156,31 @@ multihists = {}
 
 ##################################################
 
+#Just for past reference:
 
-prefix_yuta ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_decayBc/job_pt/'
-prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy_decayBc_FromYuta_20220317/job_pt/'
-#prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy_vprob_fls3d_invertedOR_v3/job_pt/'
-#prefix_signal ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy/job_pt_Legacy_v2/'
-#prefix_cr ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_vprobfsigcr/'
-#prefix_q3 ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_q3/'
+#prefix_yuta ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_decayBc/job_pt/'
+#prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy_decayBc_FromYuta_20220317/job_pt/'
+##prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy_vprob_fls3d_invertedOR_v3/job_pt/'
 
-datastr = "Data_2018/data.root"
-sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig_20220324.root"
-#sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig.root"    
-#datastr = "Data_2018/Myroot_training_weightAdded.root"
-#sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
-bkgstr  = "BJpsiX_ul_2018/bkg.root"
+#datastr = "Data_2018/data.root"
+#sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig_20220324.root"
+##sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig.root"    
+##datastr = "Data_2018/Myroot_training_weightAdded.root"
+##sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
+#bkgstr  = "BJpsiX_ul_2018/bkg.root"
+#=======
+prefix = init.get('common', 'filedir') + '/job_pt_' + options.year + '/'
+
+datastr = init.get('common', 'data_prefix') + '/data.root'
+sigstr  = init.get('common', 'sig_prefix') + '/sig.root'
+bkgstr  = init.get('common', 'bkg_prefix') + '/bkg.root'
 
 
-#file_hammer = TFile(prefix_yuta + '/' + sigstr.replace('sig.root', 'Myroot_0.root'))
-file_hammer = TFile('/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_decayBc/job_pt/BcJpsiTau_inclusive_ul_all_2018/Myroot_0.root')
+file_hammer = TFile(prefix + '/BcJpsiTau_inclusive/Myroot_0.root')
 hist_hammer = file_hammer.Get('hammer')
 
 
-bc_sf =  0.0787644 ##0.45/(3*0.8)##
-
-#bc_sf =  0.45/(3)
-#sig_sf = 'hammer_ebe*puweight/0.55'
-#sig_sf = 'hammer_ebe*puweight/0.55'
-
-#sig_sf = 'weight'
+bc_sf =  init.get('common', 'bc_sf')
 
 ddir = {}
 
@@ -209,8 +211,20 @@ print('hammer weight = ', hammer_weight, 'id=', binid)
 mu_ID_weight =  "*mu1_SFID*mu2_SFID"
 mu_Reco_weight =  "*mu1_SFReco*mu2_SFReco"
 mu_weight =mu_ID_weight+mu_Reco_weight
-# data  
+
+
 ddir['data_obs'] =  {'file':datastr, 'weight':'1', 'scale':1, 'order':2999, 'color':1, 'addcut':'1'}
+
+ddir['bc_jpsi_tau_3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight +'*weight_ctau', 'scale':bc_sf, 'order':1, 'color':taucol_1, 'addcut':'n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6 && weight_ctau < 100.'}
+
+ddir['bc_jpsi_tau_N3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':1, 'color':lob_1, 'addcut':'gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0 && weight_ctau < 100.'}
+
+ddir['bc_jpsi_dst'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'(gen_sig_decay==10||gen_sig_decay==20)  && weight_ctau < 100.'}
+
+ddir['bc_others'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'(!((n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6) || (gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0) ||gen_sig_decay==10 ||gen_sig_decay==20 ))  && weight_ctau < 100.'}
+
+ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
+
 
 # signal + Bc : All possible channel decays
 #ddir['sig_lep'] = {'file':sigstr, 'weight':'puweight*(hammer_ebe/0.55)', 'scale':bc_sf, 'order':3, 'color':ttcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0 && isJpsiTau2Mu==1'}
@@ -218,10 +232,8 @@ ddir['data_obs'] =  {'file':datastr, 'weight':'1', 'scale':1, 'order':2999, 'col
 #ddir['sig_others'] = {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':3, 'color':wcol, 'addcut':'n_occurance==1 && tau_isRight_3prong==0'}
 #ddir['bg_bc'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':qcdcol, 'addcut':'n_occurance==0 && isJpsiMu==0'}
 #ddir['bg_norm'] =      {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jtfake, 'addcut':'n_occurance==0 && isJpsiMu==1'}
-
-ddir['bc_jpsi_tau_3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight +'*weight_ctau', 'scale':bc_sf, 'order':1, 'color':taucol_1, 'addcut':'n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6 && weight_ctau < 100.'}
 #ddir['bc_jpsi_tau_mu'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':1, 'color':taucol_1, 'addcut':'tau_isRight_3prong==0 && gen_sig_decay==6 && isJpsiTau2Mu==1'} # merged in Bc others
-ddir['bc_jpsi_tau_N3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':1, 'color':lob_1, 'addcut':'gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0 && weight_ctau < 100.'}
+
 #ddir['bc_jpsi_mu'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight, 'scale':bc_sf, 'order':1, 'color':pink_1, 'addcut':'gen_sig_decay==0'} # merged in Bc others  
 
 #ddir['bc_charmonium_mu'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':bc_mu_1, 'addcut':'gen_sig_decay>1&&gen_sig_decay<6'} #in SR 0
@@ -241,72 +253,42 @@ ddir['bc_jpsi_tau_N3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weig
 #ddir['bc_jpsi_3pi'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jpsi_2, 'addcut':'gen_sig_decay==9'}
 #ddir['bc_jpsi_ds'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'* weight_ctau', 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'gen_sig_decay==10'}
 #ddir['bc_jpsi_dsp'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'* weight_ctau', 'scale':bc_sf, 'order':4, 'color':jpsi_4, 'addcut':'gen_sig_decay==20'}
-ddir['bc_jpsi_dst'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'(gen_sig_decay==10||gen_sig_decay==20)  && weight_ctau < 100.'}
 #ddir['bc_jpsi_5pi'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':jpsi_4, 'addcut':'gen_sig_decay==11'}
 #ddir['bc_jpsi_pions'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':lob_1, 'addcut':'(gen_sig_decay==8||gen_sig_decay==9||gen_sig_decay==11)'}
 #ddir['bc_others'] = {'file':sigstr, 'weight':'puweight', 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'gen_sig_decay==16'}
-ddir['bc_others'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'(!((n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6) || (gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0) ||gen_sig_decay==10 ||gen_sig_decay==20 ))  && weight_ctau < 100.'}
 #((gen_sig_decay==8||gen_sig_decay==9||gen_sig_decay==11)||(gen_sig_decay>1&&gen_sig_decay<6)||gen_sig_decay==7|| gen_sig_decay==16 ||( tau_isRight_3prong==0 && gen_sig_decay==6 && isJpsiTau2Mu==1)||gen_sig_decay==0)'}
 
 # other B backgrounds 
-ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
 
 
 ##################################################
 
 
-basic = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1'
-#phiveto = "!(tau_rhomass1_kk < 1.04) && !(tau_rhomass2_kk < 1.04)"
-#xgbs_sr = 'xgbs > 5.35'
-#xgbs_sb = 'xgbs > 4.35 && xgbs < 5.35'
-#xgbs_lp = 'xgbs > 3.35 && xgbs < 4.35'
-#xgbs_sr = 'xgbs > 4.3'
-#xgbs_sb = 'xgbs > 3.3 && xgbs < 4.3'
-#xgbs_lp = 'xgbs > 2.3 && xgbs < 3.3'
+basic = init.get('common', 'basic')
 
-sr_up_bound= '10'  
-sr_down_bound= '4.3'
-sr_down_bound_xl = '3.7'
-sr_down_bound_xs = '4.6'
-sb_up_bound = '3.5' 
-sb_down_bound = '2.5'
-lb_up_bound = '2.5'
-lb_down_bound = '2.0'
+xgbs_sr = 'xgbs > ' + init.get('common', 'sr_low')
+xgbs_sr_xl = 'xgbs > ' + init.get('common', 'sr_low_xl')
+xgbs_sb = 'xgbs > ' + init.get('common', 'sb_low') + ' && xgbs < ' + init.get('common', 'sb_high')
+xgbs_lp = 'xgbs > ' + init.get('common', 'lp_low') + ' && xgbs < ' + init.get('common', 'lp_high')
 
-xgbs_sr = 'xgbs > '+sr_down_bound  
-xgbs_sr_xl = 'xgbs > '+sr_down_bound_xl 
-xgbs_sr_xs = 'xgbs > '+sr_down_bound_xs  
-xgbs_sb = 'xgbs > '+sb_down_bound +' && xgbs < '+sb_up_bound 
-xgbs_lp = 'xgbs > '+lb_down_bound +' && xgbs < '+lb_up_bound
 
-psi2s = ' jpsi_isrestos==1 && (jpsi_kpipi_psi2smass > 3.62 && jpsi_kpipi_psi2smass < 3.75)'
-
-#rhomass = '((tau_rhomass1 > 0.65 && tau_rhomass1 < 0.89) || (tau_rhomass2 > 0.65 && tau_rhomass2 < 0.89)) '
-#rhomass = '((tau_rhomass1 > 0.69 && tau_rhomass1 < 0.85) || (tau_rhomass2 > 0.69 && tau_rhomass2 < 0.85)) '
-
-#taumass = '(tau_mass > 1. && tau_mass < 1.3)'
-#taumass = '(tau_mass > 0.93 && tau_mass < 1.4)'
 
 channels = {
 
     'inclusive':{'cut':'&&'.join([basic])},
+    'sr':{'cut':'&&'.join([basic, xgbs_sr])},
+    'sb':{'cut':'&&'.join([basic, xgbs_sb])},
+    'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
+
+
 #    'inclusive_blind':{'cut':'&&'.join([basic])},
 #    'inclusive_blind_all':{'cut':'&&'.join([basic])},
 #    'inclusive_blind_all_bptg10':{'cut':'&&'.join([basic,'b_pt>10'])},
 #    'inclusive_bptg10':{'cut':'&&'.join([basic,'b_pt>10'])},
 #    'inclusive_psi2s':{'cut':'&&'.join([basic, psi2s])},
-
-
 #    'extrapolate':{'cut':'&&'.join([basic, 'xgbs > 3.5'])},
-
-    'sr':{'cut':'&&'.join([basic, xgbs_sr])},
-   
 #    'sr_bptg20':{'cut':'&&'.join([basic, xgbs_sr ,'b_pt>20' ])},
-
-    'sb':{'cut':'&&'.join([basic, xgbs_sb])},
-    'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
 #    'sb_bptg20':{'cut':'&&'.join([basic, xgbs_sb ,'b_pt>20' ])},
-
 #    'sr_highMass':{'cut':'&&'.join([basic, xgbs_sr, 'b_mass>6.5'])},
 #    'sb_highMass':{'cut':'&&'.join([basic, xgbs_sb, 'b_mass>6.5'])},
 #    'lp_highMass':{'cut':'&&'.join([basic, xgbs_lp, 'b_mass>6.5'])},      
@@ -315,7 +297,6 @@ channels = {
 #    'sb_highMassV2':{'cut':'&&'.join([basic, xgbs_sb, 'b_mass>6'])},
 #    'lp_highMassV2':{'cut':'&&'.join([basic, xgbs_lp, 'b_mass>6'])},
 #    'inclusive_highMassV2':{'cut':'&&'.join([basic, 'b_mass>6'])},
-
 #    'sr_lowMassV2':{'cut':'&&'.join([basic, xgbs_sr,'b_mass>3.5','b_mass<4'])},
 #    'sb_lowMassV2':{'cut':'&&'.join([basic, xgbs_sb,'b_mass>3.5', 'b_mass<4'])},
 #    'lp_lowMassV2':{'cut':'&&'.join([basic, xgbs_lp,'b_mass>3.5', 'b_mass<4'])},
@@ -335,33 +316,25 @@ channels = {
 #    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
     'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
 #    'sr_xs':{'cut':'&&'.join([basic, xgbs_sr_xs])},  
-
 #    'cr_sr':{'cut':'&&'.join([basic, xgbs_sr])},
 #    'cr_sb':{'cut':'&&'.join([basic, xgbs_sb])},
 #    'cr_lp':{'cut':'&&'.join([basic, xgbs_lp])},
-
 #    'q3_sr':{'cut':'&&'.join([basic, xgbs_sr])},
 #    'q3_sb':{'cut':'&&'.join([basic, xgbs_sb])},
 #    'q3_lp':{'cut':'&&'.join([basic, 'xgbs > 3.'])},
-
 #    'hp_sr':{'cut':'&&'.join([basic, taumass, xgbs_sr])},
 #    'hp_sb':{'cut':'&&'.join([basic, '!' + taumass, xgbs_sr])},
-#
 #    # lp xgbs sideband
 #    'lp_sr':{'cut':'&&'.join([basic, taumass, xgbs_sb])},
 #    'lp_sb':{'cut':'&&'.join([basic, '!' + taumass, xgbs_sb])},
-##
 ##    # mp xgbs sideband
 #    'slp_sr':{'cut':'&&'.join([basic, taumass, xgbs_lp])},
 #    'slp_sb':{'cut':'&&'.join([basic, '!' + taumass, xgbs_lp])},
-##    
 #    'cr_hp_sr':{'cut':'&&'.join([basic, taumass, xgbs_sr])},
 #    'cr_hp_sb':{'cut':'&&'.join([basic, '!' + taumass, xgbs_sr])},
-#
 ##    # lp xgbs sideband
 #    'cr_lp_sr':{'cut':'&&'.join([basic, taumass, xgbs_sb])},
 #    'cr_lp_sb':{'cut':'&&'.join([basic, '!' + taumass, xgbs_sb])},
-##
 ##    # mp xgbs sideband
 #    'cr_slp_sr':{'cut':'&&'.join([basic, taumass, xgbs_lp])},
 #    'cr_slp_sb':{'cut':'&&'.join([basic, '!' + taumass, xgbs_lp])},
@@ -369,12 +342,9 @@ channels = {
 }
 
 
-#finaldiscriminant = ['xgbs', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
-finaldiscriminant = ['xgbs', 'xgbs_zoom', 'b_mass', 'b_mass_high', 'b_mass_low', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi', 'b_eta', 'b_pt']
-#finaldiscriminant = ['xgbs', 'xgbs_zoom']
+#finaldiscriminant = ['xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
+finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass' ]
 
-#if not options.create:
-#    vardir.pop('b_mass_sf')
 
 if options.min:
     for vkey, ivar in vardir.items():
@@ -397,30 +367,18 @@ for channel, dict in channels.iteritems():
     print 'cut = ', dict['cut']
     print '-'*80
 
-    dir_postfix=''
-    ensureDir('plots'+dir_postfix+'/' + channel)     
-    shutil.copyfile('index.php','plots'+dir_postfix+'/index.php') 
-    shutil.copyfile('index.php','plots'+dir_postfix+'/' + channel +'/index.php')   
-    ensureDir('datacard'+dir_postfix+'/' + channel)
+
+    dirname = options.outdir + '/' + options.year + '_' + channel + '_' + options.sys
+    ensureDir(dirname + '/plots/')   
+    shutil.copyfile('index.php', dirname + '/index.php')
+    shutil.copyfile('index.php', dirname + '/plots/index.php') 
+    ensureDir(dirname + '/datacard/')
 
     for type, ivar in ddir.items():
 
         wstr = ivar['weight']
         waddcut = ivar['addcut']
-        filename = None
-    
-
-        if channel=='sr' and options.blind==True and type =='data_obs': 
-            waddcut += '&&0'
-
-        if channel.find('inclusive_blind_all')!=-1 :#   and type =='data_obs':
-            waddcut += '&&xgbs<4.3'        
-
-        if channel.find('inclusive_blind')!=-1  and type =='data_obs':
-            waddcut += '&&xgbs<4.3'
-        #if channel.find('bptg20')!=-1 and type.find('bc')!=-1:
-        #if  type.find('bc')!=-1:
-        #    wstr += '*getBcWeight(b_pt,b_eta)'
+        filename = None    
 
         if channel.find('cr')!=-1:
             filename = prefix_cr + '/' + ivar['file']
@@ -434,22 +392,29 @@ for channel, dict in channels.iteritems():
 
         var_tuples, hists = returnTuples(type, vardir)    
 
-        if not options.create and type.find('bg_ul')!=-1:
-        #       #if type.find('bg_ul')!=-1:
-            wstr += '*getWeight(b_mass)'
+        if channel=='sr' and options.blind==True and type =='data_obs': 
+            waddcut += '&&0'
 
+#        if channel.find('inclusive_blind_all')!=-1 :#   and type =='data_obs':
+#            waddcut += '&&xgbs<4.3'        
+#
+#        if channel.find('inclusive_blind')!=-1  and type =='data_obs':
+#            waddcut += '&&xgbs<4.3'
 
         if options.sys.find('hammer')!=-1 and type.find('bc_jpsi_tau')!=-1: 
             wstr = wstr.replace('hammer_ebe', options.sys)
+
         elif options.sys.find('ctau')!=-1 and type.find('bc')!=-1:
             wstr = wstr.replace('weight_ctau', options.sys)
             print "CTAU_SYST, wieght is " , wstr
+
         elif options.sys.find('puweight')!=-1 and type.find('data')==-1:
             wstr = wstr.replace('puweight', options.sys)
 
         elif options.sys.find('muSFID')!=-1 and type.find('data')==-1:
             wstr = wstr.replace('mu1_SFID', 'mu1_SFID_up' if options.sys.find('up')!=-1 else 'mu1_SFID_down') 
             wstr = wstr.replace('mu2_SFID', 'mu2_SFID_up' if options.sys.find('up')!=-1 else 'mu2_SFID_down')
+
         elif options.sys.find('muSFReco')!=-1 and type.find('data')==-1:     
             wstr = wstr.replace('mu1_SFReco', 'mu1_SFReco_up' if options.sys.find('up')!=-1   else 'mu1_SFReco_down') 
             wstr = wstr.replace('mu2_SFReco', 'mu2_SFReco_up' if options.sys.find('up')!=-1   else 'mu2_SFReco_down') 
@@ -462,24 +427,21 @@ for channel, dict in channels.iteritems():
         
         elif options.sys.find('tauReco')!=-1 and type.find('bc')!=-1:
             wstr += '*1.03' if options.sys.find('up')!=-1 else '*0.97'
+
         elif options.sys.find('xgbsEff')!=-1 and type.find('bc')!=-1:
             wstr += '*1.05' if options.sys.find('up')!=-1 else '*0.95'
+
         elif options.sys.find('BcPt')!=-1 and type.find('bc')!=-1:
             wstr += '*getBcWeight(B_pt_gen,1)'if options.sys.find('up')!=-1 else '*getBcWeight(B_pt_gen,-1)'
 
 
         cut = '(' + dict['cut'] + ' &&' + waddcut + ')*' + wstr
-        print(type, cut)
-
-
-        
+        print(type, cut)        
 
         tree.MultiDraw(var_tuples, cut)
     
         multihists.update(copy.deepcopy(hists))
 
-
-#    print('write to datacards ...')
 
 
 
@@ -500,7 +462,6 @@ for channel, dict in channels.iteritems():
             multihists[type + '_' + vkey].Scale(Double(ivar2['scale']))
 
             ################################
-            ### This will be used later ... 
             hist = copy.deepcopy(multihists[type + '_' + vkey])
             hist.SetMarkerColor(ivar2['color'])
             hist.SetLineColor(ivar2['color'])
@@ -508,8 +469,6 @@ for channel, dict in channels.iteritems():
             hists.append(hist)
             titles.append(type)
             ################################
-
-
 
             hist2add = multihists[type + '_' + vkey]
 
@@ -531,34 +490,20 @@ for channel, dict in channels.iteritems():
 
         Histo._ApplyPrefs()
         print(Histo)
-        
-        commonname = vkey
+       
+        comparisonPlots(Histo, dirname + '/plots/' + vkey + '.gif')
 
-        if options.sys!="None":
-            commonname = vkey + '_' + options.sys
-
-
-        comparisonPlots(Histo, 'plots' + dir_postfix + '/' + channel + '/' + commonname  + '.gif')
-
-#        if channel.find('q3')==-1:
-
-        comparisonPlots(Histo, 'plots' + dir_postfix + '/' + channel + '/' + commonname  + '_log.gif', True)
-        
-#        Histo.Group('signal_ref', ['sig_3p', 'sig_others', 'sig_3pp'])
+        comparisonPlots(Histo, dirname + '/plots/' + vkey + '_log.gif', True)
             
-        ensureDir('datacard' + dir_postfix + '/' + channel)
 
         if vkey in finaldiscriminant:
 
-            print(options.sys)
+            Histo.WriteDataCard(dirname + '/datacard/' + vkey + '.root', True, 'RECREATE', channel)
 
-#            if options.sys=="None":
-            Histo.WriteDataCard('datacard' + dir_postfix + '/' + channel + '/' + commonname + '.root', True, 'RECREATE', channel)
-
-        if options.sys=='None' and vkey=='xgbs':
-            drawSignificance(hists, channel, vkey, True)
+        if options.sys=='None' and vkey.find('xgbs')!=-1:
+            drawSignificance(hists, channel, vkey, dirname + '/plots/', True)
         
-        comparisonPlots_alt(hists, titles, True, False, 'plots' + dir_postfix + '/' + channel + '/' + commonname + '_compare.pdf', False, True, 'pE')
+        comparisonPlots_alt(hists, titles, True, False, dirname + '/plots/' + vkey + '_compare.pdf', False, True, 'pE')
 
 
     

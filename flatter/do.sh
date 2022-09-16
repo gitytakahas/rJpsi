@@ -5,7 +5,7 @@
 # 
 # Location where output files will be stored
 #
-pnfs="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi_Legacy_decayBc/"
+pnfs="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/"
 #pnfs="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/"
 
 
@@ -24,69 +24,67 @@ analysis="BcJpsiTauNu"
 # uberftp -ls gsiftp://storage01.lcg.cscs.ch//pnfs/lcg.cscs.ch/cms/trivcat/store/user/ytakahas/
 # 
 #sigmc="BcToJPsiMuMu_Legacy_2018_20210520"
-sigmc="BcToJPsiMuMu_Legacy_2018_20220208"   #"BcToJPsiMuMu_Legacy_2018_20220122"
-bgmc="HbToJPsiMuMu_Legacy_2018_20220208"
-bgmc2="JPsiMuMu_Legacy_2018_20220221"
-dataset="Charmonium_legacy_2018_20210331"
+
 
 
 
 priority="pt"
 nchunk_sig=10
-nchunk_bg=2
+nchunk_bg=1
 nchunk_data=4
 
 
-# uncomment here in case of "multpile" options
-#nchunk_sig=5
-#nchunk_bg=3
-#nchunk_data=3
 #priority="multiple"
+#nchunk_sig=5
+#nchunk_bg=1
+#nchunk_data=2
 
 
 
 
 
-outdir="job_${priority}"
+
 #outdir="job_${priority}_vprobfsigcr"
 
 #########################################
 # for signal MC
 #########################################
-for year in 2018
+for year in 2016 2017
+#for year in 2018
 do
 
-    pustr=$year
+    outdir="job_${priority}_${year}"
 
-    if [ $year = "2017" ]; then
-	pustr="UL$year"
+
+    sigmc="BcToJPsiMuMu_Freeze_${year}_20220823"   #"BcToJPsiMuMu_Legacy_2018_20220122"
+    bgmc="HbToJPsiMuMu_Freeze_${year}_20220823"
+    bgmc2="JPsiMuMu_Freeze_${year}_20220823"
+    dataset="Charmonium_Freeze_GJSON_${year}_20220825"
+
+    echo "-------------------------------------"
+    echo $year
+    echo "-------------------------------------"
+    echo $sigmc
+    echo $bgmc
+    echo $bgmc2
+    echo $dataset
+    echo "-------------------------------------"
+
+    echo "signal"
+    python getDataset.py --file ${sigmc} --chunk ${nchunk_sig} --analysis ${analysis} --type signal --name BcJpsiTau_inclusive --select UL --year $year --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+
+
+    echo "bkg."
+    python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX --year ${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+
+    if [ $year = "2018" ]; then
+	python getDataset.py --file ${bgmc2} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX_inclusive --year ${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
     fi
 
-    echo "signal", $year
-
-    python getDataset.py --file ${sigmc} --chunk ${nchunk_sig} --analysis ${analysis} --type signal --name BcJpsiTau_inclusive_ul_all_${year} --select UL --year $pustr --priority ${priority} --odir ${pnfs} --jdir ${outdir}
-
-
-done
-
-
-#########################################
-# for J/psi + X BG
-#########################################
-
-python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX_ul_2018 --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
-python getDataset.py --file ${bgmc2} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX_ul_2018_new --year 2018 --priority ${priority} --odir ${pnfs} --jdir ${outdir}
-
-#########################################
-# Data (2016)
-#########################################
-
-for year in 2018
-do
     echo "data", $year
-    python getDataset.py --file ${dataset} --chunk ${nchunk_data} --analysis ${analysis} --type data --name Data_${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
-done
+    python getDataset.py --file ${dataset} --chunk ${nchunk_data} --analysis ${analysis} --type data --name Data --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 
+done
 
 
 

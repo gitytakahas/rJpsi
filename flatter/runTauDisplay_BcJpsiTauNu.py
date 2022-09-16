@@ -302,13 +302,60 @@ if options.type=='signal':
 #    putool_up = PileupWeightTool(options.year, 'up')
 #    putool_down = PileupWeightTool(options.year, 'down')
 
-    pufile = TFile('/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/RJPsi_mc_pu_2021Dec08_111.root')
 
-    puhist = pufile.Get('hweights')
-    puhist_up = pufile.Get('hweights_up')
-    puhist_down = pufile.Get('hweights_down')
+if options.type in ['signal','bg']:
+#    pufile = TFile('/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/RJPsi_mc_pu_2021Dec08_111.root')
+    
+    pufile_data = TFile('nanoAOD-tools/python/postprocessing/data/pileup/PileupHistogram-UL' + options.year + '-100bins_withVar.root')
+    pufile_mc = TFile('nanoAOD-tools/python/postprocessing/data/pileup/mcPileupUL' + options.year + '.root')
 
-    print(pufile, puhist, puhist_up, puhist_down, 'is read ...')
+    puhist_data = pufile_data.Get('pileup')
+    puhist_data_plus = pufile_data.Get('pileup_plus')
+    puhist_data_minus = pufile_data.Get('pileup_minus')
+
+    puhist_mc = pufile_mc.Get('pu_mc')
+
+
+    if(puhist_data.GetNcells() != puhist_mc.GetNcells()):
+        print("ERR: Numerator and Denominator have different number of bins !!!!")
+
+    for _hist in [puhist_data, puhist_data_plus, puhist_data_minus, puhist_mc]:
+        _hist.Scale(1./_hist.Integral())
+
+    puhist = copy.deepcopy(puhist_mc)
+    puhist_up = copy.deepcopy(puhist_mc)
+    puhist_down = copy.deepcopy(puhist_mc)    
+
+    #does the ratio of the histos
+    for i in range(puhist_data.GetNcells()):
+
+        val_mc = puhist_mc.GetBinContent(i)
+        val_data = puhist_data.GetBinContent(i)
+        val_data_plus = puhist_data_plus.GetBinContent(i)
+        val_data_minus = puhist_data_minus.GetBinContent(i)
+
+        weight = 1
+        weight_up = 1
+        weight_down = 1
+
+        if val_mc!=0:
+            weight = val_data/val_mc
+            weight_up = val_data_plus/val_mc
+            weight_down = val_data_minus/val_mc
+
+
+        print i, weight, weight_up, weight_down
+        puhist.SetBinContent(i, weight)
+        puhist_up.SetBinContent(i, weight_up)
+        puhist_down.SetBinContent(i, weight_down)
+
+
+#    puhist = pufile.Get('hweights')
+#    puhist_up = pufile.Get('hweights_up')
+#    puhist_down = pufile.Get('hweights_down')
+
+    print(puhist, puhist_up, puhist_down, 'is made ...')
+
     SF_ID = ScaleFactorMuonTool('central', fileName='Efficiency_muon_trackerMuon_Run2018_UL_ID.json', keyName='NUM_LooseID_DEN_TrackerMuons');
     SF_Reco = ScaleFactorMuonTool('central', fileName='Efficiency_muon_generalTracks_Run2018_UL_trackerMuon.json', keyName='NUM_TrackerMuons_DEN_genTracks');
   
@@ -467,7 +514,7 @@ for evt in xrange(Nevt):
 
 
 
-
+    tindex_multiple = 0
 
     for tindex in range(len(chain.JpsiTau_tau_pt)):
 
@@ -501,7 +548,16 @@ for evt in xrange(Nevt):
 
         if options.priority=='multiple':
 
-            if tindex > 5: break
+#            if chain.JpsiTau_tau_vprob[itau] < 0.1: continue
+#            if chain.JpsiTau_tau_fls3d[itau] < 3.: continue
+#            if chain.JpsiTau_tau_mass[itau] > 1.7: continue
+            if bool(chain.JpsiTau_tau_pi1_trigMatch[tindex])==False and bool(chain.JpsiTau_tau_pi2_trigMatch[tindex])==False and bool(chain.JpsiTau_tau_pi3_trigMatch[tindex])==False: 
+#                print 'trigger matching was not satisifed ...'
+                continue
+
+            tindex_multiple+=1
+
+            if tindex_multiple >= 6: break
             # > 10 ---> 0.97316682 efficiency of catching the siganl
             # > 5 ---> 0.95029727 efficiency of catching the siganl
 

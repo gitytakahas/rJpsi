@@ -149,7 +149,7 @@ class DisplayManager_compare(object):
         ymax = max(h.GetMaximum() for h in self.histos)
         ymin = min(h.GetMinimum() for h in self.histos)
 
-        print 'ymax=', ymax, 'ymin=', ymin
+#        print 'ymax=', ymax, 'ymin=', ymin
 
 
         self.Legend.Clear()
@@ -195,7 +195,10 @@ class DisplayManager_compare(object):
 
 #            print h.GetName(), title, _doption
 #            self.Legend.AddEntry(h, title + ' (' + str(int(h.GetEntries())) + ')', 'lep')
-            self.Legend.AddEntry(h, (title + ' (' + str(int(h.GetEntries())) + ', ' +  '{0:.1f}'.format(h.GetSumOfWeights()) + ')') +', ks {:.2f}'.format(ks) if i>0 and (self.name.endswith("tau_rhomass_unrolled") or self.name.endswith("tau_rhomass_unrolled_coarse") )  else '' , 'lep')  
+            if self.name.endswith("tau_rhomass_unrolled") or self.name.endswith("tau_rhomass_unrolled_coarse") : 
+                self.Legend.AddEntry(h, (title + ' (' + str(int(h.GetEntries())) + ', ' +  '{0:.1f}'.format(h.GetSumOfWeights()) + ')')+ ', ks {:.2f}'.format(ks) if i>0 else '', 'lep') 
+            else:   
+                self.Legend.AddEntry(h, title + ' (' + str(int(h.GetEntries())) + ', ' +  '{0:.1f}'.format(h.GetSumOfWeights()) + ')', 'lep')
              #self.Legend.AddEntry(h, (title + ' (' + str(int(h.GetEntries())) + ', ' +  '{0:.1f}'.format(h.GetSumOfWeights()) + ')') +', ks {:.2f}, cs {:.2f}'.format(ks,cs) if i>0 else '' , 'lep')
 #            self.Legend.AddEntry(h, title + ' (' + str(int(h.GetSumOfWeights())) + ')', 'lep')
 

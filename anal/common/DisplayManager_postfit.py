@@ -209,7 +209,7 @@ class DisplayManager(object):
 #                print ibin, 'data = ', self.data.obj.GetBinContent(ibin), '+/-', self.data.obj.GetBinError(ibin), 'MC = ', self.total.weighted.GetBinContent(ibin) , err
                                   
 
-            print 'total = ', PullT.GetN(), histPull.GetXaxis().GetNbins()
+#            print 'total = ', PullT.GetN(), histPull.GetXaxis().GetNbins()
 
             for ibin in range(0, PullT.GetN()):
                 N = PullT.GetY()[ibin];
