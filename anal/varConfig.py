@@ -40,7 +40,11 @@ vardir["tau_rhomass2"] = {'tree':'tree',  'nbin':25, 'xmin':0.2, 'xmax':1.4, 'xt
 #vardir["tau_rhomass_unrolled"] = {'tree':'tree',  'nbin':625, 'xmin':0, 'xmax':625, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'(min(tau_rhomass2, 1.4) - 0.2)/0.048 + 25*(min(tau_rhomass1, 1.4) - 0.2)/0.048'}
 vardir["tau_rhomass_unrolled"] = {'tree':'tree',  'nbin':121, 'xmin':0, 'xmax':121, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.3) - 0.2)/0.11) + 11*int((min(tau_rhomass1, 1.3) - 0.2)/0.11)'}
 
-vardir["tau_rhomass_unrolled_coarse"] = {'tree':'tree',  'nbin':36, 'xmin':0, 'xmax':36, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.3) - 0.2)/0.22) + 6*int((min(tau_rhomass1, 1.3) - 0.2)/0.22)'}
+vardir["tau_rhomass_unrolled_semicoarse"] = {'tree':'tree',  'nbin':36, 'xmin':0, 'xmax':36, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.3) - 0.2)/0.22) + 6*int((min(tau_rhomass1, 1.3) - 0.2)/0.22)'}
+
+vardir["tau_rhomass_unrolled_coarse"] = {'tree':'tree',  'nbin':25, 'xmin':0, 'xmax':25, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.1) - 0.2)/0.225) + 5*int((min(tau_rhomass1, 1.1) - 0.2)/0.225)'}
+vardir["tau_rhomass_unrolled_coarse_16"] = {'tree':'tree',  'nbin':16, 'xmin':0, 'xmax':16, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.1) - 0.2)/0.225) + 4*int((min(tau_rhomass1, 1.1) - 0.2)/0.225)'}  
+
 
 vardir["tau_rhomass_ss"] = {'tree':'tree',  'nbin':30, 'xmin':0.2, 'xmax':1.5, 'xtitle':'Tau rhomass ss (GeV)'}
 vardir["tau_rhomass_random"] = {'tree':'tree',  'nbin':30, 'xmin':0.2, 'xmax':1.5, 'xtitle':'Tau rhomass random (GeV)', 'var':'tau_rhomass'}

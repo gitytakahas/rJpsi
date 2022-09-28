@@ -169,7 +169,7 @@ multihists = {}
 ##sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
 #bkgstr  = "BJpsiX_ul_2018/bkg.root"
 #=======
-prefix = init.get('common', 'filedir') + '/job_pt_' + options.year + '/'
+prefix = init.get('common', 'filedir') + '/job_inv_pt_' + options.year + '/'
 
 datastr = init.get('common', 'data_prefix') + '/data.root'
 sigstr  = init.get('common', 'sig_prefix') + '/sig.root'
@@ -343,8 +343,8 @@ channels = {
 
 
 #finaldiscriminant = ['xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
-finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass' ]
-
+#finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'tau_rhomass_unrolled_coarse_16', 'q2_simple', 'xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass' ]
+finaldiscriminant = ['tau_rhomass_unrolled_coarse_16']
 
 if options.min:
     for vkey, ivar in vardir.items():

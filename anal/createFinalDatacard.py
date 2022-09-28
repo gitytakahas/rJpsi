@@ -50,10 +50,10 @@ for syst in systs_name_bkg:
     for ud in ['up', 'down']:
         systs_bkg.append(syst + '_' + ud)
 
-datacardpath = 'plots_dir/'
+datacardpath = 'plots_inv_dir/'
 
 
-finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
+finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse','tau_rhomass_unrolled_coarse_16']
 
 for vkey, ivar in vardir.items():
     if vkey not in finaldiscriminant: 
@@ -68,9 +68,10 @@ print '-'*80
 
 
 
-ratio = 0.092
+#ratio = 0.092
+ratio = 0.03742
 fitCat = 'sr'
-output='combine_sb3p5_sr4/' + options.year 
+output='combine_inv_sb3p5_sr4/' + options.year 
 
 
 init = ConfigParser.SafeConfigParser()
@@ -134,7 +135,7 @@ def setNameTitle(hist, name):
     hist.SetTitle(name)
     hist.SetName(name)
 
-def draw(vkey, channels, target, sys='None', subtract=False, saveFig=False, sf = 0.265):
+def draw(vkey, channels, target, sys='None', subtract=False, saveFig=False,  opt = 'None' , sf = 0.265,):
 
     hists = []
     titles = []
@@ -142,7 +143,7 @@ def draw(vkey, channels, target, sys='None', subtract=False, saveFig=False, sf =
     for ii, channel in enumerate(channels):
 
         _hist = getHist(vkey, channel, target, sys)
-        print( " draw _hist vkey ", vkey, " channel " ,channel, " target " ,target, " sys ", sys , "Nbins ", _hist.GetNbinsX()) 
+        #print( " draw _hist vkey ", vkey, " channel " ,channel, " target " ,target, " sys ", sys , "Nbins ", _hist.GetNbinsX()) 
         if subtract:
 
             for proc in ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p','bc_jpsi_dst','bc_others']: 
@@ -173,8 +174,7 @@ def draw(vkey, channels, target, sys='None', subtract=False, saveFig=False, sf =
     shutil.copyfile('index.php',_dirname+'/index.php')
 
     if saveFig:
-        comparisonPlots_alt(hists, titles, True, False, _dirname + '/' + vkey +  '.pdf', True, True, 'hpe')
-
+        comparisonPlots_alt(hists, titles, True, False, _dirname + '/' + vkey +  '.pdf', True, True,   opt+'hpe' )
 
     file_output = TFile(_dirname + '/' + vkey +  '.root', 'recreate')
     for _hist in hists2return:
@@ -191,9 +191,9 @@ def draw(vkey, channels, target, sys='None', subtract=False, saveFig=False, sf =
 for vkey, ivar in vardir.items():
 
    
-    draw(vkey, ['lp',  'sb'], 'data_obs', 'None', True, True)
+    draw(vkey, ['lp',  'sb'], 'data_obs', 'None', True, True, 'None')
 
-    draw(vkey, ['sb',  'sr'], 'data_obs', 'None', True, True)
+    draw(vkey, ['sb',  'sr'], 'data_obs', 'None', True, True, 'None')
 
 
 
@@ -201,15 +201,15 @@ for vkey, ivar in vardir.items():
 
 
     print("lp-sb comparison")    
-    draw(vkey, ['lp',  'sb'], 'data_obs', 'None', True, True)
+    draw(vkey, ['lp',  'sb'], 'data_obs', 'None', True, True, 'ks')
     print("sb-sr comparison")
-    draw(vkey, ['sb',  'sr'], 'data_obs', 'None', True, True)
+    draw(vkey, ['sb',  'sr'], 'data_obs', 'None', True, True, 'ksratio')
     print("sb-sr_xl comparison")
-    draw(vkey, ['sb',  'sr_xl'], 'data_obs', 'None', True, True)
+    draw(vkey, ['sb',  'sr_xl'], 'data_obs', 'None', True, True, 'ksratio')
     #print("sb-sr comparison hist preparation bkg ")
-    #hists4ddbkg_bgmc = draw(vkey, ['sb', 'sr'], 'bg_ul', 'None', False, True)
+    hists4ddbkg_bgmc = draw(vkey, ['sb', 'sr'], 'bg_ul', 'None', False, True, 'ks')
     print("lp-sb comparison hist preparation data")
-    hists4ddbkg_vr = draw(vkey, ['lp', 'sb'], 'data_obs', 'None', True, True)
+    hists4ddbkg_vr = draw(vkey, ['lp', 'sb'], 'data_obs', 'None', True, True, 'ks')
 
     file = TFile(datacardpath + '/' + options.year + '_' + fitCat + '_None/datacard/' + vkey + '.root')
     file.cd(fitCat)
@@ -223,7 +223,7 @@ for vkey, ivar in vardir.items():
        _tmp = file.Get(fitCat + '/' + proc)
        hists2write.append(copy.deepcopy(_tmp))
         
-    hists4ddbkg_sr = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False)
+    hists4ddbkg_sr = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 'None')
     bkgHist = copy.deepcopy(hists4ddbkg_sr[1])
     bkgHist.Scale(ratio)
     setNameTitle(bkgHist, 'dd_bkg')
@@ -253,7 +253,7 @@ for vkey, ivar in vardir.items():
         _hist.GetXaxis().SetLabelSize(0.0)
 
         Histo.AddHistogram(_hist.GetName(), _hist)
-        print ( " Histo = DataMCPlot(vkey) with _hist ", _hist.GetName() ," bins ", _hist.GetNbinsX() )
+        #print ( " Histo = DataMCPlot(vkey) with _hist ", _hist.GetName() ," bins ", _hist.GetNbinsX() )
         if _name.find('data')!=-1:
             Histo.Hist(_hist.GetName()).stack = False
 
@@ -266,13 +266,13 @@ for vkey, ivar in vardir.items():
 
     ### shape variation 
 
-    hists4ddbkg_up = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 0.95)
+    hists4ddbkg_up = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 'None', 0.95)
     bkgHist_up = copy.deepcopy(hists4ddbkg_up[1])
     bkgHist_up.Scale(ratio)
     setNameTitle(bkgHist_up, 'dd_bkg_shapeUp')
     hists2write.append(bkgHist_up)
     
-    hists4ddbkg_down = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 0.2)
+    hists4ddbkg_down = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 'None', 0.95)
     bkgHist_down = copy.deepcopy(hists4ddbkg_down[1])
     bkgHist_down.Scale(ratio)
     setNameTitle(bkgHist_down, 'dd_bkg_shapeDown')
@@ -283,7 +283,7 @@ for vkey, ivar in vardir.items():
 
         name_sys = sys.replace('_up','Up').replace('_down', 'Down')
             
-        hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', sys, True, False)
+        hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', sys, True, False, 'None')
 
         bkgHist_sys = hists_sys[1]
         bkgHist_sys.Scale(ratio)
@@ -304,7 +304,7 @@ for vkey, ivar in vardir.items():
 
         name_sys = sys.replace('_up','Up').replace('_down', 'Down')
 
-        hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', sys, True, False)
+        hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', sys, True, False, 'None')
 
         bkgHist_sys = hists_sys[1]
         bkgHist_sys.Scale(ratio)
@@ -332,10 +332,11 @@ for vkey, ivar in vardir.items():
 
 
         for sys in systs_bkg:
+            continue
             if vkey == 'tau_rhomass_unrolled' : 
                 continue
             name_sys = sys.replace('_up','Up').replace('_down', 'Down')
-            hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False)
+            hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 'None')
             bkgHist_sys = hists_sys[1]
             bkgHist_sys.Scale(ratio)
             #To be updated 
@@ -350,7 +351,7 @@ for vkey, ivar in vardir.items():
                 else: 
                     #To be updated          
                     file_ratio =  TFile("syst_bkg/"+vkey+"_ratio.root", 'open')
-                    ratio_hist=file_ratio.Get("data_obs_sr_xl")
+                    ratio_hist=file_ratio.Get("data_obs_sr")
                     if name_sys.find("Up")!=-1:   
                         bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
                     else:
