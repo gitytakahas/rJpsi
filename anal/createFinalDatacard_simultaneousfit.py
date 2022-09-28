@@ -375,18 +375,18 @@ for vkey, ivar in vardir.items():
 ##            hists2write.append(bkgHist_sys)
             
 
-        hists_all = []
+#        hists_all = []
 
-        for hist_ in datacards[fitCat]:
-            hist_th1d = TH1F(hist_.GetName(), hist_.GetName(), hist_.GetXaxis().GetNbins(), hist_.GetXaxis().GetXmin(), hist_.GetXaxis().GetXmax())
-
-            print hist_.GetName()
-
-            for ibin in range(1, hist_.GetXaxis().GetNbins()+1):
-                hist_th1d.SetBinContent(ibin, hist_.GetBinContent(ibin))
-                hist_th1d.SetBinError(ibin, hist_.GetBinError(ibin))
-
-            hists_all.append(copy.deepcopy(hist_th1d))
+#        for hist_ in datacards[fitCat]:
+#            hist_th1d = TH1F(hist_.GetName(), hist_.GetName(), hist_.GetXaxis().GetNbins(), hist_.GetXaxis().GetXmin(), hist_.GetXaxis().GetXmax())
+#
+#            print hist_.GetName()
+#
+#            for ibin in range(1, hist_.GetXaxis().GetNbins()+1):
+#                hist_th1d.SetBinContent(ibin, hist_.GetBinContent(ibin))
+#                hist_th1d.SetBinError(ibin, hist_.GetBinError(ibin))
+#
+#            hists_all.append(copy.deepcopy(hist_th1d))
 #            hist_.Write()
 #            hist_th1d.Write()
 
@@ -394,13 +394,13 @@ for vkey, ivar in vardir.items():
 #    for hist2write in hists2write:
 #        hist2write.Write()
 
-        filename_new2 = output + '/' + vkey + '_' + fitCat + '.root'
-        file_new2 = TFile(filename_new2, 'recreate')
-        for hist_ in hists_all:
-            hist_.Write()
-
-        file_new2.Write()
-        file_new2.Close()
+#        filename_new2 = output + '/' + vkey + '_' + fitCat + '.root'
+#        file_new2 = TFile(filename_new2, 'recreate')
+#        for hist_ in hists_all:
+#            hist_.Write()
+#
+#        file_new2.Write()
+#        file_new2.Close()
 
 
         
