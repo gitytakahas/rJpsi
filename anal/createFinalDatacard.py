@@ -50,10 +50,13 @@ for syst in systs_name_bkg:
     for ud in ['up', 'down']:
         systs_bkg.append(syst + '_' + ud)
 
-datacardpath = 'plots_dir/'
+datacardpath = '/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/results'
 
 
-finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
+#finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
+finaldiscriminant = ['tau_rhomass_unrolled_var']
+
+vardir["tau_rhomass_unrolled_var"] = {'tree':'tree'} # dummy to let the loop below will go through unrolled variable binning distribution
 
 for vkey, ivar in vardir.items():
     if vkey not in finaldiscriminant: 
@@ -68,7 +71,7 @@ print '-'*80
 
 
 
-ratio = 0.092
+#ratio = 0.092
 fitCat = 'sr'
 output='combine_sb3p5_sr4/' + options.year 
 
@@ -225,6 +228,14 @@ for vkey, ivar in vardir.items():
         
     hists4ddbkg_sr = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False)
     bkgHist = copy.deepcopy(hists4ddbkg_sr[1])
+
+    hist_sb = getHist(vkey, 'sb', 'bg_ul') 
+    hist_sr = getHist(vkey, 'sr', 'bg_ul') 
+    
+    ratio = float(hist_sr.GetSumOfWeights())/float(hist_sb.GetSumOfWeights())
+
+    print 'ratio=', ratio
+
     bkgHist.Scale(ratio)
     setNameTitle(bkgHist, 'dd_bkg')
     hists2write.append(bkgHist)
@@ -331,33 +342,33 @@ for vkey, ivar in vardir.items():
         
 
 
-        for sys in systs_bkg:
-            if vkey == 'tau_rhomass_unrolled' : 
-                continue
-            name_sys = sys.replace('_up','Up').replace('_down', 'Down')
-            hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False)
-            bkgHist_sys = hists_sys[1]
-            bkgHist_sys.Scale(ratio)
-            #To be updated 
-            p0 = 0.871 if bkgHist_sys.GetNbinsX()< 40 else  0.850166  
-            p1 = 0.009 if bkgHist_sys.GetNbinsX()< 40 else  0.0018
-            for bin in range(0, bkgHist_sys.GetNbinsX()):
-                if name_sys.find("Func")!=-1:
-                    if name_sys.find("Up")!=-1:
-                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) * ( (p0+ p1*bin)))
-                    else:
-                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) * ( ( 2 - p0 - p1*bin)))
-                else: 
-                    #To be updated          
-                    file_ratio =  TFile("syst_bkg/"+vkey+"_ratio.root", 'open')
-                    ratio_hist=file_ratio.Get("data_obs_sr_xl")
-                    if name_sys.find("Up")!=-1:   
-                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
-                    else:
-                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(2-ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
-                    file_ratio.Close()
-            setNameTitle(bkgHist_sys, 'dd_bkg_' + name_sys)
-            hists2write.append(bkgHist_sys)
+#        for sys in systs_bkg:
+#            if vkey == 'tau_rhomass_unrolled' : 
+#                continue
+#            name_sys = sys.replace('_up','Up').replace('_down', 'Down')
+#            hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False)
+#            bkgHist_sys = hists_sys[1]
+#            bkgHist_sys.Scale(ratio)
+#            #To be updated 
+#            p0 = 0.871 if bkgHist_sys.GetNbinsX()< 40 else  0.850166  
+#            p1 = 0.009 if bkgHist_sys.GetNbinsX()< 40 else  0.0018
+#            for bin in range(0, bkgHist_sys.GetNbinsX()):
+#                if name_sys.find("Func")!=-1:
+#                    if name_sys.find("Up")!=-1:
+#                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) * ( (p0+ p1*bin)))
+#                    else:
+#                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) * ( ( 2 - p0 - p1*bin)))
+#                else: 
+#                    #To be updated          
+#                    file_ratio =  TFile("syst_bkg/"+vkey+"_ratio.root", 'open')
+#                    ratio_hist=file_ratio.Get("data_obs_sr_xl")
+#                    if name_sys.find("Up")!=-1:   
+#                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
+#                    else:
+#                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(2-ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
+#                    file_ratio.Close()
+#            setNameTitle(bkgHist_sys, 'dd_bkg_' + name_sys)
+#            hists2write.append(bkgHist_sys)
             
 
 

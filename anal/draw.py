@@ -34,6 +34,7 @@ parser.add_option("-o", "--outdir", default=".", type="string", dest="outdir")
 (options, args) = parser.parse_args() 
 
 #print(options)
+binning = [0.2, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.9, 1.0, 1.5]
 
 print '-'*80
 print 'sys=', options.sys
@@ -57,10 +58,15 @@ def returnTuples(prefix, vardir):
 
         hname = prefix + '_' + varname
 
+#        if var.has_key('isVar'):
+#            hist_register = TH2D(hname, hname, len(binning)-1, array('d',binning), len(binning)-1, array('d', binning))
+#            hist_register.GetXaxis().SetTitle(var['xtitle'])
+#            hist_register.GetYaxis().SetTitle(var['ytitle'])
+#        else:            
         hist_register = TH1D(hname, hname, var['nbin'], var['xmin'], var['xmax'])
-
         hist_register.GetXaxis().SetTitle(var['xtitle'])
         hist_register.GetYaxis().SetTitle('a.u.')
+
         hist_register.Sumw2()
         hist_register.SetTitle(varname)
         
@@ -275,11 +281,11 @@ xgbs_lp = 'xgbs > ' + init.get('common', 'lp_low') + ' && xgbs < ' + init.get('c
 
 channels = {
 
-    'inclusive':{'cut':'&&'.join([basic])},
+#    'inclusive':{'cut':'&&'.join([basic])},
     'sr':{'cut':'&&'.join([basic, xgbs_sr])},
     'sb':{'cut':'&&'.join([basic, xgbs_sb])},
     'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
-
+    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
 
 #    'inclusive_blind':{'cut':'&&'.join([basic])},
 #    'inclusive_blind_all':{'cut':'&&'.join([basic])},
@@ -314,7 +320,6 @@ channels = {
 #    'lp_mediumMass':{'cut':'&&'.join([basic, xgbs_lp,'b_mass>4', 'b_mass<6.5'])},
 #    'inclusive_mediumMass':{'cut':'&&'.join([basic,'b_mass>4', 'b_mass<6.5'])},
 #    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
-    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
 #    'sr_xs':{'cut':'&&'.join([basic, xgbs_sr_xs])},  
 #    'cr_sr':{'cut':'&&'.join([basic, xgbs_sr])},
 #    'cr_sb':{'cut':'&&'.join([basic, xgbs_sb])},
@@ -343,7 +348,7 @@ channels = {
 
 
 #finaldiscriminant = ['xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
-finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass' ]
+finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass']
 
 
 if options.min:
@@ -439,11 +444,48 @@ for channel, dict in channels.iteritems():
         print(type, cut)        
 
         tree.MultiDraw(var_tuples, cut)
-    
         multihists.update(copy.deepcopy(hists))
 
+        # add 2D plots for unrolled mass distributions ... 
+        varname_var = 'tau_rhomass_unrolled_var' # variable binning
+        
+        hname_2d = type + '_' + varname_var + '_2d'
+
+        hist_2d = TH2D(hname_2d, hname_2d, len(binning)-1, array('d',binning), len(binning)-1, array('d', binning))
+        hist_2d.Sumw2()
+#        hist_var.GetXaxis().SetTitle('Tau rhomass2')
+#        hist_var.GetYaxis().SetTitle('Tau rhomass1')
+#        hist_var.SetTitle(varname_var)
+        
+
+        tree.Draw('tau_rhomass1:tau_rhomass2 >> ' + hist_2d.GetName(), cut)
+
+        # make it 1d ... 
+        nbins_var = int((len(binning)-1)*(len(binning)-1))
+
+        print '# of bins =', nbins_var
+
+        hname_1d = type + '_' + varname_var
+
+        hist_unrolled = TH1D(hname_1d, hname_1d, nbins_var, 0, nbins_var)
+
+        idx_var = 1
+        for ix in range(1, hist_2d.GetXaxis().GetNbins()+1):
+            for iy in range(1, hist_2d.GetYaxis().GetNbins()+1):
+
+                hist_unrolled.SetBinContent(idx_var, hist_2d.GetBinContent(ix, iy))
+                hist_unrolled.SetBinError(idx_var, hist_2d.GetBinError(ix, iy))
+
+                print ix, iy, hist_2d.GetBinContent(ix,iy), hist_2d.GetBinError(ix,iy)
+
+                idx_var += 1
+
+        multihists[hname_1d] = copy.deepcopy(hist_unrolled)
 
 
+#    import pdb; pdb.set_trace()
+    vardir["tau_rhomass_unrolled_var"] = {'tree':'tree'} # dummy to let the loop below will go through unrolled variable binning distribution
+    finaldiscriminant.append('tau_rhomass_unrolled_var')
 
     for vkey, ivar in vardir.items():
 
@@ -459,7 +501,10 @@ for channel, dict in channels.iteritems():
 
         for type, ivar2 in ddir.items():
 
+            print type + '_' + vkey
+
             multihists[type + '_' + vkey].Scale(Double(ivar2['scale']))
+#            import pdb; pdb.set_trace()
 
             ################################
             hist = copy.deepcopy(multihists[type + '_' + vkey])
@@ -506,4 +551,5 @@ for channel, dict in channels.iteritems():
         comparisonPlots_alt(hists, titles, True, False, dirname + '/plots/' + vkey + '_compare.pdf', False, True, 'pE')
 
 
-    
+        if vardir.has_key('tau_rhomass_unrolled_var'):
+            vardir.pop('tau_rhomass_unrolled_var')

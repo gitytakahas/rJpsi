@@ -43,6 +43,9 @@ vardir["tau_rhomass_unrolled"] = {'tree':'tree',  'nbin':121, 'xmin':0, 'xmax':1
 #vardir["tau_rhomass_unrolled_coarse"] = {'tree':'tree',  'nbin':36, 'xmin':0, 'xmax':36, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.3) - 0.2)/0.22) + 6*int((min(tau_rhomass1, 1.3) - 0.2)/0.22)'}
 vardir["tau_rhomass_unrolled_coarse"] = {'tree':'tree',  'nbin':25, 'xmin':0, 'xmax':25, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.1) - 0.2)/0.225) + 5*int((min(tau_rhomass1, 1.1) - 0.2)/0.225)'}
 
+#vardir["tau_rhomass_unrolled_var"] = {'tree':'tree',  'nbin':25, 'xmin':0, 'xmax':25, 'xtitle':'Tau rhomasses1', 'ytitle':'Tau rhomasses2', 'var':'int((min(tau_rhomass2, 1.1) - 0.2)/0.225) + 5*int((min(tau_rhomass1, 1.1) - 0.2)/0.225)','isVar':True}
+
+
 vardir["tau_rhomass_ss"] = {'tree':'tree',  'nbin':30, 'xmin':0.2, 'xmax':1.5, 'xtitle':'Tau rhomass ss (GeV)'}
 vardir["tau_rhomass_random"] = {'tree':'tree',  'nbin':30, 'xmin':0.2, 'xmax':1.5, 'xtitle':'Tau rhomass random (GeV)', 'var':'tau_rhomass'}
 vardir["tau_rhomass_ave"] = {'tree':'tree',  'nbin':30, 'xmin':0.2, 'xmax':1.5, 'xtitle':'Tau rhomass average (GeV)', 'var':'(tau_rhomass1 + tau_rhomass2)/2.'}

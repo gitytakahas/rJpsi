@@ -56,7 +56,10 @@ datacardpath = '/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/results'
 
 
 #finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
-finaldiscriminant = ['tau_rhomass_unrolled_coarse']
+#finaldiscriminant = ['tau_rhomass_unrolled_coarse', 'tau_rhomass_unrolled_var']
+finaldiscriminant = ['tau_rhomass_unrolled_var']
+
+vardir["tau_rhomass_unrolled_var"] = {'tree':'tree'} # dummy to let the loop below will go through unrolled variable binning distribution
 
 for vkey, ivar in vardir.items():
     if vkey not in finaldiscriminant: 
