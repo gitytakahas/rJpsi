@@ -39,6 +39,7 @@ ensureDir(jobdir)
 ########################
 
 syss = ['None']
+#syss = []
 
 for ii in range(10):
     for ud in ['up', 'down']:
@@ -54,8 +55,8 @@ for other in others:
 
 ########################
 
-for year in ['2018']:
-#for year in ['2016', '2017']:
+#for year in ['2018']:
+for year in ['2016', '2017', '2018']:
     for ijob, sys in enumerate(syss):
 
         jobscript = jobdir + '/job_' + year + '_' + sys + '.sh'

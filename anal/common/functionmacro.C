@@ -31,6 +31,7 @@ TH1F *weight;
 TFile *tauf;
 TH1F *taubr_up;
 TH1F *taubr_down;
+TH2F *taubr_ref;
 TH1F *Bcweight1D_up;
 TH1F *Bcweight1D_down;
 TFile *fmap;
@@ -60,13 +61,14 @@ void ReadFileTau(){
 
   std::cout << "Read tau BR file";
 
-  tauf = new TFile("tauola/correction.root");
+  tauf = new TFile("datacard/tauola/correction.root");
 
   //  mc = (TH1F*) f->Get("inclusive/bg_ul");
   //  mc->Scale(1./mc->GetSumOfWeights());
 
   taubr_up = (TH1F*) tauf->Get("envelope_up");  
   taubr_down = (TH1F*) tauf->Get("envelope_down");  
+  taubr_ref = (TH2F*) tauf->Get("evt1_set1_2d");
   //  weight->Scale(1./weight->GetSumOfWeights());  
   
   //  weight->Divide(mc);
@@ -116,13 +118,21 @@ Float_t getWeight(float val){
 }
 
 
-Float_t getTauBrWeight_up(float val){
+Float_t getTauBrWeight_up(float val1, float val2){
 
   //  std::cout << "getWeight for " << val << std::endl;
 
-  Int_t binid = taubr_up->GetXaxis()->FindBin(val);
+  //  Int_t binid = taubr_up->GetXaxis()->FindBin(val);
   
-  //  std::cout <<"binid=" << binid << std::endl;
+  if(val1==-1 || val2==-1){
+    //    std::cout << "negative value!" << std::endl;
+    return 1;
+  }
+
+  Int_t binid_x = taubr_ref->GetXaxis()->FindBin(val1);
+  Int_t binid_y = taubr_ref->GetYaxis()->FindBin(val2);
+  Int_t binid = taubr_ref->GetXaxis()->GetNbins()*(binid_y - 1) + binid_x; 
+  //  std::cout <<val1 << " " << val2 << ", binid_x =" << binid_x << ", binid_y= " << binid_y << ", binid=" << binid << std::endl;
   
   Float_t w = taubr_up->GetBinContent(binid);
   //  Float_t w = 1.;
@@ -132,12 +142,21 @@ Float_t getTauBrWeight_up(float val){
 
 }
 
-Float_t getTauBrWeight_down(float val){
+Float_t getTauBrWeight_down(float val1, float val2){
+
+  if(val1==-1 || val2==-1){
+    //    std::cout << "negative value!" << std::endl;
+    return 1;
+  }
 
   //  std::cout << "getWeight for " << val << std::endl;
 
-  Int_t binid = taubr_down->GetXaxis()->FindBin(val);
-  
+  //  Int_t binid = taubr_down->GetXaxis()->FindBin(val); 
+  Int_t binid_x = taubr_ref->GetXaxis()->FindBin(val1);
+  Int_t binid_y = taubr_ref->GetYaxis()->FindBin(val2);
+  Int_t binid = taubr_ref->GetXaxis()->GetNbins()*(binid_y - 1) + binid_x; 
+  //  Int_t binid = taubr_ref->FindBin(val1, val2);
+ 
   //  std::cout <<"binid=" << binid << std::endl;
   
   Float_t w = taubr_down->GetBinContent(binid);

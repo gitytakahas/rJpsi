@@ -40,8 +40,8 @@ vardir["tau_rhomass2"] = {'tree':'tree',  'nbin':25, 'xmin':0.2, 'xmax':1.4, 'xt
 #vardir["tau_rhomass_unrolled"] = {'tree':'tree',  'nbin':625, 'xmin':0, 'xmax':625, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'(min(tau_rhomass2, 1.4) - 0.2)/0.048 + 25*(min(tau_rhomass1, 1.4) - 0.2)/0.048'}
 vardir["tau_rhomass_unrolled"] = {'tree':'tree',  'nbin':121, 'xmin':0, 'xmax':121, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.3) - 0.2)/0.11) + 11*int((min(tau_rhomass1, 1.3) - 0.2)/0.11)'}
 
-#vardir["tau_rhomass_unrolled_coarse"] = {'tree':'tree',  'nbin':36, 'xmin':0, 'xmax':36, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.3) - 0.2)/0.22) + 6*int((min(tau_rhomass1, 1.3) - 0.2)/0.22)'}
-vardir["tau_rhomass_unrolled_coarse"] = {'tree':'tree',  'nbin':25, 'xmin':0, 'xmax':25, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.1) - 0.2)/0.225) + 5*int((min(tau_rhomass1, 1.1) - 0.2)/0.225)'}
+vardir["tau_rhomass_unrolled_coarse"] = {'tree':'tree',  'nbin':36, 'xmin':0, 'xmax':36, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.3) - 0.2)/0.22) + 6*int((min(tau_rhomass1, 1.3) - 0.2)/0.22)'}
+#vardir["tau_rhomass_unrolled_coarse"] = {'tree':'tree',  'nbin':25, 'xmin':0, 'xmax':25, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.1) - 0.2)/0.225) + 5*int((min(tau_rhomass1, 1.1) - 0.2)/0.225)'}
 
 #vardir["tau_rhomass_unrolled_var"] = {'tree':'tree',  'nbin':25, 'xmin':0, 'xmax':25, 'xtitle':'Tau rhomasses1', 'ytitle':'Tau rhomasses2', 'var':'int((min(tau_rhomass2, 1.1) - 0.2)/0.225) + 5*int((min(tau_rhomass1, 1.1) - 0.2)/0.225)','isVar':True}
 
@@ -126,6 +126,7 @@ vardir["jpsi_phi"] = {'tree':'tree',  'nbin':30, 'xmin':-math.pi, 'xmax':math.pi
 vardir["jpsi_fls3d"] = {'tree':'tree',  'nbin':30, 'xmin':0, 'xmax':30, 'xtitle':'jpsi flight sig.'}
 vardir["jpsi_fl3d"] = {'tree':'tree',  'nbin':30, 'xmin':0, 'xmax':1., 'xtitle':'jpsi flight length'}
 #vardir["jpsi_unfit_mass"] = {'tree':'tree',  'nbin':30, 'xmin':2.9, 'xmax':3.3, 'xtitle':'jpsi unfit mass'}
+vardir["jpsi_mass"] = {'tree':'tree',  'nbin':30, 'xmin':2.9, 'xmax':3.3, 'xtitle':'jpsi mass'}
 
 
 #if options.mva:
@@ -205,6 +206,7 @@ vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':60, 'xmin':1.1, 'xmax':9.1, 'xtitl
 vardir["xgbs_zoom_extra"] = {'tree':'tree',  'nbin':60, 'xmin':1.1, 'xmax':9.1, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
 vardir["xgbs_zoom_thight"] = {'tree':'tree',  'nbin':60, 'xmin':3.1, 'xmax':9.1, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
 vardir["xgbs_sigscan"] = {'tree':'tree',  'nbin':600, 'xmin':3.1, 'xmax':7., 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
+vardir["xgbs_fit"] = {'tree':'tree',  'nbin':50, 'xmin':2., 'xmax':7., 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
 
 #vardir["xgbs_log"] = {'tree':'tree',  'nbin':30, 'xmin':-15, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isLog':True}
 #vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':9., 'xmax':11, 'xtitle':'zoom XGB output score', 'var':'xgbs', 'isLog':True}

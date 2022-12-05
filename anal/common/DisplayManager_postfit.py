@@ -317,6 +317,7 @@ class DisplayManager(object):
 #            self.canvas.cd(1).SetLogy()
 
         self.canvas.Update()
+#        self.RedrawAxis();
 
         l1=add_lumi(self.lumi)
         l1.Draw("same")

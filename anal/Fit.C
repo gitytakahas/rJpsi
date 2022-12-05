@@ -68,9 +68,12 @@
 using namespace RooFit ;
 using namespace RooStats ;
 
-void fit();
-void Fit() { fit(); }
-void fit() {
+//void fit();
+//void Fit() { fit(); }
+void Fit(TString filetype = "data") {
+
+  bool isData = false;
+  if(filetype=="data") isData = true;
 
   gStyle->SetOptStat(0);
   gStyle->SetOptFit(0);
@@ -97,8 +100,13 @@ void fit() {
   int Bc_bins = (int)(upper_limit - lower_limit)*10;
 
   ////1) Yuta: select the file you want
-  TFile *ntuple_data = new TFile("/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_2018/BJpsiX/bkg.root");
-  //TFile *ntuple_data = new TFile("/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_inv_pt_2018/Data/data.root"); 
+
+  TString filename = "/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_2018/BJpsiX/bkg.root";
+  
+  if(isData) filename = "/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_inv_pt_2018/Data/data.root";
+
+  TFile *ntuple_data = new TFile(filename);
+
   //=====
   
   TTree* tree_data   = (TTree*) ntuple_data->Get("tree");
@@ -119,10 +127,21 @@ void fit() {
   ////RooFormulaVar n1Func("n1Func","@0*@1*@2*@3*@4*@5*getWeight(@6)",RooArgList(puweight,mu1_SFReco,mu2_SFReco,mu1_SFID,mu2_SFID,genWeightBkgB,b_mass));     
   RooFormulaVar n1Func("n1Func","@0*@1*@2*@3*@4*@5",RooArgList(puweight,mu1_SFReco,mu2_SFReco,mu1_SFID,mu2_SFID,genWeightBkgB));
   RooRealVar* w = (RooRealVar*) cut_data0->addColumn(n1Func) ;
+
   RooDataSet cut_data(cut_data0->GetName(),cut_data0->GetTitle(),cut_data0,*cut_data0->get(),0,w->GetName()) ;
 
   //For data:
-  //RooDataSet cut_data(cut_data0->GetName(),cut_data0->GetTitle(),cut_data0,*cut_data0->get()) ;  
+
+  if(isData) RooDataSet cut_data(cut_data0->GetName(),cut_data0->GetTitle(),cut_data0,*cut_data0->get()) ; 
+
+  
+  //RooDataSet *cut_data;
+
+  //  cut_data = (RooDataSet*) (cut_data0->GetName(),cut_data0->GetTitle(),cut_data0,*cut_data0->get(),0,w->GetName()) ;
+
+  //  if(isData) cut_data(cut_data0->GetName(),cut_data0->GetTitle(),cut_data0,*cut_data0->get()) ; 
+
+
 
   //=====
   TCut SelectionCut_numerator   = "xgbs>=4.0"; RooDataSet *cut_data_numerator = (RooDataSet*)cut_data.reduce(SelectionCut_numerator);

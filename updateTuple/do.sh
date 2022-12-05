@@ -4,7 +4,7 @@ today=`date "+%Y%m%d%H%M"`
 # Specify here the output file types 
 
 name="pt"
-year="2016"
+year="2018"
 
 prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/job_${name}_${year}"
 
@@ -30,7 +30,8 @@ function hadding (){
 #
 ##############################################
 
-for dir in $sig_inclusive_all $bkg $data
+for dir in $sig_inclusive_all $bkg $daat
+#for dir in $sig_inclusive_all
 do
 
     echo "hadding ...", $dir

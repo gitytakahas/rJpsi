@@ -1,7 +1,7 @@
 today=`date "+%Y%m%d%H%M"`
 
 name="pt"
-year="2016"
+year="2018"
 
 
 # input files
@@ -25,7 +25,7 @@ model_name="${name}_2018_val"
 #
 #if [ $year = "2018" ]
 #then
-#    python application.py --file ${sig_inclusive}/Myroot_analysis.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive}
+python application.py --file ${sig_inclusive}/Myroot_analysis.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive}
 #else
 #    python application.py --file ${sig_inclusive}/Myroot.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive}
 #fi
@@ -40,7 +40,7 @@ model_name="${name}_2018_val"
 ##############################################
 
 
-hadd -f ${data}/data.root ${data}/Myroot_*xgbs*.root
-hadd -f ${bkg}/bkg.root ${bkg}/Myroot_*xgbs*.root
+#hadd -f ${data}/data.root ${data}/Myroot_*xgbs*.root
+#hadd -f ${bkg}/bkg.root ${bkg}/Myroot_*xgbs*.root
 hadd -f ${sig_inclusive}/sig.root  ${sig_inclusive}/Myroot_*xgbs*.root 
 

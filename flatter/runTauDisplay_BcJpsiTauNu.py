@@ -306,8 +306,8 @@ if options.type=='signal':
 if options.type in ['signal','bg']:
 #    pufile = TFile('/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/RJPsi_mc_pu_2021Dec08_111.root')
     
-    pufile_data = TFile('nanoAOD-tools/python/postprocessing/data/pileup/PileupHistogram-UL' + options.year + '-100bins_withVar.root')
-    pufile_mc = TFile('nanoAOD-tools/python/postprocessing/data/pileup/mcPileupUL' + options.year + '.root')
+    pufile_data = TFile('nanoAOD-tools/python/postprocessing/data/pileup/PileupHistogram-goldenJSON-13tev-' + options.year + '-100bins_withVar.root')
+    pufile_mc = TFile('nanoAOD-tools/python/postprocessing/data/pileup/mcPileup' + options.year + '.root')
 
     puhist_data = pufile_data.Get('pileup')
     puhist_data_plus = pufile_data.Get('pileup_plus')
@@ -344,7 +344,7 @@ if options.type in ['signal','bg']:
             weight_down = val_data_minus/val_mc
 
 
-        print i, weight, weight_up, weight_down
+#        print i, weight, weight_up, weight_down
         puhist.SetBinContent(i, weight)
         puhist_up.SetBinContent(i, weight_up)
         puhist_down.SetBinContent(i, weight_down)
@@ -1309,27 +1309,42 @@ for evt in xrange(Nevt):
             if options.type == 'bg':
                 out.genWeightBkgB[0] = chain.genWeightBkgB
 
-            if options.type in ['signal'] and chain.JpsiTau_st_n_occurance == 1:
+            if options.type in ['signal']:
 
-                if isRight_3prong:
-                    if len(chain.truth_tau_dipion1_mass)==1:
-                        out.gen_dipion1_mass[0] = chain.truth_tau_dipion1_mass[0]
-                        out.gen_dipion2_mass[0] = chain.truth_tau_dipion2_mass[0]
-                        out.gen_dipion_unrolled[0] = int((min([chain.truth_tau_dipion2_mass[0], 1.3]) - 0.2)/0.11) + 11*int((min([chain.truth_tau_dipion1_mass[0], 1.3]) - 0.2)/0.11)
-                        out.gen_dipion_unrolled_coarse[0] = int((min([chain.truth_tau_dipion2_mass[0], 1.3]) - 0.2)/0.22) + 6*int((min([chain.truth_tau_dipion1_mass[0], 1.3]) - 0.2)/0.22)
-                    else:
-                        out.gen_dipion1_mass[0] = -1
-                        out.gen_dipion2_mass[0] = -1
-                        out.gen_dipion_unrolled[0] = -1 
-                        out.gen_dipion_unrolled_coarse[0] = -1
+#                if isRight_3prong:
+#                    if len(chain.truth_tau_dipion1_mass)==1:
+#                        out.gen_dipion1_mass[0] = chain.truth_tau_dipion1_mass[0]
+#                        out.gen_dipion2_mass[0] = chain.truth_tau_dipion2_mass[0]
+#                        out.gen_dipion_unrolled[0] = int((min([chain.truth_tau_dipion2_mass[0], 1.3]) - 0.2)/0.11) + 11*int((min([chain.truth_tau_dipion1_mass[0], 1.3]) - 0.2)/0.11)
+#                        out.gen_dipion_unrolled_coarse[0] = int((min([chain.truth_tau_dipion2_mass[0], 1.3]) - 0.2)/0.22) + 6*int((min([chain.truth_tau_dipion1_mass[0], 1.3]) - 0.2)/0.22)
+#                    else:
+#                        out.gen_dipion1_mass[0] = -1
+#                        out.gen_dipion2_mass[0] = -1
+#                        out.gen_dipion_unrolled[0] = -1 
+#                        out.gen_dipion_unrolled_coarse[0] = -1
+#                else:
+#                        out.gen_dipion1_mass[0] = -9
+#                        out.gen_dipion2_mass[0] = -9
+#                        out.gen_dipion_unrolled[0] = -9 
+#                        out.gen_dipion_unrolled_coarse[0] = -9
+ 
+
+                if len(chain.truth_tau_dipion1_mass)==1 and chain.JpsiTau_st_n_occurance == 1:
+                    out.gen_dipion1_mass[0] = chain.truth_tau_dipion1_mass[0]
+                    out.gen_dipion2_mass[0] = chain.truth_tau_dipion2_mass[0]
+#                    out.gen_dipion_unrolled[0] = int((min([chain.truth_tau_dipion2_mass[0], 1.3]) - 0.2)/0.11) + 11*int((min([chain.truth_tau_dipion1_mass[0], 1.3]) - 0.2)/0.11)
+#                    out.gen_dipion_unrolled_coarse[0] = int((min([chain.truth_tau_dipion2_mass[0], 1.3]) - 0.2)/0.22) + 6*int((min([chain.truth_tau_dipion1_mass[0], 1.3]) - 0.2)/0.22)
                 else:
-                        out.gen_dipion1_mass[0] = -9
-                        out.gen_dipion2_mass[0] = -9
-                        out.gen_dipion_unrolled[0] = -9 
-                        out.gen_dipion_unrolled_coarse[0] = -9
-                    
+                    out.gen_dipion1_mass[0] = -1
+                    out.gen_dipion2_mass[0] = -1
+#                    out.gen_dipion_unrolled[0] = -1 
+#                    out.gen_dipion_unrolled_coarse[0] = -1
+
+
+                   
 
 #                import pdb; pdb.set_trace()
+            if options.type in ['signal'] and chain.JpsiTau_st_n_occurance == 1:
 
                 out.filt.Fill(6)
                 

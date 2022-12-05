@@ -49,8 +49,8 @@ nchunk_data=4
 #########################################
 # for signal MC
 #########################################
-for year in 2016 2017
-#for year in 2018
+#for year in 2016 2017
+for year in 2018
 do
 
     outdir="job_${priority}_${year}"
@@ -75,14 +75,15 @@ do
 
 
     echo "bkg."
-    python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX --year ${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+#    python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX --year ${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 
     if [ $year = "2018" ]; then
-	python getDataset.py --file ${bgmc2} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX_inclusive --year ${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+	echo $year
+#	python getDataset.py --file ${bgmc2} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX_inclusive --year ${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
     fi
 
     echo "data", $year
-    python getDataset.py --file ${dataset} --chunk ${nchunk_data} --analysis ${analysis} --type data --name Data --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+#    python getDataset.py --file ${dataset} --chunk ${nchunk_data} --analysis ${analysis} --type data --name Data --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 
 done
 
