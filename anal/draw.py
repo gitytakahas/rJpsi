@@ -156,12 +156,25 @@ multihists = {}
 
 ##################################################
 
+#Just for past reference:
 
-prefix = init.get('common', 'filedir') + '/job_pt_' + options.year + '/'
+#prefix_yuta ='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi_Legacy_decayBc/job_pt/'
+#prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy_decayBc_FromYuta_20220317/job_pt/'
+##prefix ='/pnfs/psi.ch/cms/trivcat/store/user/cgalloni/RJpsi_Legacy_vprob_fls3d_invertedOR_v3/job_pt/'
+
+#datastr = "Data_2018/data.root"
+#sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig_20220324.root"
+##sigstr  = "BcJpsiTau_inclusive_ul_all_2018/sig.root"    
+##datastr = "Data_2018/Myroot_training_weightAdded.root"
+##sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
+#bkgstr  = "BJpsiX_ul_2018/bkg.root"
+#=======
+prefix = init.get('common', 'filedir') + '/job_inv_pt_' + options.year + '/'
 
 datastr = init.get('common', 'data_prefix') + '/data.root'
 sigstr  = init.get('common', 'sig_prefix') + '/sig.root'
 bkgstr  = init.get('common', 'bkg_prefix') + '/bkg.root'
+
 
 file_hammer = TFile(prefix + '/BcJpsiTau_inclusive/Myroot_0.root')
 hist_hammer = file_hammer.Get('hammer')
@@ -252,25 +265,9 @@ ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightB
 
 
 basic = init.get('common', 'basic')
-#xgbs_sr = 'xgbs > 5.35'
-#xgbs_sb = 'xgbs > 4.35 && xgbs < 5.35'
-#xgbs_lp = 'xgbs > 3.35 && xgbs < 4.35'
-#xgbs_sr = 'xgbs > 4.3'
-#xgbs_sb = 'xgbs > 3.3 && xgbs < 4.3'
-#xgbs_lp = 'xgbs > 2.3 && xgbs < 3.3'
-
-#sr_up_bound= '10'  
-#sr_down_bound= '4.3'
-#sr_down_bound_xl = '3.8'
-#sr_down_bound_xs = '4.6'
-#sb_up_bound = '3.5' 
-#sb_down_bound = '2.5'
-#lb_up_bound = '2.5'
-#lb_down_bound = '2.0'
 
 xgbs_sr = 'xgbs > ' + init.get('common', 'sr_low')
-#xgbs_sr_xl = 'xgbs > '+sr_down_bound_xl 
-#xgbs_sr_xs = 'xgbs > '+sr_down_bound_xs  
+xgbs_sr_xl = 'xgbs > ' + init.get('common', 'sr_low_xl')
 xgbs_sb = 'xgbs > ' + init.get('common', 'sb_low') + ' && xgbs < ' + init.get('common', 'sb_high')
 xgbs_lp = 'xgbs > ' + init.get('common', 'lp_low') + ' && xgbs < ' + init.get('common', 'lp_high')
 
@@ -317,7 +314,7 @@ channels = {
 #    'lp_mediumMass':{'cut':'&&'.join([basic, xgbs_lp,'b_mass>4', 'b_mass<6.5'])},
 #    'inclusive_mediumMass':{'cut':'&&'.join([basic,'b_mass>4', 'b_mass<6.5'])},
 #    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
-#    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
+    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
 #    'sr_xs':{'cut':'&&'.join([basic, xgbs_sr_xs])},  
 #    'cr_sr':{'cut':'&&'.join([basic, xgbs_sr])},
 #    'cr_sb':{'cut':'&&'.join([basic, xgbs_sb])},
@@ -346,8 +343,8 @@ channels = {
 
 
 #finaldiscriminant = ['xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
-finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple']
-
+#finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'tau_rhomass_unrolled_coarse_16', 'q2_simple', 'xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass' ]
+finaldiscriminant = ['tau_rhomass_unrolled_coarse_16']
 
 if options.min:
     for vkey, ivar in vardir.items():
@@ -372,8 +369,8 @@ for channel, dict in channels.iteritems():
 
 
     dirname = options.outdir + '/' + options.year + '_' + channel + '_' + options.sys
-    
-    ensureDir(dirname + '/plots/')
+    ensureDir(dirname + '/plots/')   
+    shutil.copyfile('index.php', dirname + '/index.php')
     shutil.copyfile('index.php', dirname + '/plots/index.php') 
     ensureDir(dirname + '/datacard/')
 

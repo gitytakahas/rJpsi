@@ -40,7 +40,11 @@ vardir["tau_rhomass2"] = {'tree':'tree',  'nbin':25, 'xmin':0.2, 'xmax':1.4, 'xt
 #vardir["tau_rhomass_unrolled"] = {'tree':'tree',  'nbin':625, 'xmin':0, 'xmax':625, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'(min(tau_rhomass2, 1.4) - 0.2)/0.048 + 25*(min(tau_rhomass1, 1.4) - 0.2)/0.048'}
 vardir["tau_rhomass_unrolled"] = {'tree':'tree',  'nbin':121, 'xmin':0, 'xmax':121, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.3) - 0.2)/0.11) + 11*int((min(tau_rhomass1, 1.3) - 0.2)/0.11)'}
 
-vardir["tau_rhomass_unrolled_coarse"] = {'tree':'tree',  'nbin':36, 'xmin':0, 'xmax':36, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.3) - 0.2)/0.22) + 6*int((min(tau_rhomass1, 1.3) - 0.2)/0.22)'}
+vardir["tau_rhomass_unrolled_semicoarse"] = {'tree':'tree',  'nbin':36, 'xmin':0, 'xmax':36, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.3) - 0.2)/0.22) + 6*int((min(tau_rhomass1, 1.3) - 0.2)/0.22)'}
+
+vardir["tau_rhomass_unrolled_coarse"] = {'tree':'tree',  'nbin':25, 'xmin':0, 'xmax':25, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.1) - 0.2)/0.225) + 5*int((min(tau_rhomass1, 1.1) - 0.2)/0.225)'}
+vardir["tau_rhomass_unrolled_coarse_16"] = {'tree':'tree',  'nbin':16, 'xmin':0, 'xmax':16, 'xtitle':'Tau rhomasses Unrolled bin ID', 'var':'int((min(tau_rhomass2, 1.1) - 0.2)/0.225) + 4*int((min(tau_rhomass1, 1.1) - 0.2)/0.225)'}  
+
 
 vardir["tau_rhomass_ss"] = {'tree':'tree',  'nbin':30, 'xmin':0.2, 'xmax':1.5, 'xtitle':'Tau rhomass ss (GeV)'}
 vardir["tau_rhomass_random"] = {'tree':'tree',  'nbin':30, 'xmin':0.2, 'xmax':1.5, 'xtitle':'Tau rhomass random (GeV)', 'var':'tau_rhomass'}
@@ -94,6 +98,8 @@ vardir["b_lips"] = {'tree':'tree',  'nbin':30, 'xmin':-10., 'xmax':10., 'xtitle'
 vardir["b_mcorr"] = {'tree':'tree',  'nbin':30, 'xmin':4, 'xmax':12, 'xtitle':'B corrected mass (GeV)'}
 #vardir["m_corr_bd"] = {'tree':'tree',  'nbin':30, 'xmin':3, 'xmax':15, 'xtitle':'B corrected mass bd (GeV)'}
 vardir["b_mass"] = {'tree':'tree',  'nbin':35, 'xmin':4., 'xmax':6, 'xtitle':'B mass (GeV)'}
+vardir["b_mass_high"] = {'tree':'tree',  'nbin':150, 'xmin':6.5, 'xmax':14, 'xtitle':'B mass high (GeV)', 'var':'b_mass'}
+vardir["b_mass_low"] = {'tree':'tree',  'nbin':20, 'xmin':2., 'xmax':4, 'xtitle':'B mass low (GeV)', 'var':'b_mass'}
 vardir["b_mass_simple"] = {'tree':'tree',  'nbin':35, 'xmin':4., 'xmax':6, 'xtitle':'B mass simple (GeV)'}
 vardir["b_mass_sf"] = {'tree':'tree', 'nbin':50, 'xmin':3.5, 'xmax':8, 'xtitle':'B mass (GeV)', 'var':'b_mass'}
 vardir["jpsi_kpipi"] = {'tree':'tree',  'nbin':50, 'xmin':5., 'xmax':5.5, 'xtitle':'J/#psi + K#pi#pi mass (GeV)'}
@@ -194,8 +200,12 @@ vardir["tau_dr_jpsi"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':2*math.pi,
 
 #vardir["xgbs_fine"] = {'tree':'tree',  'nbin':30, 'xmin':6, 'xmax':12, 'xtitle':'XGB output score fine', 'var':'xgbs', 'isRight':True}
 vardir["xgbs"] = {'tree':'tree',  'nbin':100, 'xmin':-15, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
-vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':60, 'xmin':3.1, 'xmax':9.1, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
+
+vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':60, 'xmin':1.1, 'xmax':9.1, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
+vardir["xgbs_zoom_extra"] = {'tree':'tree',  'nbin':60, 'xmin':1.1, 'xmax':9.1, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
+vardir["xgbs_zoom_thight"] = {'tree':'tree',  'nbin':60, 'xmin':3.1, 'xmax':9.1, 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
 vardir["xgbs_sigscan"] = {'tree':'tree',  'nbin':600, 'xmin':3.1, 'xmax':7., 'xtitle':'XGB output score', 'var':'xgbs', 'isRight':True}
+
 #vardir["xgbs_log"] = {'tree':'tree',  'nbin':30, 'xmin':-15, 'xmax':9, 'xtitle':'XGB output score', 'var':'xgbs', 'isLog':True}
 #vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':9., 'xmax':11, 'xtitle':'zoom XGB output score', 'var':'xgbs', 'isLog':True}
 #vardir["xgbs_zoom"] = {'tree':'tree',  'nbin':30, 'xmin':7., 'xmax':12, 'xtitle':'zoom XGB output score', 'var':'xgbs', 'isLog':True}

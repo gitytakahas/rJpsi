@@ -189,10 +189,10 @@ histPref['bg_bc'] = {'style':sHTT_QCD, 'layer':1, 'legend':'Bc BG'}
 histPref['bg_norm'] = {'style':sHTT_jtfake, 'layer':1, 'legend':'Bg norm.'}
 histPref['sig_had'] = {'style':sHTT_TTJets_v2, 'layer':4, 'legend':'Signal (3prong)'}
 #ALL possible Bc decays
-histPref['bc_jpsi_tau_3p'] = {'style':s_taucol_3, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{h}#nu'}
-histPref['bc_jpsi_tau_N3p'] = {'style':s_lob_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{oth}#nu'}
-histPref['bc_jpsi_tau_mu'] = {'style':s_taucol_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{#mu}#nu'}
-histPref['bc_jpsi_mu'] = {'style':s_pink_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#mu#nu'}
+histPref['bc_jpsi_tau_3p*'] = {'style':s_taucol_3, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{h}#nu'}
+histPref['bc_jpsi_tau_N3p*'] = {'style':s_lob_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{oth}#nu'}
+histPref['bc_jpsi_tau_mu*'] = {'style':s_taucol_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{#mu}#nu'}
+histPref['bc_jpsi_mu*'] = {'style':s_pink_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#mu#nu'}
 histPref['bc_charmonium_mu'] = {'style':s_bc_mu_1, 'layer':4, 'legend':'Bc#rightarrow(c#bar{c})_{other}#mu#nu'}
 histPref['bc_psi2s_mu'] = {'style':s_bc_mu_1, 'layer':4, 'legend':'Bc#rightarrow#psi(2s)#mu#nu'}
 histPref['bc_chic0_mu'] = {'style':s_bc_mu_2, 'layer':4, 'legend':'Bc#rightarrow#chi_{c0}#mu#nu'}
@@ -208,10 +208,10 @@ histPref['bc_jpsi_pi'] = {'style':s_jpsi_1, 'layer':4, 'legend':'Bc#rightarrowJ/
 histPref['bc_jpsi_3pi'] = {'style':s_jpsi_2, 'layer':4, 'legend':'Bc#rightarrowJ/#psi3#pi'}
 histPref['bc_jpsi_ds'] = {'style':s_jpsi_3, 'layer':4, 'legend':'Bc#rightarrowJ/#psi D^{+}_{s}'}
 histPref['bc_jpsi_dsp'] = {'style':s_jpsi_4, 'layer':4, 'legend':'Bc#rightarrowJ/#psi D*^{+}_{s}'}
-histPref['bc_jpsi_dst'] = {'style':s_jpsi_3, 'layer':4, 'legend':'Bc#rightarrowJ/#psi D(*)^{+}_{s}'}
+histPref['bc_jpsi_dst*'] = {'style':s_jpsi_3, 'layer':4, 'legend':'Bc#rightarrowJ/#psi D(*)^{+}_{s}'}
 histPref['bc_jpsi_5pi'] = {'style':s_jpsi_4, 'layer':4, 'legend':'Bc#rightarrowJ/#psi5#pi'}
 histPref['bc_jpsi_pions'] = {'style':s_lob_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi pions'}
-histPref['bc_others'] = {'style':s_others, 'layer':4, 'legend':'Bc#rightarrow others'}
+histPref['bc_others*'] = {'style':s_others, 'layer':4, 'legend':'Bc#rightarrow others'}
 
 histPref['sig_3pp*'] = {'style':sHTT_TTJets, 'layer':3, 'legend':'Signal (3prong + #pi^{0})'}
 histPref['sig_others*'] = {'style':sHTT_WJets, 'layer':2, 'legend':'Signal (others)'} 

@@ -1,3 +1,4 @@
+
 import ROOT
 import copy
 import math
@@ -7,7 +8,7 @@ def add_CMS(add=0):
     lowX=0.15 + add
     lowY=0.84
     lumi  = ROOT.TPaveText(lowX, lowY+0.06, lowX+0.15, lowY+0.16, "NDC")
-    lumi.SetTextFont(61)
+    lumi.SetTextFont(61)   
     lumi.SetTextSize(0.055)
     lumi.SetBorderSize(   0 )
     lumi.SetFillStyle(    0 )
@@ -125,7 +126,12 @@ class DisplayManager_compare(object):
     def Draw(self, histos, titles, norm=False, prefix=None):
 
         self.histos = histos
-
+        ks=0
+        chi2=0
+        ad=0
+        chi2_recomputed =0
+        ndof_recomputed=0
+        prob=0
 #        print('norm', norm)
 
         # dirty ... 
@@ -133,15 +139,16 @@ class DisplayManager_compare(object):
 #            if hh.GetName().find('data')!=-1:
 #                for ibin in range(1, hh.GetXaxis().GetNbins()+1):
 #                    hh.SetBinError(ibin, math.sqrt(hh.GetBinContent(ibin)))
-
+        sum_of_weights=[] 
         if norm:
 #            print('normalization option enabled!')
             for hh in self.histos:
                 if hh.GetSumOfWeights()==0:
                     print 'hist ', hh.GetName() ,'has 0 SumOfWeights' 
                 else:
+                    sum_of_weights.append(hh.GetSumOfWeights())
                     hh.Scale(1./hh.GetSumOfWeights())
-        
+        #print(" sum_of_weights ", sum_of_weights) 
 
         
 
@@ -171,12 +178,30 @@ class DisplayManager_compare(object):
             if self.isLog:
                 h.GetYaxis().SetRangeUser(0.00001, ymax * 100)
 #                h.GetYaxis().SetRangeUser(0.1, ymax * 100)
-            
+
+            _doption = self.doption
+            if i>0 and 'ks' in  _doption : 
+                ks = h.KolmogorovTest(self.histos[0], "p")
+                advalue = 42.42
+                advalue_root = ROOT.Double(advalue)
+                chi2 = h.Chi2Test(self.histos[0], "WW") 
+                #ad = h.AndersonDarlingTest(self.histos[0],advalue_root) ## doesn't work: suspect root bug
+                chi2_recomputed=0
+                ndof_recomputed=0
+                for b in range(1,h.GetNbinsX()):
+                    #print ("bin " , b , " , h.GetBinContent(b)  " , h.GetBinContent(b), ", self.histos[0].GetBinContent(b) ", self.histos[0].GetBinContent(b))
+                    if  h.GetBinContent(b)==0 and self.histos[0].GetBinContent(b)==0 : continue
+                    chi2_recomputed+= (h.GetBinContent(b)-self.histos[0].GetBinContent(b))**2/((h.GetBinContent(b)/sum_of_weights[i])+(self.histos[0].GetBinContent(b)/sum_of_weights[0]))
+                    ndof_recomputed+=1
+                print("Goodness of fit test result : ks ", ks )
+                print("Goodness of fit test result : prob chi2 from ROOT", chi2 )
+                prob=  ROOT.TMath.Prob(chi2_recomputed, ndof_recomputed -1)   
+                print("Goodness of fit test result : chi2 recomputed ", chi2_recomputed, ", ndof ", h.GetNbinsX() -1, " prob " , ROOT.TMath.Prob(chi2_recomputed,ndof_recomputed -1))
+
 
 #            self.Legend.AddEntry(h, title + ': ' + '{0:.1f}'.format(h.Integral()), 'lep')
 
 
-            _doption = self.doption
 
 #            if h.GetName().find('data')!=-1:
 #                _doption = 'lep'
@@ -188,7 +213,12 @@ class DisplayManager_compare(object):
 
 #            print h.GetName(), title, _doption
 #            self.Legend.AddEntry(h, title + ' (' + str(int(h.GetEntries())) + ')', 'lep')
-            self.Legend.AddEntry(h, title + ' (' + str(int(h.GetEntries())) + ', ' +  '{0:.1f}'.format(h.GetSumOfWeights()) + ')', 'lep')
+            if 'ks' in  _doption : 
+                self.Legend.AddEntry(h, (title + ' (' + str(int(h.GetEntries())) + ', ' +  '{0:.1f}'.format(h.GetSumOfWeights()) + ')')+ ', ks {:.2f}, p chi2 {:.2f}, p chi2(s) {:.2f}'.format(ks,chi2,prob) if i>0 else '', 'lep') 
+                _doption ='hpe'
+            else:   
+                self.Legend.AddEntry(h, title + ' (' + str(int(h.GetEntries())) + ', ' +  '{0:.1f}'.format(h.GetSumOfWeights()) + ')', 'lep')
+             #self.Legend.AddEntry(h, (title + ' (' + str(int(h.GetEntries())) + ', ' +  '{0:.1f}'.format(h.GetSumOfWeights()) + ')') +', ks {:.2f}, cs {:.2f}'.format(ks,cs) if i>0 else '' , 'lep')
 #            self.Legend.AddEntry(h, title + ' (' + str(int(h.GetSumOfWeights())) + ')', 'lep')
 
             if i == 0:
@@ -215,6 +245,8 @@ class DisplayManager_compare(object):
             self.canvas.cd(2)
 
             for ihist in range(1, len(self.histos)):
+                #ks=self.histos[ihist].KolmogorovTest(self.histos[0])
+                #print("Kolmogorov Smirnov test result : ks ", ks )
                 histPull = copy.deepcopy(self.histos[ihist])
                 pull_histos.append(histPull)
                 histPull.Divide(self.histos[0])
@@ -258,14 +290,23 @@ class DisplayManager_compare(object):
                 else:
                     histPull.Draw("same ep")
 
+                
+                if ihist== 1 and ( self.name.find("tau_rhomass_unrolled")!=-1 and  self.doption.find("ratio")!=-1) :
+                    namefile = self.name
+                    namefile=namefile.replace('.pdf', '_ratio.root')
+                    print (" CAMILLA creating root file ", namefile) 
+                    outHistFile = ROOT.TFile.Open(namefile , "RECREATE") 
+                    outHistFile.cd ()
+                    histPull.Write()
+                    outHistFile.Close ()
                 line = ROOT.TLine(histPull.GetXaxis().GetXmin(), 1., histPull.GetXaxis().GetXmax(), 1.)
                 line.SetLineStyle(2)
                 line.Draw()
 
-                self.draw_ratioLegend.AddEntry(histPull, titles[ihist])
+                self.draw_ratioLegend.AddEntry(histPull, titles[ihist])#+", ks {:.2f}".format(ks) )
 
 
-#            self.draw_ratioLegend.Draw()
+            #self.draw_ratioLegend.Draw()
 
             # This is a little bit ugly though ...
 
@@ -282,6 +323,6 @@ class DisplayManager_compare(object):
         l1.Draw("same")
         l2=add_Preliminary()
         l2.Draw("same")
-
+        print ("Printing canvas ",self.name) 
         self.canvas.Print(self.name)
         self.canvas.Print(self.name.replace('.pdf', '.gif'))
