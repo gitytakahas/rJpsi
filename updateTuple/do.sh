@@ -4,7 +4,7 @@ today=`date "+%Y%m%d%H%M"`
 # Specify here the output file types 
 
 name="pt"
-year="2018"
+year="2016"
 
 prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/job_${name}_${year}"
 

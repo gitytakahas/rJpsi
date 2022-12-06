@@ -305,9 +305,22 @@ if options.type=='signal':
 
 if options.type in ['signal','bg']:
 #    pufile = TFile('/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/RJPsi_mc_pu_2021Dec08_111.root')
-    
-    pufile_data = TFile('nanoAOD-tools/python/postprocessing/data/pileup/PileupHistogram-goldenJSON-13tev-' + options.year + '-100bins_withVar.root')
-    pufile_mc = TFile('nanoAOD-tools/python/postprocessing/data/pileup/mcPileup' + options.year + '.root')
+
+    puname_data = None
+    puname_mc = None
+
+    if options.year == '2016':
+        puname_data = 'PileupData_GoldenJSON_Full2016.root'
+        puname_mc = 'pileup_profile_Summer16.root'
+    elif options.year == '2017':
+        puname_data = 'PileupHistogram-goldenJSON-13tev-2017-99bins_withVar.root'
+        puname_mc = 'mcPileup2017.root'
+    elif options.year == '2018':
+        puname_data = 'PileupHistogram-goldenJSON-13tev-2018-100bins_withVar.root'
+        puname_mc = 'mcPileup2018.root'
+
+    pufile_data = TFile('nanoAOD-tools/python/postprocessing/data/pileup/' + puname_data)
+    pufile_mc = TFile('nanoAOD-tools/python/postprocessing/data/pileup/' + puname_mc)
 
     puhist_data = pufile_data.Get('pileup')
     puhist_data_plus = pufile_data.Get('pileup_plus')
@@ -356,8 +369,16 @@ if options.type in ['signal','bg']:
 
     print(puhist, puhist_up, puhist_down, 'is made ...')
 
-    SF_ID = ScaleFactorMuonTool('central', fileName='Efficiency_muon_trackerMuon_Run2018_UL_ID.json', keyName='NUM_LooseID_DEN_TrackerMuons');
-    SF_Reco = ScaleFactorMuonTool('central', fileName='Efficiency_muon_generalTracks_Run2018_UL_trackerMuon.json', keyName='NUM_TrackerMuons_DEN_genTracks');
+    yearstr = options.year
+    if options.year == '2016':
+        if options.file.find('preVFP')!=-1:
+            yearstr = '2016preVFP'
+        else:
+            yearstr = '2016postVFP'
+    print 'muon reco file', yearstr 
+
+    SF_ID = ScaleFactorMuonTool('central', fileName='Efficiency_muon_trackerMuon_Run' + yearstr + '_UL_ID.json', keyName='NUM_LooseID_DEN_TrackerMuons');
+    SF_Reco = ScaleFactorMuonTool('central', fileName='Efficiency_muon_generalTracks_Run' + yearstr + '_UL_trackerMuon.json', keyName='NUM_TrackerMuons_DEN_genTracks');
   
 if options.type=='bg':
     chain.SetBranchStatus('genWeightBkgB',1)
@@ -425,9 +446,8 @@ for evt in xrange(Nevt):
             if chain.JpsiTau_tau_vprob[itau] < 0.1: continue
             if chain.JpsiTau_tau_fls3d[itau] < 3.: continue
 #            if  chain.JpsiTau_tau_fls3d[itau] > 3. and chain.JpsiTau_tau_vprob[itau] > 0.1: continue
-#            if abs(chain.JpsiTau_tau_q[itau])!=1: continue
-
             if chain.JpsiTau_tau_mass[itau] > 1.7: continue
+#            if abs(chain.JpsiTau_tau_q[itau])!=1: continue
             if bool(chain.JpsiTau_tau_pi1_trigMatch[itau])==False and bool(chain.JpsiTau_tau_pi2_trigMatch[itau])==False and bool(chain.JpsiTau_tau_pi3_trigMatch[itau])==False: 
 #                print 'trigger matching was not satisifed ...'
                 continue

@@ -90,6 +90,8 @@ for key, var in hdict.items():
 #            multihists[hname_1d] = copy.deepcopy(hist_unrolled)
 
 
+    hist_unrolled.Scale(1./hist_unrolled.GetSumOfWeights())
+
     hdict[key]['hist'] = copy.deepcopy(hist_unrolled)
     hdict[key]['hist2d'] = copy.deepcopy(hist_2d)
 
