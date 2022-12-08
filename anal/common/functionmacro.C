@@ -61,7 +61,7 @@ void ReadFileTau(){
 
   std::cout << "Read tau BR file";
 
-  tauf = new TFile("datacard/tauola/correction.root");
+  tauf = new TFile("tauola/correction.root");
 
   //  mc = (TH1F*) f->Get("inclusive/bg_ul");
   //  mc->Scale(1./mc->GetSumOfWeights());

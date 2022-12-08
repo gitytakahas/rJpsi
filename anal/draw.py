@@ -181,14 +181,14 @@ multihists = {}
 ##sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
 #bkgstr  = "BJpsiX_ul_2018/bkg.root"
 #=======
-prefix = init.get('common', 'filedir') + '/job_pt_' + options.year + '/'
+prefix = init.get('common', 'filedir') + '/job_inv_pt_' + options.year + '/'
 
 datastr = init.get('common', 'data_prefix') + '/data.root'
 sigstr  = init.get('common', 'sig_prefix') + '/sig.root'
 bkgstr  = init.get('common', 'bkg_prefix') + '/bkg.root'
 
-
-file_hammer = TFile(prefix + '/BcJpsiTau_inclusive/Myroot_0.root')
+# preventing problems with hammer for inverted tau selection files.
+file_hammer = TFile(prefix.replace('_inv','') + '/BcJpsiTau_inclusive/Myroot_0.root')
 hist_hammer = file_hammer.Get('hammer')
 
 
@@ -399,8 +399,10 @@ channels = {
 
 
 #finaldiscriminant = ['xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
+
 #finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'jpsi_mass', 'xgbs_fit']
-finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'b_mass', 'jpsi_mass']
+finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'b_mass', 'jpsi_mass','tau_rhomass_unrolled_coarse_16']
+
 
 
 if options.min:
