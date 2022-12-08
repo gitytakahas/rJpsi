@@ -190,6 +190,7 @@ histPref['bg_norm'] = {'style':sHTT_jtfake, 'layer':1, 'legend':'Bg norm.'}
 histPref['sig_had'] = {'style':sHTT_TTJets_v2, 'layer':4, 'legend':'Signal (3prong)'}
 #ALL possible Bc decays
 histPref['bc_jpsi_tau_3p*'] = {'style':s_taucol_3, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{h}#nu'}
+histPref['bc_jpsi_tau'] = {'style':s_taucol_3, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{h}#nu'}
 histPref['bc_jpsi_tau_N3p*'] = {'style':s_lob_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{oth}#nu'}
 histPref['bc_jpsi_tau_mu*'] = {'style':s_taucol_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#tau_{#mu}#nu'}
 histPref['bc_jpsi_mu*'] = {'style':s_pink_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi#mu#nu'}

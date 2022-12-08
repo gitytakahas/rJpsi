@@ -12,6 +12,7 @@ from common.helper import *
 from common.H2TauStyle import *
 import ConfigParser
 from optparse import OptionParser, OptionValueError
+import json 
 
 #gROOT.SetBatch(False)
 gROOT.SetBatch(True)
@@ -33,8 +34,6 @@ parser.add_option("-o", "--outdir", default=".", type="string", dest="outdir")
 
 (options, args) = parser.parse_args() 
 
-#print(options)
-
 print '-'*80
 print 'sys=', options.sys
 print 'min=', options.min
@@ -48,6 +47,14 @@ init.read("./settings.ini")
 lumi = init.get('common', 'lumi_' + options.year)
 #filedir = init.get('common', 'filedir')
 
+binning_rhomass1 = json.loads(init.get('common','binning_rhomass1'))
+binning_rhomass2 = json.loads(init.get('common','binning_rhomass2'))
+
+print '-'*80
+print 'binning_rhomass1 =', binning_rhomass1
+print 'binning_rhomass2 =', binning_rhomass2
+print '-'*80
+
 def returnTuples(prefix, vardir):
 
     var_tuples = []
@@ -57,10 +64,15 @@ def returnTuples(prefix, vardir):
 
         hname = prefix + '_' + varname
 
+#        if var.has_key('isVar'):
+#            hist_register = TH2D(hname, hname, len(binning)-1, array('d',binning), len(binning)-1, array('d', binning))
+#            hist_register.GetXaxis().SetTitle(var['xtitle'])
+#            hist_register.GetYaxis().SetTitle(var['ytitle'])
+#        else:            
         hist_register = TH1D(hname, hname, var['nbin'], var['xmin'], var['xmax'])
-
         hist_register.GetXaxis().SetTitle(var['xtitle'])
         hist_register.GetYaxis().SetTitle('a.u.')
+
         hist_register.Sumw2()
         hist_register.SetTitle(varname)
         
@@ -175,12 +187,27 @@ datastr = init.get('common', 'data_prefix') + '/data.root'
 sigstr  = init.get('common', 'sig_prefix') + '/sig.root'
 bkgstr  = init.get('common', 'bkg_prefix') + '/bkg.root'
 
-
-file_hammer = TFile(prefix + '/BcJpsiTau_inclusive/Myroot_0.root')
+# preventing problems with hammer for inverted tau selection files.
+file_hammer = TFile(prefix.replace('_inv','') + '/BcJpsiTau_inclusive/Myroot_0.root')
 hist_hammer = file_hammer.Get('hammer')
 
 
-bc_sf =  init.get('common', 'bc_sf')
+bc_sf =  float(init.get('common', 'bc_sf'))
+bc_sf_corr = 1. # 1 for 2018, where we have more signal events
+
+print '2018 bc_sf = ', bc_sf, 'corr=', bc_sf_corr
+
+if options.year=='2017':
+    bc_sf_corr = float(83826632./48207632.)*(float(lumi)/59.5)
+elif options.year=='2016':
+    bc_sf_corr = float(83826632./45497000.)*(float(lumi)/59.5)
+
+print 'bc_sf_corr for ', options.year, '=', bc_sf_corr
+
+bc_sf *= bc_sf_corr
+
+print 'total bc_sf for', options.year, '=', bc_sf
+
 
 ddir = {}
 
@@ -212,18 +239,40 @@ mu_ID_weight =  "*mu1_SFID*mu2_SFID"
 mu_Reco_weight =  "*mu1_SFReco*mu2_SFReco"
 mu_weight =mu_ID_weight+mu_Reco_weight
 
+bkg_data_sf = 15499238/2589193.8
+
+if options.year == '2016':
+    bkg_data_sf = 7467872/2031220.4
+elif options.year == '2017':
+    bkg_data_sf = 7127790/1727038.5
+
+
+# root -l /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_2018/Data/data.root 
+#root [1] tree->GetEntries(" tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1")
+#(long long) 15499238
+#[ytakahas@t3ui03 /work/ytakahas/work/analysis/CMSSW_10_2_10/src/rJpsi/anal]$ root -l /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_2018/BJpsiX/bkg.root 
+#root [1] tree->Draw("1 >> h", "(tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1)*puweight*genWeightBkgB*mu1_SFID*mu2_SFID*mu1_SFReco*mu2_SFReco")
+#root [2] h->GetSumOfWeights()
+#(double) 2589193.8
+
+
+
 
 ddir['data_obs'] =  {'file':datastr, 'weight':'1', 'scale':1, 'order':2999, 'color':1, 'addcut':'1'}
 
-ddir['bc_jpsi_tau_3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight +'*weight_ctau', 'scale':bc_sf, 'order':1, 'color':taucol_1, 'addcut':'n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6 && weight_ctau < 100.'}
+ddir['bc_jpsi_tau_3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight +'*weight_ctau', 'scale':bc_sf, 'order':1, 'color':taucol_1, 'addcut':'n_occurance==1 && isJpsiTau2Mu!=1 && tau_isRight_3prong==1 && gen_sig_decay==6 && weight_ctau < 100.'}
 
-ddir['bc_jpsi_tau_N3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':1, 'color':lob_1, 'addcut':'gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0 && weight_ctau < 100.'}
+ddir['bc_jpsi_tau_N3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':1, 'color':lob_1, 'addcut':'n_occurance==1 && gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0 && weight_ctau < 100.'}
 
 ddir['bc_jpsi_dst'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'(gen_sig_decay==10||gen_sig_decay==20)  && weight_ctau < 100.'}
 
 ddir['bc_others'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'(!((n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6) || (gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0) ||gen_sig_decay==10 ||gen_sig_decay==20 ))  && weight_ctau < 100.'}
 
-ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
+#ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
+#ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':7*0.64*1.3/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
+ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':bkg_data_sf, 'order':5, 'color':dycol, 'addcut':'1'}
+
+
 
 
 # signal + Bc : All possible channel decays
@@ -271,15 +320,23 @@ xgbs_sr_xl = 'xgbs > ' + init.get('common', 'sr_low_xl')
 xgbs_sb = 'xgbs > ' + init.get('common', 'sb_low') + ' && xgbs < ' + init.get('common', 'sb_high')
 xgbs_lp = 'xgbs > ' + init.get('common', 'lp_low') + ' && xgbs < ' + init.get('common', 'lp_high')
 
+if options.year=='2016':
+    xgbs_sr = 'xgbs > ' + init.get('common', 'sr_low_' + options.year)
+    xgbs_sr_xl = 'xgbs > ' + init.get('common', 'sr_low_xl_' + options.year)
+    xgbs_sb = 'xgbs > ' + init.get('common', 'sb_low_' + options.year) + ' && xgbs < ' + init.get('common', 'sb_high_' + options.year)
+    xgbs_lp = 'xgbs > ' + init.get('common', 'lp_low_' + options.year) + ' && xgbs < ' + init.get('common', 'lp_high_' + options.year)
+
+
+
 
 
 channels = {
 
-    'inclusive':{'cut':'&&'.join([basic])},
+#    'inclusive':{'cut':'&&'.join([basic])},
     'sr':{'cut':'&&'.join([basic, xgbs_sr])},
     'sb':{'cut':'&&'.join([basic, xgbs_sb])},
     'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
-
+    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
 
 #    'inclusive_blind':{'cut':'&&'.join([basic])},
 #    'inclusive_blind_all':{'cut':'&&'.join([basic])},
@@ -314,7 +371,6 @@ channels = {
 #    'lp_mediumMass':{'cut':'&&'.join([basic, xgbs_lp,'b_mass>4', 'b_mass<6.5'])},
 #    'inclusive_mediumMass':{'cut':'&&'.join([basic,'b_mass>4', 'b_mass<6.5'])},
 #    'lp':{'cut':'&&'.join([basic, xgbs_lp])},
-    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
 #    'sr_xs':{'cut':'&&'.join([basic, xgbs_sr_xs])},  
 #    'cr_sr':{'cut':'&&'.join([basic, xgbs_sr])},
 #    'cr_sb':{'cut':'&&'.join([basic, xgbs_sb])},
@@ -343,8 +399,11 @@ channels = {
 
 
 #finaldiscriminant = ['xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
-#finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'tau_rhomass_unrolled_coarse_16', 'q2_simple', 'xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass' ]
-finaldiscriminant = ['tau_rhomass_unrolled_coarse_16']
+
+#finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'jpsi_mass', 'xgbs_fit']
+finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'b_mass', 'jpsi_mass','tau_rhomass_unrolled_coarse_16']
+
+
 
 if options.min:
     for vkey, ivar in vardir.items():
@@ -422,8 +481,8 @@ for channel, dict in channels.iteritems():
         elif options.sys.find('br_BcJpsiDst')!=-1 and type.find('bc_jpsi_ds')!=-1:
             wstr += '*1.38' if  options.sys.find('up')!=-1 else '*0.62'
 
-        elif options.sys.find('tauBr')!=-1 and type.find('bc_jpsi_tau_3p')!=-1:
-            wstr += '*getTauBrWeight_up(gen_dipion_unrolled)' if options.sys.find('up')!=-1 else '*getTauBrWeight_down(gen_dipion_unrolled)'
+        elif options.sys.find('tauBr')!=-1 and type in ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p']:
+            wstr += '*getTauBrWeight_up(gen_dipion2_mass, gen_dipion1_mass)' if options.sys.find('up')!=-1 else '*getTauBrWeight_down(gen_dipion2_mass, gen_dipion1_mass)'
         
         elif options.sys.find('tauReco')!=-1 and type.find('bc')!=-1:
             wstr += '*1.03' if options.sys.find('up')!=-1 else '*0.97'
@@ -436,14 +495,51 @@ for channel, dict in channels.iteritems():
 
 
         cut = '(' + dict['cut'] + ' &&' + waddcut + ')*' + wstr
-        print(type, cut)        
+#        print(type, cut)        
 
         tree.MultiDraw(var_tuples, cut)
-    
         multihists.update(copy.deepcopy(hists))
 
+        # add 2D plots for unrolled mass distributions ... 
+        varname_var = 'tau_rhomass_unrolled_var' # variable binning
+        
+        hname_2d = type + '_' + varname_var + '_2d'
+
+        hist_2d = TH2D(hname_2d, hname_2d, len(binning_rhomass2)-1, array('d',binning_rhomass2), len(binning_rhomass1)-1, array('d', binning_rhomass1))
+        hist_2d.Sumw2()
+#        hist_var.GetXaxis().SetTitle('Tau rhomass2')
+#        hist_var.GetYaxis().SetTitle('Tau rhomass1')
+#        hist_var.SetTitle(varname_var)
+        
+
+        tree.Draw('tau_rhomass1:tau_rhomass2 >> ' + hist_2d.GetName(), cut)
+
+        # make it 1d ... 
+        nbins_var = hist_2d.GetXaxis().GetNbins()*hist_2d.GetYaxis().GetNbins()
+
+        print '# of bins =', nbins_var
+
+        hname_1d = type + '_' + varname_var
+
+        hist_unrolled = TH1D(hname_1d, hname_1d, nbins_var, 0, nbins_var)
+
+        idx_var = 1
+        for iy in range(1, hist_2d.GetYaxis().GetNbins()+1):
+            for ix in range(1, hist_2d.GetXaxis().GetNbins()+1):
+
+                hist_unrolled.SetBinContent(idx_var, hist_2d.GetBinContent(ix, iy))
+                hist_unrolled.SetBinError(idx_var, hist_2d.GetBinError(ix, iy))
+
+#                print ix, iy, hist_2d.GetBinContent(ix,iy), hist_2d.GetBinError(ix,iy)
+
+                idx_var += 1
+
+        multihists[hname_1d] = copy.deepcopy(hist_unrolled)
 
 
+#    import pdb; pdb.set_trace()
+    vardir["tau_rhomass_unrolled_var"] = {'tree':'tree'} # dummy to let the loop below will go through unrolled variable binning distribution
+    finaldiscriminant.append('tau_rhomass_unrolled_var')
 
     for vkey, ivar in vardir.items():
 
@@ -459,7 +555,10 @@ for channel, dict in channels.iteritems():
 
         for type, ivar2 in ddir.items():
 
+            print type + '_' + vkey
+
             multihists[type + '_' + vkey].Scale(Double(ivar2['scale']))
+#            import pdb; pdb.set_trace()
 
             ################################
             hist = copy.deepcopy(multihists[type + '_' + vkey])
@@ -487,7 +586,6 @@ for channel, dict in channels.iteritems():
             if type.find('data')!=-1:
                 Histo.Hist(hist2add.GetName()).stack = False
     
-
         Histo._ApplyPrefs()
         print(Histo)
        
@@ -498,6 +596,7 @@ for channel, dict in channels.iteritems():
 
         if vkey in finaldiscriminant:
 
+            Histo.Group('bc_jpsi_tau', ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p'])
             Histo.WriteDataCard(dirname + '/datacard/' + vkey + '.root', True, 'RECREATE', channel)
 
         if options.sys=='None' and vkey.find('xgbs')!=-1:
@@ -506,4 +605,5 @@ for channel, dict in channels.iteritems():
         comparisonPlots_alt(hists, titles, True, False, dirname + '/plots/' + vkey + '_compare.pdf', False, True, 'pE')
 
 
-    
+        if vardir.has_key('tau_rhomass_unrolled_var'):
+            vardir.pop('tau_rhomass_unrolled_var')

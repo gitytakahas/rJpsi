@@ -8,7 +8,7 @@ https://github.com/pwaller/minty/blob/master/minty/junk/MultiDraw.py
 import os
 
 from ROOT import gROOT, gSystem, gDirectory, TObject, TTree, TObjArray, TTreeFormula,\
-    TH1D, SetOwnership, TTreeFormulaManager
+    TH1D, SetOwnership, TTreeFormulaManager,TH2D
 
 #gROOT.Macro('~/common/functionmacro.C+')
 
@@ -83,6 +83,8 @@ def MultiDraw(self, Formulae, CommonWeight="1"):
         match = re.match(r"^(.*?)\s*>>\s*(.*?)\s*\(\s*(.*?)\s*\)$", origFormula)
         if match:
 
+
+            print 'This is it!'
             formula, name, arguments = match.groups()
             arguments = re.split(",\s*", arguments)
 

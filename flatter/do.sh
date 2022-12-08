@@ -71,18 +71,23 @@ do
     echo "-------------------------------------"
 
     echo "signal"
-    python getDataset.py --file ${sigmc} --chunk ${nchunk_sig} --analysis ${analysis} --type signal --name BcJpsiTau_inclusive --select UL --year $year --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 
+    if [ $year = "2016" ]; then
+	python getDataset.py --file ${sigmc} --chunk 1 --analysis ${analysis} --type signal --name BcJpsiTau_inclusive --select UL --year $year --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+    else
+	python getDataset.py --file ${sigmc} --chunk ${nchunk_sig} --analysis ${analysis} --type signal --name BcJpsiTau_inclusive --select UL --year $year --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+    fi
 
     echo "bkg."
     python getDataset.py --file ${bgmc} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX --year ${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 
     if [ $year = "2018" ]; then
+	echo $year
 	python getDataset.py --file ${bgmc2} --chunk ${nchunk_bg} --analysis ${analysis} --type bg --name BJpsiX_inclusive --year ${year} --priority ${priority} --odir ${pnfs} --jdir ${outdir}
     fi
 
     echo "data", $year
-    python getDataset.py --file ${dataset} --chunk ${nchunk_data} --analysis ${analysis} --type data --name Data --priority ${priority} --odir ${pnfs} --jdir ${outdir}
+#    python getDataset.py --file ${dataset} --chunk ${nchunk_data} --analysis ${analysis} --type data --name Data --priority ${priority} --odir ${pnfs} --jdir ${outdir}
 
 done
 

@@ -10,9 +10,9 @@ year="2018"
 prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/job_${name}_${year}"
 
 
-sig_inclusive_all="${prefix}/BcJpsiTau_inclusive_ul_all_${year}/Myroot_training.root" 
+sig_inclusive_all="${prefix}/BcJpsiTau_inclusive/Myroot_training.root" 
 #sig_inclusive_ul_all_2018="${prefix}/BcJpsiTau_inclusive_ul_all_2018/Myroot.root" 
-bkg_new="${prefix}/BJpsiX_ul_inclusive_${year}/Myroot_weightAdded.root"
+bkg_new="${prefix}/BJpsiX_inclusive/Myroot_weightAdded.root"
 #data_ul_2018="${prefix}/Data_2018/Myroot_training_weightAdded.root"
 
 ##############################################

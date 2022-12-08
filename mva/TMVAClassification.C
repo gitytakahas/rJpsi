@@ -164,8 +164,8 @@ int TMVAClassification( TString myMethodList = "" )
    // Read training and test data
    // (it is also possible to use ASCII format as input -> see TMVA Users Guide)
 
-   TFile *input_s = TFile::Open( "/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt/BcJpsiTau_inclusive_ul_all_2018/Myroot_training_default.root");
-   TFile *input_b = TFile::Open( "/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt/Data_2018/Myroot_training.root");
+   TFile *input_s = TFile::Open( "/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_2018/BcJpsiTau_inclusive/Myroot_training.root");
+   TFile *input_b = TFile::Open( "/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_2018/BJpsiX_inclusive/Myroot_weightAdded.root");
 
    TTree *signalTree     = (TTree*)input_s->Get("tree");
    TTree *background     = (TTree*)input_b->Get("tree");

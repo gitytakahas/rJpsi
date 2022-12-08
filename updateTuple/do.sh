@@ -30,7 +30,8 @@ function hadding (){
 #
 ##############################################
 
-for dir in $sig_inclusive_all $bkg $data
+for dir in $sig_inclusive_all $bkg $daat
+#for dir in $sig_inclusive_all
 do
 
     echo "hadding ...", $dir

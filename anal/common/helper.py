@@ -1,5 +1,5 @@
 import os 
-from ROOT import TFile, TH1F, TH2F, TTree, gROOT, gStyle, Double, TCanvas, kRed, TH1D, TRandom3, kBird, THStack, TGraph, gDirectory, kBlue
+from ROOT import TFile, TH1F, TH2F, TTree, gROOT, gStyle, Double, TCanvas, kRed, TH1D, TRandom3, kBird, THStack, TGraph, gDirectory, kBlue, TH2D
 
 def ensureDir(directory):
     if not os.path.exists(directory):
