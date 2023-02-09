@@ -1,4 +1,4 @@
-import copy, os,  math, sys, shutil
+import copy, os,  math, sys, shutil 
 from numpy import array
 from common.officialStyle import officialStyle
 from array import array
@@ -6,12 +6,36 @@ import numpy as np
 from varConfig import vardir
 from common.DataMCPlot import *
 from common.DisplayManager_postfit import DisplayManager
+from common.DisplayManager_postfit_wide import DisplayManager_wide
 from common.DisplayManager_compare import DisplayManager_compare
 from common.helper import *
 from common.H2TauStyle import *
 import ConfigParser
 from optparse import OptionParser, OptionValueError
-from ROOT import TH1F
+
+usage = "usage: python compare.py" 
+parser = OptionParser(usage) 
+#parser.add_option('-m', '--min', action="store_true", default=False, dest='min')
+parser.add_option("-y", "--year", default="all", type="string", dest="year")
+parser.add_option('-s', '--scale', action="store_true", default=False, dest='scale')
+
+(options, args) = parser.parse_args() 
+
+process_convention={
+    'bc_jpsi_tau':'jpsi_tau',
+    'bc_jpsi_dst':'jpsi_hc'
+}
+
+nuisance_convention={
+    'hammer_ebe':'bglvar',
+    'weight_ctau':'ctau',
+    'BcPt':'bccorr',
+    'puweight':'puWeight',
+    'br_BcJpsiDst':'br_jpsi_hc_over_mu',
+    'muSFID':'sfIdJpsi',
+    'muSFReco':'sfReco'
+}
+
 
 #gROOT.SetBatch(False)
 gROOT.SetBatch(True)
@@ -19,17 +43,9 @@ officialStyle(gStyle)
 gStyle.SetOptTitle(0)
 #gStyle.SetOptStat(0)
 
+sf_signal = 0.6389
 
-usage = "usage: python compare.py" 
-parser = OptionParser(usage) 
-
-parser.add_option("-y", "--year", default="2018", type="string", dest="year")
-#parser.add_option('-c', '--create', action="store_true", default=False, dest='create')
-
-(options, args) = parser.parse_args() 
-
-
-
+prefix='tauhad'
 systs_hammer = []
 
 for hammer in range(0, 10):
@@ -37,29 +53,31 @@ for hammer in range(0, 10):
     systs_hammer.append('hammer_ebe_e' + str(hammer) + '_down')
 
 systs_mc = []
-systs_name_mc=['puweight', 'muSFID', 'muSFReco', 'weight_ctau', 'br_BcJpsiDst', 'tauBr', 'tauReco', 'xgbsEff', 'BcPt']
+#systs_name_mc=['puweight', 'trigger', 'muSFID', 'muSFReco', 'weight_ctau', 'br_BcJpsiDst', 'tauBr',  'tauReco', 'xgbsEff', 'BcPt']
+systs_name_mc=['puweight', 'weight_ctau', 'tauBr',  'BcPt']
 
 for syst in systs_name_mc:
     for ud in ['up', 'down']:
         systs_mc.append(syst + '_' + ud)
 
-print(systs_mc)
 
-systs_bkg = []
-systs_name_bkg = ["bkgExtra", "bkgExtraFunc"]
+#systs_bkg = []
+#systs_name_bkg = ["bkgExtra","bkgExtra"]
+#
+#for syst in systs_name_bkg:
+#    for ud in ['up', 'down']:
+#        systs_bkg.append(syst + '_' + ud)
 
-for syst in systs_name_bkg:
-    for ud in ['up', 'down']:
-        systs_bkg.append(syst + '_' + ud)
-
-datacardpath = '/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/results'
-
+datacardpath = '/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/results_simultaneous'
+#datacardpath = '/work/cgalloni/Rjpsi_analysis/CMSSW_10_2_10/src/rJpsi/anal/plots_inv_dir_Yuta/'
+categories = ['sr','sb']
 
 #finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
-#finaldiscriminant = ['tau_rhomass_unrolled_coarse', 'tau_rhomass_unrolled_var']
 finaldiscriminant = ['tau_rhomass_unrolled_var']
+#finaldiscriminant = ['tau_rhomass_unrolled_coarse']
 
 vardir["tau_rhomass_unrolled_var"] = {'tree':'tree'} # dummy to let the loop below will go through unrolled variable binning distribution
+
 
 for vkey, ivar in vardir.items():
     if vkey not in finaldiscriminant: 
@@ -74,19 +92,19 @@ print '-'*80
 
 
 
-ratio = 0.092
-output='combine_sb3p5_sr4_simultaneous/' + options.year 
+#ratio = 0.092
+#fitCat = 'sr'
+output='combine_sb3p5_sr4_simultaneous'
 ensureDir(output)
+
 
 init = ConfigParser.SafeConfigParser()
 init.read("./settings.ini")
-lumi = init.get('common', 'lumi_' + options.year)
 
 
-
-
-processes = ["data_obs","dd_bkg","bc_jpsi_dst","bc_others", "bc_jpsi_tau_N3p", "bc_jpsi_tau_3p"]
-categories = ['sr','sb']
+eras = ['2016', '2017', '2018']
+if options.year!='all':
+    eras = [options.year]
 
 
 def applyHists(hists):
@@ -103,9 +121,14 @@ def applyHists(hists):
         hist.SetLineStyle(idx+1)
 
 
-def comparisonPlots(hist, pname='sync.pdf', isLog=False, isRatio=True, clabel=''):
+def comparisonPlots(hist, lumi, pname='sync.pdf', isLog=False, isRatio=True, clabel=''):
 
     display = DisplayManager(pname, isRatio, isLog, lumi, clabel, 0.42, 0.65)
+    display.Draw(hist)
+
+def comparisonPlots_wide(hist, lumi, pname='sync.pdf', isLog=False, isRatio=True, clabel=''):
+
+    display = DisplayManager_wide(pname, isRatio, isLog, lumi, clabel, 0.42, 0.65)
     display.Draw(hist)
 
 def comparisonPlots_alt(hists, titles, norm=False, isLog=False, pname='sync.pdf', isRatio=False, isLegend=False, doption='he'):
@@ -116,9 +139,9 @@ def comparisonPlots_alt(hists, titles, norm=False, isLog=False, pname='sync.pdf'
     display.Draw(hists, titles, norm)
 
 
-def getHist(vkey, channel, target, sys='None'):
+def getHist(year, vkey, channel, target, sys='None'):
 
-    filename = datacardpath + '/' + options.year + '_' + channel + '_' + sys + '/datacard/' + vkey + '.root'
+    filename = datacardpath + '/' + year + '_' + channel + '_' + sys + '/datacard/' + vkey + '.root'
 
     if not os.path.isfile(filename):
         print 'This file is corrupted!!!'
@@ -139,22 +162,24 @@ def setNameTitle(hist, name):
     hist.SetTitle(name)
     hist.SetName(name)
 
-def draw(vkey, channels, target, sys='None', subtract=False, saveFig=False, sf = 0.265):
+def draw(year, vkey, channels, target, sys='None', subtract=False, saveFig=False, opt='None', sf = 0.265):
+
 
     hists = []
     titles = []
     
     for ii, channel in enumerate(channels):
 
-        _hist = getHist(vkey, channel, target, sys)
+        _hist = getHist(year, vkey, channel, target, sys)
         print( " draw _hist vkey ", vkey, " channel " ,channel, " target " ,target, " sys ", sys , "Nbins ", _hist.GetNbinsX()) 
+
         if subtract:
 
-            for proc in ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p','bc_jpsi_dst','bc_others']: 
+            for proc in ['bc_jpsi_tau', 'bc_jpsi_dst','bc_others']: 
 
-                _hist2 = getHist(vkey, channel, proc, sys) #copy.deepcopy(file.Get(channel + '/' + proc))
+                _hist2 = getHist(year, vkey, channel, proc, sys) #copy.deepcopy(file.Get(channel + '/' + proc))
 
-                if proc in ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p']:
+                if proc in ['bc_jpsi_tau']:
                     _hist2.Scale(sf)
 
                 _hist.Add(_hist2, -1)
@@ -178,8 +203,8 @@ def draw(vkey, channels, target, sys='None', subtract=False, saveFig=False, sf =
     shutil.copyfile('index.php',_dirname+'/index.php')
 
     if saveFig:
-        comparisonPlots_alt(hists, titles, True, False, _dirname + '/' + vkey +  '.pdf', True, True, 'hpe')
 
+        comparisonPlots_alt(hists, titles, True, False, _dirname + '/' + vkey +   '_' + year + '.pdf', True, True,   opt+'hpe' )
 
     file_output = TFile(_dirname + '/' + vkey +  '.root', 'recreate')
     for _hist in hists2return:
@@ -195,239 +220,248 @@ def draw(vkey, channels, target, sys='None', subtract=False, saveFig=False, sf =
 
 for vkey, ivar in vardir.items():
 
-    datacards = {}
+    filename_new = output + '/' + vkey + '.root'
 
-    for fitCat in categories:
-        hists2write = []   
-#    draw(vkey, ['lp',  'sb'], 'data_obs', 'None', True, True)
+    if options.scale:
+        print 'this is scaled!'
+        filename_new = filename_new.replace('.root', '_scaled.root')
 
-#    draw(vkey, ['sb',  'sr'], 'data_obs', 'None', True, True)
-
-#    hists2write = []
-
-
-#    print("lp-sb comparison")    
-#    draw(vkey, ['lp',  'sb'], 'data_obs', 'None', True, True)
-#    print("sb-sr comparison")
-#    draw(vkey, ['sb',  'sr'], 'data_obs', 'None', True, True)
-#    print("sb-sr_xl comparison")
-#    draw(vkey, ['sb',  'sr_xl'], 'data_obs', 'None', True, True)
-#    #print("sb-sr comparison hist preparation bkg ")
-#    #hists4ddbkg_bgmc = draw(vkey, ['sb', 'sr'], 'bg_ul', 'None', False, True)
-#    print("lp-sb comparison hist preparation data")
-#    hists4ddbkg_vr = draw(vkey, ['lp', 'sb'], 'data_obs', 'None', True, True)
-
-        file = TFile(datacardpath + '/' + options.year + '_' + fitCat + '_None/datacard/' + vkey + '.root')
-        file.cd(fitCat)
+    file_new = TFile(filename_new, 'recreate')
         
-        listofprocs = [key.GetName() for key in gDirectory.GetListOfKeys()]
+    for year in eras:
 
-#        print listofprocs
+        lumi = init.get('common', 'lumi_' + year)
+
+        for fitCat in categories:
+   
+#            draw(year, vkey, ['lp',  'sb'], 'data_obs', 'None', True, True,'None')
+
+#            draw(year, vkey, ['sb',  'sr'], 'data_obs', 'None', True, True, 'None')
+
+
+
+            hists2write = []
+
+
+#            print("lp-sb comparison")    
+#            draw(year, vkey, ['lp',  'sb'], 'data_obs', 'None', True, True, 'ks')
+#            print("sb-sr comparison")
+#            draw(year, vkey, ['sb',  'sr'], 'data_obs', 'None', True, True, 'ksratio')
+#            print("sb-sr_xl comparison")
+#            draw(year, vkey, ['sb',  'sr_xl'], 'data_obs', 'None', True, True, 'ksratio')
+#            #print("sb-sr comparison hist preparation bkg ")
+#            hists4ddbkg_bgmc = draw(year, vkey, ['sb', 'sr'], 'bg_ul', 'None', False, True, 'ks')
+#            print("lp-sb comparison hist preparation data")
+#            hists4ddbkg_vr = draw(year, vkey, ['lp', 'sb'], 'data_obs', 'None', True, True, 'ks')
+        
+            file = TFile(datacardpath + '/' + year + '_' + fitCat + '_None/datacard/' + vkey + '.root')
+            file.cd(fitCat)
+        
+            listofprocs = [key.GetName() for key in gDirectory.GetListOfKeys()]
+
+            print listofprocs
 
     
-        for proc in listofprocs:
-            _tmp = file.Get(fitCat + '/' + proc)
-            hists2write.append(copy.deepcopy(_tmp))
+            for proc in listofprocs:
+                _tmp = file.Get(fitCat + '/' + proc)
+
+                if options.scale and _tmp.GetName().find('jpsi_tau')!=-1:
+                    _tmp.Scale(sf_signal)
+                
+
+                hists2write.append(copy.deepcopy(_tmp))
         
-##        hists4ddbkg_sr = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False)
-##        bkgHist = copy.deepcopy(hists4ddbkg_sr[1])
-##        bkgHist.Scale(ratio)
-##        setNameTitle(bkgHist, 'dd_bkg')
-##        hists2write.append(bkgHist)
+#            hists4ddbkg_sr = draw(year, vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 'None')
+#            bkgHist = copy.deepcopy(hists4ddbkg_sr[1])
+
+#            hist_sb = getHist(year, vkey, 'sb', 'bg_ul') 
+#            hist_sr = getHist(year, vkey, 'sr', 'bg_ul') 
+
+        #    ratio from stefanos
+        # SR with weight 0.110209
+        # SR without weight 0.0967332
+        # ratio = 0.110209/0.0967332
+        #    ratio = 1.1393089446*
+
+#        ratio_sf = 0.110209/0.0967332
+#        
+#        if year=='2016':
+#            ratio_sf = 0.096054/0.0819467
+#        elif year=='2017':
+#            ratio_sf = 0.123838/0.0996171
+#
+#        ratio = ratio_sf*float(hist_sr.GetSumOfWeights())/float(hist_sb.GetSumOfWeights())
+
+
+##            ratio_file = TFile('correction/'+year + '.root')
+##            ratio_graph = ratio_file.Get('Graph')
 ##
-##    ### draw histograms 
+##            xgbs_sr = init.get('common', 'sr_low')
+##        
+##            if year=='2016':
+##                xgbs_sr = init.get('common', 'sr_low_' + year)
 ##
-##    hists2draw = copy.deepcopy(hists2write)
-##    print ( "Calling    Histo = DataMCPlot(vkey)    for  vkey ", vkey )
-##    Histo = DataMCPlot(vkey)
+##            ratio = ratio_graph.Eval(float(xgbs_sr))
+##        
+##            print '-'*80
+##            print year, ': BDT >', xgbs_sr, ', SR/SB extrapolation ratio =', ratio
+##            print '-'*80
 ##
-##    for _hist in hists2draw:
+##            bkgHist.Scale(ratio)
+##            setNameTitle(bkgHist, 'dd_bkg')
+##            hists2write.append(bkgHist)
+
+
+##        ### draw histograms 
 ##
-##        _name = _hist.GetName()
+##        hists2draw = copy.deepcopy(hists2write)
+##        print ( "Calling    Histo = DataMCPlot(vkey)    for  vkey ", vkey )
+##        Histo = DataMCPlot(vkey)
 ##
-##        if _name=='bg_ul': continue
+##        for _hist in hists2draw:
 ##
-##        if _name.find('data')!=-1:
-##            _hist.SetFillStyle(0)
-##            _hist.Sumw2(False)
-##            _hist.SetBinErrorOption(1)
+##            _name = _hist.GetName()
+##
+##            if _name=='bg_ul': continue
+##
+##            if _name.find('data')!=-1:
+##                _hist.SetFillStyle(0)
+##                _hist.Sumw2(False)
+##                _hist.SetBinErrorOption(1)
 ##            
 ##
-##        _hist.SetName(_name)
-##        _hist.SetTitle(_name)
-##        _hist.GetXaxis().SetLabelColor(1)
-##        _hist.GetXaxis().SetLabelSize(0.0)
+##            _hist.SetName(_name)
+##            _hist.SetTitle(_name)
+##            _hist.GetXaxis().SetLabelColor(1)
+###            _hist.GetXaxis().SetLabelSize(0.0)
 ##
-##        Histo.AddHistogram(_hist.GetName(), _hist)
-##        print ( " Histo = DataMCPlot(vkey) with _hist ", _hist.GetName() ," bins ", _hist.GetNbinsX() )
-##        if _name.find('data')!=-1:
-##            Histo.Hist(_hist.GetName()).stack = False
+##            Histo.AddHistogram(_hist.GetName(), _hist)
+##            print ( " Histo = DataMCPlot(vkey) with _hist ", _hist.GetName() ," bins ", _hist.GetNbinsX() )
+##            if _name.find('data')!=-1:
+##                Histo.Hist(_hist.GetName()).stack = False
 
 
-##    Histo._ApplyPrefs()
-##    print(Histo)
-##    comparisonPlots(Histo, output + '/' + vkey + '.gif')
-##    comparisonPlots(Histo, output + '/' + vkey + '_log.gif', True)
+
+##        Histo._ApplyPrefs()
+##        print(Histo)
+##        comparisonPlots_wide(Histo, lumi, output + '/' + vkey + '_' + year +'.gif')
+##        comparisonPlots_wide(Histo, lumi, output + '/' + vkey + '_log_' + year + '.gif', True)
+###        comparisonPlots(Histo, lumi, output + '/' + vkey + '_' + year +'.pdf')
+###        comparisonPlots(Histo, lumi, output + '/' + vkey + '_log_' + year + '.pdf', True)
+##
+##
+##        ### shape variation 
+##
+##        hists4ddbkg_up = draw(year, vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 'None', 0.95)
+##        bkgHist_up = copy.deepcopy(hists4ddbkg_up[1])
+##        bkgHist_up.Scale(ratio)
+##        setNameTitle(bkgHist_up, 'dd_bkg_shapeUp')
+##        hists2write.append(bkgHist_up)
+##    
+##        hists4ddbkg_down = draw(year, vkey, ['sr', 'sb'], 'data_obs', 'None', True, False,'None',  0.2)
+##        bkgHist_down = copy.deepcopy(hists4ddbkg_down[1])
+##        bkgHist_down.Scale(ratio)
+##        setNameTitle(bkgHist_down, 'dd_bkg_shapeDown')
+##        hists2write.append(bkgHist_down)
 
 
-        ### shape variation 
+            for sys in systs_hammer:
 
-#        hists4ddbkg_up = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 0.95)
-#        bkgHist_up = copy.deepcopy(hists4ddbkg_up[1])
-#        bkgHist_up.Scale(ratio)
-#        setNameTitle(bkgHist_up, 'dd_bkg_shapeUp')
-#        hists2write.append(bkgHist_up)
-#    
-#        hists4ddbkg_down = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 0.2)
-#        bkgHist_down = copy.deepcopy(hists4ddbkg_down[1])
-#        bkgHist_down.Scale(ratio)
-#        setNameTitle(bkgHist_down, 'dd_bkg_shapeDown')
-#        hists2write.append(bkgHist_down)
-
-
-        for sys in systs_hammer:
-
-            name_sys = sys.replace('_up','Up').replace('_down', 'Down')
+                name_sys = sys.replace('_up','Up').replace('_down', 'Down')
             
-#            hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', sys, True, False)
+  #          hists_sys = draw(year, vkey, ['sr', 'sb'], 'data_obs', sys, True, False, 'None')
+
 
 #            bkgHist_sys = hists_sys[1]
 #            bkgHist_sys.Scale(ratio)
 #            setNameTitle(bkgHist_sys, 'dd_bkg_' + name_sys)
 #            hists2write.append(bkgHist_sys)
+        
+                sig_sys = getHist(year, vkey, fitCat, 'bc_jpsi_tau', sys)
             
-            sig_3p_sys = getHist(vkey, fitCat, 'bc_jpsi_tau_3p', sys)
-            sig_others_sys = getHist(vkey, fitCat, 'bc_jpsi_tau_N3p', sys)
+                setNameTitle(sig_sys, 'bc_jpsi_tau_' + name_sys)
+
+                if options.scale:
+                    sig_sys.Scale(sf_signal)
             
-            setNameTitle(sig_3p_sys, 'bc_jpsi_tau_3p_' + name_sys)
-            setNameTitle(sig_others_sys, 'bc_jpsi_tau_N3p_' + name_sys)
-            
-            hists2write.append(sig_3p_sys)
-            hists2write.append(sig_others_sys)
+                hists2write.append(sig_sys)
 
 
-        for sys in systs_mc:
 
-            name_sys = sys.replace('_up','Up').replace('_down', 'Down')
+
+            for sys in systs_mc:
+
+                name_sys = sys.replace('_up','Up').replace('_down', 'Down')
             
-#            hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', sys, True, False)
-#            
+#            hists_sys = draw(year, vkey, ['sr', 'sb'], 'data_obs', sys, True, False, 'None')
+            
 #            bkgHist_sys = hists_sys[1]
 #            bkgHist_sys.Scale(ratio)
-#            
+
 #            setNameTitle(bkgHist_sys, 'dd_bkg_' + name_sys)
 #            hists2write.append(bkgHist_sys)
 
                         
-            sig_3p_sys = getHist(vkey, fitCat, 'bc_jpsi_tau_3p', sys)
-            sig_others_sys = getHist(vkey, fitCat, 'bc_jpsi_tau_N3p', sys)
-            bc_others_sys = getHist(vkey, fitCat, 'bc_others', sys)
-            bc_jpsi_dst_sys = getHist(vkey, fitCat, 'bc_jpsi_dst', sys)
-            
-            setNameTitle(sig_3p_sys, 'bc_jpsi_tau_3p_' + name_sys)
-            setNameTitle(sig_others_sys, 'bc_jpsi_tau_N3p_' + name_sys)
-            setNameTitle(bc_others_sys, 'bc_others_' + name_sys)
-            setNameTitle(bc_jpsi_dst_sys, 'bc_jpsi_dst_' + name_sys)     
+                sig_sys = getHist(year, vkey, fitCat, 'bc_jpsi_tau', sys)
+                bc_others = getHist(year, vkey, fitCat, 'bc_others', sys)
+                bc_jpsi_dst = getHist(year, vkey, fitCat, 'bc_jpsi_dst', sys)
+        
+                setNameTitle(sig_sys, 'bc_jpsi_tau_' + name_sys)
+                setNameTitle(bc_others, 'bc_others_' + name_sys)
+                setNameTitle(bc_jpsi_dst, 'bc_jpsi_dst_' + name_sys)     
+
+                if options.scale:
+                    sig_sys.Scale(sf_signal)
 
             
-            hists2write.append(sig_3p_sys)
-            hists2write.append(sig_others_sys)
-            hists2write.append(bc_others_sys)
-            hists2write.append(bc_jpsi_dst_sys)
-
-
-##        for ibin in range(1, hists2write[-1].GetXaxis().GetNbins()+1):
-##            print '@@@ writing bg_bin' + str(ibin), 'with', hists2write[-1].GetXaxis().GetNbins(), hists2write[-1].GetXaxis().GetXmin(), hists2write[-1].GetXaxis().GetXmax()
-##            dummy = TH1F('bg_bin' + str(ibin), 'bg_bin' + str(ibin), hists2write[-1].GetXaxis().GetNbins(), hists2write[-1].GetXaxis().GetXmin(), hists2write[-1].GetXaxis().GetXmax() )
-##
-##            dummy.SetBinContent(ibin, 1)
-##            dummy.SetBinError(ibin, 0)
-##
-##            hists2write.append(copy.deepcopy(dummy))
-
-        print(hists2write)
-
-        datacards[fitCat] = copy.deepcopy(hists2write)
-
-##        for sys in systs_bkg:
-##            if vkey == 'tau_rhomass_unrolled' : 
-##                continue
-##            name_sys = sys.replace('_up','Up').replace('_down', 'Down')
-##            hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False)
-##            bkgHist_sys = hists_sys[1]
-##            bkgHist_sys.Scale(ratio)
-##            #To be updated 
-##            p0 = 0.871 if bkgHist_sys.GetNbinsX()< 40 else  0.850166  
-##            p1 = 0.009 if bkgHist_sys.GetNbinsX()< 40 else  0.0018
-##            for bin in range(0, bkgHist_sys.GetNbinsX()):
-##                if name_sys.find("Func")!=-1:
-##                    if name_sys.find("Up")!=-1:
-##                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) * ( (p0+ p1*bin)))
-##                    else:
-##                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) * ( ( 2 - p0 - p1*bin)))
-##                else: 
-##                    #To be updated          
-##                    file_ratio =  TFile("syst_bkg/"+vkey+"_ratio.root", 'open')
-##                    ratio_hist=file_ratio.Get("data_obs_sr_xl")
-##                    if name_sys.find("Up")!=-1:   
-##                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
-##                    else:
-##                        bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(2-ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
-##                    file_ratio.Close()
-##            setNameTitle(bkgHist_sys, 'dd_bkg_' + name_sys)
-##            hists2write.append(bkgHist_sys)
-            
-
-#        hists_all = []
-
-#        for hist_ in datacards[fitCat]:
-#            hist_th1d = TH1F(hist_.GetName(), hist_.GetName(), hist_.GetXaxis().GetNbins(), hist_.GetXaxis().GetXmin(), hist_.GetXaxis().GetXmax())
-#
-#            print hist_.GetName()
-#
-#            for ibin in range(1, hist_.GetXaxis().GetNbins()+1):
-#                hist_th1d.SetBinContent(ibin, hist_.GetBinContent(ibin))
-#                hist_th1d.SetBinError(ibin, hist_.GetBinError(ibin))
-#
-#            hists_all.append(copy.deepcopy(hist_th1d))
-#            hist_.Write()
-#            hist_th1d.Write()
-
-
-#    for hist2write in hists2write:
-#        hist2write.Write()
-
-#        filename_new2 = output + '/' + vkey + '_' + fitCat + '.root'
-#        file_new2 = TFile(filename_new2, 'recreate')
-#        for hist_ in hists_all:
-#            hist_.Write()
-#
-#        file_new2.Write()
-#        file_new2.Close()
-
-
+                hists2write.append(sig_sys)
+                hists2write.append(bc_others)
+                hists2write.append(bc_jpsi_dst)
         
 
-    filename_new = output + '/' + vkey + '.root'
-    file_new = TFile(filename_new, 'recreate')
-    file_new.mkdir(fitCat)
-    file_new.cd(fitCat)
 
+#        for sys in systs_bkg:
+#            continue
+#            if vkey == 'tau_rhomass_unrolled' : 
+#                continue
+#            name_sys = sys.replace('_up','Up').replace('_down', 'Down')
+#            hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 'None')
+#            bkgHist_sys = hists_sys[1]
+#            bkgHist_sys.Scale(ratio)
+#            #To be updated 
+#            p0 = 0.871 if bkgHist_sys.GetNbinsX()< 40 else  0.850166  
+#            p1 = 0.009 if bkgHist_sys.GetNbinsX()< 40 else  0.0018
+#            for bin in range(0, bkgHist_sys.GetNbinsX()):
+#                #To be updated          
+#                file_ratio =  TFile("syst_bkg/"+vkey+"_"+year+"_ratio.root", 'open')
+#                ratio_hist=file_ratio.Get("data_obs_sr")
+#                if name_sys.find("Up")!=-1:   
+#                    bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
+#                else:
+#                    bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(2-ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
+#                file_ratio.Close()
+#            setNameTitle(bkgHist_sys, 'dd_bkg_' + name_sys)
+#            hists2write.append(bkgHist_sys)
+            
 
-    for fitCat, hists_ in datacards.iteritems():
+  
+            file_new.mkdir(prefix + '_' + fitCat + '_' + year)
+            file_new.cd(prefix + '_' + fitCat + '_' + year)
 
-#        print fitCat, hists_
+            for hist2write in hists2write:
+                histname = hist2write.GetName()
 
-        file_new.cd()
-        file_new.mkdir(fitCat)
-        file_new.cd(fitCat)
-        
-        for hist_ in hists_:
-            hist_.Write()
+                for pkey, pvar in process_convention.items():
+                    histname = histname.replace(pkey, pvar)
 
+                for nkey, nvar in nuisance_convention.items():
+                    histname = histname.replace(nkey, nvar)
 
-#    for hist2write in hists2write:
-#        hist2write.Write()
+                if hist2write.GetName()!=histname:
+                    print 'rename:', hist2write.GetName(),'---->', histname
+                    setNameTitle(hist2write, histname)
+
+                hist2write.Write()
 
     file_new.Write()
     file_new.Close()
@@ -435,47 +469,59 @@ for vkey, ivar in vardir.items():
 
 
     ### shape comparison!
+    print 'shape comparison!!'
     file = TFile(filename_new)
 
-    for fitCat in categories:
-        file.cd(fitCat)
+    for year in eras:
+
+        for fitCat in categories:
+
+            dirname = prefix + '_' + fitCat + '_' + year
+
+            file.cd(dirname)
         
-        listofprocs = [key.GetName() for key in gDirectory.GetListOfKeys()]
-
-#        print ("the list of processes is ", listofprocs)
-
-        for proc in listofprocs:
-
-            if proc.find('Up')==-1: continue
-
-            strs = proc.split('_')
-            print ("Printing proc", proc) 
-            procname = [ processes[x] for x in range(len(processes)) if processes[x] in proc][0]
-            print ("procname : ", procname)
-            print ("tentative sysname : ", proc.replace(procname+"_", ""))
-            sysname = ((proc.replace(procname+"_", "")).replace('Up', ''))
-
-            print(procname, sysname)
-        
-            _cent = fitCat + '/' + procname
-            _down = fitCat + '/' + proc.replace('Up','Down')
-            _up = fitCat + '/' + proc
-
-            print('comparing,', _cent, _down, _up)
-
-            cent = copy.deepcopy(file.Get(_cent))
-            down = copy.deepcopy(file.Get(_down))
-            up = copy.deepcopy(file.Get(_up))
+            listofprocs = [key.GetName() for key in gDirectory.GetListOfKeys()]
             
-            hists = [cent, down, up]
-            titles = [procname, proc, proc.replace('Up','Down')]
+            print listofprocs
 
-            applyHists(hists)
+            for proc in listofprocs:
+            
+                if proc.find('Up')==-1: continue
 
-            _dirname = output + '/syscompare/' + vkey + '/' + fitCat
-            ensureDir(_dirname)
-            shutil.copyfile('index.php',_dirname+'/index.php')
-            comparisonPlots_alt(hists, titles, False, False, _dirname + '/' + vkey + '_' + procname + '_' + sysname + '.pdf', True, True, 'hpe')
+
+                #            strs = proc.split('_')
+                tmplist =  proc.split('_')
+                procname = tmplist[0] + '_' + tmplist[1]
+                sysname = ((proc.replace(procname+"_", "")).replace('Up', ''))
+
+                _cent = dirname + '/' + procname
+                _down = dirname + '/' + proc.replace('Up','Down')
+                _up = dirname + '/' + proc
+
+                print '-'*80
+                print '\t', procname, _cent, _down, _up
+
+#                bc_others tauhad_sb_2018/bc_others tauhad_sb_2018/bc_others_sfRecoDown tauhad_sb_2018/bc_others_sfRecoUp
+#                jpsi_hc tauhad_sb_2018/jpsi_hc tauhad_sb_2018/jpsi_hc_br_jpsi_hc_over_muDown tauhad_sb_2018/jpsi_hc_br_jpsi_hc_over_muUp
+#                jpsi_hc tauhad_sb_2018/jpsi_hc tauhad_sb_2018/jpsi_tau_br_jpsi_hc_over_muDown tauhad_sb_2018/jpsi_tau_br_jpsi_hc_over_muUp
+
+
+                #            import pdb; pdb.set_trace()
+                
+                cent = copy.deepcopy(file.Get(_cent))
+                down = copy.deepcopy(file.Get(_down))
+                up = copy.deepcopy(file.Get(_up))
+                
+                hists = [cent, down, up]
+                titles = [procname, proc, proc.replace('Up','Down')]
+                
+                print hists, titles
+                applyHists(hists)
+                
+                _dirname = output + '/syscompare/' + vkey + '/' + year + '/' + fitCat
+                ensureDir(_dirname)
+                shutil.copyfile('index.php',_dirname+'/index.php')
+                comparisonPlots_alt(hists, titles, False, False, _dirname + '/' + vkey + '_' + procname + '_' + sysname + '.pdf', True, True, 'hpe')
 
 
         

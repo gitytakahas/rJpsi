@@ -4,9 +4,9 @@ today=`date "+%Y%m%d%H%M"`
 # Specify here the output file types 
 
 name="pt"
-year="2016"
+year="2018"
 
-prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/job_${name}_${year}"
+prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/job_inv_${name}_${year}"
 
 sig_inclusive_all="${prefix}/BcJpsiTau_inclusive"
 bkg="${prefix}/BJpsiX"
@@ -30,8 +30,8 @@ function hadding (){
 #
 ##############################################
 
-for dir in $sig_inclusive_all $bkg $daat
-#for dir in $sig_inclusive_all
+for dir in $sig_inclusive_all $bkg $data
+#for dir in $data
 do
 
     echo "hadding ...", $dir
@@ -57,31 +57,31 @@ if [ $year = "2018" ]; then
 
     hadding $bkg_new Myroot.root Myroot_*.root
 
-    for dir in $sig_inclusive_all
-    do
-	echo "splitting into two ...", $dir
-	sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.2
-    done
-
-
-    ##############################################
-    #
-    # 3. Create pt/eta map for the TMVA training
-    # 
-    # to avoid biasing, we can reweigh based on B pT and eta
-    #
-    ##############################################
-    python create_weights.py --sig_file ${sig_inclusive_all}/Myroot_training.root --bkg_file ${bkg_new}/Myroot.root --out_dir weight_${name}_${year}
-
-
-    ##############################################
-    #
-    # 4. add pt/eta weight calculated above
-    #    -> add "weight" variable that contains all weightings (including pu weight, BkgB weights)
-    # We do it for both training files and analysis files.
-    # 
-    ##############################################
-    sh updateTuple.sh ${bkg_new}/Myroot.root $PWD/weight_${name}_${year}/weight.root
+#    for dir in $sig_inclusive_all
+#    do
+#	echo "splitting into two ...", $dir
+#	sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.2
+#    done
+#
+#
+#    ##############################################
+#    #
+#    # 3. Create pt/eta map for the TMVA training
+#    # 
+#    # to avoid biasing, we can reweigh based on B pT and eta
+#    #
+#    ##############################################
+#    python create_weights.py --sig_file ${sig_inclusive_all}/Myroot_training.root --bkg_file ${bkg_new}/Myroot.root --out_dir weight_${name}_${year}
+#
+#
+#    ##############################################
+#    #
+#    # 4. add pt/eta weight calculated above
+#    #    -> add "weight" variable that contains all weightings (including pu weight, BkgB weights)
+#    # We do it for both training files and analysis files.
+#    # 
+#    ##############################################
+#    sh updateTuple.sh ${bkg_new}/Myroot.root $PWD/weight_${name}_${year}/weight.root
 
 fi
 

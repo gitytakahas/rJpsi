@@ -130,6 +130,7 @@ def drawSignificance(hists, channel, vkey, pathname, isRight=True):
 #        print(nBin, xval, 'sig', nsig, 'data', ndata)
         
         if ndata!=0:
+#            significance = nsig/math.sqrt(ndata + (ndata*0.03)**2)
             significance = nsig/math.sqrt(ndata)
         else:
             significance = 0.
@@ -159,7 +160,7 @@ def drawSignificance(hists, channel, vkey, pathname, isRight=True):
     
     plot.Draw('apl')
     
-    canvas.SaveAs(pathname + '/sig_' + vkey  + '.gif')
+    canvas.SaveAs(pathname + '/sig_' + vkey  + '.pdf')
     
         
 
@@ -181,14 +182,14 @@ multihists = {}
 ##sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
 #bkgstr  = "BJpsiX_ul_2018/bkg.root"
 #=======
-prefix = init.get('common', 'filedir') + '/job_inv_pt_' + options.year + '/'
+prefix = init.get('common', 'filedir') + '/job_pt_' + options.year
 
 datastr = init.get('common', 'data_prefix') + '/data.root'
 sigstr  = init.get('common', 'sig_prefix') + '/sig.root'
 bkgstr  = init.get('common', 'bkg_prefix') + '/bkg.root'
 
 # preventing problems with hammer for inverted tau selection files.
-file_hammer = TFile(prefix.replace('_inv','') + '/BcJpsiTau_inclusive/Myroot_0.root')
+file_hammer = TFile(prefix.replace('_inv','').replace('_bkup','') + '/BcJpsiTau_inclusive/Myroot_0.root')
 hist_hammer = file_hammer.Get('hammer')
 
 
@@ -198,9 +199,14 @@ bc_sf_corr = 1. # 1 for 2018, where we have more signal events
 print '2018 bc_sf = ', bc_sf, 'corr=', bc_sf_corr
 
 if options.year=='2017':
-    bc_sf_corr = float(83826632./48207632.)*(float(lumi)/59.5)
+#    bc_sf_corr = float(0.120483/0.114853) # 0.093
+    bc_sf_corr = float(0.16/0.1416)
 elif options.year=='2016':
-    bc_sf_corr = float(83826632./45497000.)*(float(lumi)/59.5)
+#    bc_sf_corr = float(0.147627/0.114853) # 0.114
+    bc_sf_corr = float(0.161/0.146)
+elif options.year =='2018':
+    bc_sf_corr = float(1./0.8) # as we are using 80% of data 
+
 
 print 'bc_sf_corr for ', options.year, '=', bc_sf_corr
 
@@ -242,9 +248,9 @@ mu_weight =mu_ID_weight+mu_Reco_weight
 bkg_data_sf = 15499238/2589193.8
 
 if options.year == '2016':
-    bkg_data_sf = 7467872/2031220.4
+    bkg_data_sf = 0.9142443245*7467872/2031220.4
 elif options.year == '2017':
-    bkg_data_sf = 7127790/1727038.5
+    bkg_data_sf = 0.8794414225*7127790/1727038.5
 
 
 # root -l /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_2018/Data/data.root 
@@ -316,15 +322,17 @@ ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightB
 basic = init.get('common', 'basic')
 
 xgbs_sr = 'xgbs > ' + init.get('common', 'sr_low')
-xgbs_sr_xl = 'xgbs > ' + init.get('common', 'sr_low_xl')
+#xgbs_sr_xl = 'xgbs > ' + init.get('common', 'sr_low_xl')
 xgbs_sb = 'xgbs > ' + init.get('common', 'sb_low') + ' && xgbs < ' + init.get('common', 'sb_high')
 xgbs_lp = 'xgbs > ' + init.get('common', 'lp_low') + ' && xgbs < ' + init.get('common', 'lp_high')
+xgbs_gap = 'xgbs > ' + init.get('common', 'sb_high') + ' && xgbs < ' + init.get('common', 'sr_low')
 
 if options.year=='2016':
     xgbs_sr = 'xgbs > ' + init.get('common', 'sr_low_' + options.year)
-    xgbs_sr_xl = 'xgbs > ' + init.get('common', 'sr_low_xl_' + options.year)
+#    xgbs_sr_xl = 'xgbs > ' + init.get('common', 'sr_low_xl_' + options.year)
     xgbs_sb = 'xgbs > ' + init.get('common', 'sb_low_' + options.year) + ' && xgbs < ' + init.get('common', 'sb_high_' + options.year)
     xgbs_lp = 'xgbs > ' + init.get('common', 'lp_low_' + options.year) + ' && xgbs < ' + init.get('common', 'lp_high_' + options.year)
+    xgbs_gap = 'xgbs > ' + init.get('common', 'sb_high_' + options.year) + ' && xgbs < ' + init.get('common', 'sr_low_' + options.year)
 
 
 
@@ -336,7 +344,10 @@ channels = {
     'sr':{'cut':'&&'.join([basic, xgbs_sr])},
     'sb':{'cut':'&&'.join([basic, xgbs_sb])},
     'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
-    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
+    'gap':{'cut':'&&'.join([basic, xgbs_gap])}, 
+
+
+#    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
 
 #    'inclusive_blind':{'cut':'&&'.join([basic])},
 #    'inclusive_blind_all':{'cut':'&&'.join([basic])},
@@ -401,7 +412,7 @@ channels = {
 #finaldiscriminant = ['xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
 
 #finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'jpsi_mass', 'xgbs_fit']
-finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'b_mass', 'jpsi_mass','tau_rhomass_unrolled_coarse_16']
+finaldiscriminant = ['tau_rhomass_unrolled', 'q2_simple', 'b_mass', 'tau_rhomass1', 'tau_rhomass2']
 
 
 
@@ -478,7 +489,7 @@ for channel, dict in channels.iteritems():
             wstr = wstr.replace('mu1_SFReco', 'mu1_SFReco_up' if options.sys.find('up')!=-1   else 'mu1_SFReco_down') 
             wstr = wstr.replace('mu2_SFReco', 'mu2_SFReco_up' if options.sys.find('up')!=-1   else 'mu2_SFReco_down') 
 
-        elif options.sys.find('br_BcJpsiDst')!=-1 and type.find('bc_jpsi_ds')!=-1:
+        elif options.sys.find('br_BcJpsiDst')!=-1 and type.find('bc_jpsi_dst')!=-1:
             wstr += '*1.38' if  options.sys.find('up')!=-1 else '*0.62'
 
         elif options.sys.find('tauBr')!=-1 and type in ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p']:
@@ -487,12 +498,17 @@ for channel, dict in channels.iteritems():
         elif options.sys.find('tauReco')!=-1 and type.find('bc')!=-1:
             wstr += '*1.03' if options.sys.find('up')!=-1 else '*0.97'
 
+        elif options.sys.find('trigger')!=-1 and type.find('data')==-1:
+            wstr += '*1.05' if options.sys.find('up')!=-1 else '*0.95'
+
         elif options.sys.find('xgbsEff')!=-1 and type.find('bc')!=-1:
             wstr += '*1.05' if options.sys.find('up')!=-1 else '*0.95'
 
         elif options.sys.find('BcPt')!=-1 and type.find('bc')!=-1:
             wstr += '*getBcWeight(B_pt_gen,1)'if options.sys.find('up')!=-1 else '*getBcWeight(B_pt_gen,-1)'
 
+        if type.find('bg_ul')!=-1:
+            wstr += "*getCorrection(" + options.year + ", xgbs)"
 
         cut = '(' + dict['cut'] + ' &&' + waddcut + ')*' + wstr
 #        print(type, cut)        
@@ -527,6 +543,13 @@ for channel, dict in channels.iteritems():
         for iy in range(1, hist_2d.GetYaxis().GetNbins()+1):
             for ix in range(1, hist_2d.GetXaxis().GetNbins()+1):
 
+#                width_x = hist_2d.GetXaxis().GetBinWidth(ix)
+#                width_y = hist_2d.GetYaxis().GetBinWidth(iy)
+#                area = float(width_x)*float(width_y)
+
+#                hist_unrolled.SetBinContent(idx_var, float(hist_2d.GetBinContent(ix, iy))/area)
+#                hist_unrolled.SetBinError(idx_var, float(hist_2d.GetBinError(ix, iy))/area)
+#                print 'area(', ix, iy, ') =>', area
                 hist_unrolled.SetBinContent(idx_var, hist_2d.GetBinContent(ix, iy))
                 hist_unrolled.SetBinError(idx_var, hist_2d.GetBinError(ix, iy))
 

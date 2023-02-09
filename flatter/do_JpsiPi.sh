@@ -50,17 +50,17 @@ nchunk_data=4
 #########################################
 # for signal MC
 #########################################
-#for year in 2016 2017 2018
-for year in 2016
+for year in 2016 2017 2018
+#for year in 2017 2018
 do
 
     outdir="job_JpsiPi_${priority}_${year}"
 
 
-    sigmc="BcToJPsiMuMu_Freeze_${year}_20220823"   #"BcToJPsiMuMu_Legacy_2018_20220122"
+    sigmc="BcToJPsiMuMu_JpsiPi_${year}_20221212"   #"BcToJPsiMuMu_Legacy_2018_20220122"
     bgmc="HbToJPsiMuMu_Freeze_${year}_20220823"
     bgmc2="JPsiMuMu_Freeze_${year}_20220823"
-    dataset="Charmonium_Freeze_GJSON_${year}_20220825"
+    dataset="Charmonium_JpsiPi_GJSON_${year}_20221212"
 
     echo "-------------------------------------"
     echo $year

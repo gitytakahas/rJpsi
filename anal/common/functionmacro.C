@@ -56,6 +56,35 @@ void ReadFile(){
 
 }
 
+float getCorrection(int year, float xgbs){
+  float p0 = -1;
+  float p1 = -1;
+  float p2 = -1;
+
+  if(year==2016){
+    p0 = 0.922312;
+    p1 = 0.0165410;
+    p2 = 0.0166504;
+  }else if (year==2017){
+    p0 = 0.897591;
+    p1 = 0.0247323;
+    p2 = 0.0115164;
+  }else if (year==2018){
+    p0 = 0.986485;
+    p1 = 0.0545809;
+    p2 = 0.00711602;
+  }
+
+
+  float weight = p0 + p1*xgbs + p2*xgbs*xgbs;
+
+  //  std::cout << year << " " << weight << std::endl;
+
+  return weight;
+
+
+}
+
 
 void ReadFileTau(){
 

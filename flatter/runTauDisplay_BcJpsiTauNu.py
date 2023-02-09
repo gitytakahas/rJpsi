@@ -443,9 +443,9 @@ for evt in xrange(Nevt):
     if options.priority=='pt':
             
         for itau in range(len(chain.JpsiTau_tau_pt)):
-            if chain.JpsiTau_tau_vprob[itau] < 0.1: continue
-            if chain.JpsiTau_tau_fls3d[itau] < 3.: continue
-#            if  chain.JpsiTau_tau_fls3d[itau] > 3. and chain.JpsiTau_tau_vprob[itau] > 0.1: continue
+#            if chain.JpsiTau_tau_vprob[itau] < 0.1: continue
+#            if chain.JpsiTau_tau_fls3d[itau] < 3.: continue
+            if  chain.JpsiTau_tau_fls3d[itau] > 3. and chain.JpsiTau_tau_vprob[itau] > 0.1: continue
             if chain.JpsiTau_tau_mass[itau] > 1.7: continue
 #            if abs(chain.JpsiTau_tau_q[itau])!=1: continue
             if bool(chain.JpsiTau_tau_pi1_trigMatch[itau])==False and bool(chain.JpsiTau_tau_pi2_trigMatch[itau])==False and bool(chain.JpsiTau_tau_pi3_trigMatch[itau])==False: 

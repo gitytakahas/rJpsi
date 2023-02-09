@@ -13,6 +13,13 @@ from common.H2TauStyle import *
 import ConfigParser
 from optparse import OptionParser, OptionValueError
 
+usage = "usage: python compare.py" 
+parser = OptionParser(usage) 
+#parser.add_option('-m', '--min', action="store_true", default=False, dest='min')
+parser.add_option("-y", "--year", default="all", type="string", dest="year")
+(options, args) = parser.parse_args() 
+
+
 #gROOT.SetBatch(False)
 gROOT.SetBatch(True)
 officialStyle(gStyle)
@@ -27,23 +34,23 @@ for hammer in range(0, 10):
     systs_hammer.append('hammer_ebe_e' + str(hammer) + '_down')
 
 systs_mc = []
-systs_name_mc=['puweight', 'muSFID', 'muSFReco', 'weight_ctau', 'br_BcJpsiDst', #'tauBr', 
-               'tauReco', 'xgbsEff', 'BcPt']
+#systs_name_mc=['puweight', 'trigger', 'muSFID', 'muSFReco', 'weight_ctau', 'br_BcJpsiDst', 'tauBr',  'tauReco', 'xgbsEff', 'BcPt']
+systs_name_mc=[]
 
 for syst in systs_name_mc:
     for ud in ['up', 'down']:
         systs_mc.append(syst + '_' + ud)
 
 
-systs_bkg = []
-systs_name_bkg = ["bkgExtra","bkgExtra"]
+#systs_bkg = []
+#systs_name_bkg = ["bkgExtra","bkgExtra"]
+#
+#for syst in systs_name_bkg:
+#    for ud in ['up', 'down']:
+#        systs_bkg.append(syst + '_' + ud)
 
-for syst in systs_name_bkg:
-    for ud in ['up', 'down']:
-        systs_bkg.append(syst + '_' + ud)
-
-#datacardpath = '/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/results'
-datacardpath = '/work/cgalloni/Rjpsi_analysis/CMSSW_10_2_10/src/rJpsi/anal/plots_inv_dir_Yuta/'
+datacardpath = '/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/results_simultaneous'
+#datacardpath = '/work/cgalloni/Rjpsi_analysis/CMSSW_10_2_10/src/rJpsi/anal/plots_inv_dir_Yuta/'
 
 #finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
 finaldiscriminant = ['tau_rhomass_unrolled_var']
@@ -67,7 +74,7 @@ print '-'*80
 
 #ratio = 0.092
 fitCat = 'sr'
-output='combine_sb3p5_sr4_inv_Yuta/'
+output='combine_sb3p5_sr4'
 ensureDir(output)
 
 
@@ -76,6 +83,10 @@ init.read("./settings.ini")
 
 
 processes = ["data_obs","dd_bkg","bc_jpsi_dst","bc_others", "bc_jpsi_tau"]
+
+eras = ['2016', '2017', '2018']
+if options.year!='all':
+    eras = [options.year]
 
 
 def applyHists(hists):
@@ -194,7 +205,7 @@ for vkey, ivar in vardir.items():
     filename_new = output + '/' + vkey + '.root'
     file_new = TFile(filename_new, 'recreate')
         
-    for year in ['2018']:#]['2016', '2017', '2018']:
+    for year in eras:
 
         lumi = init.get('common', 'lumi_' + year)
    
@@ -211,8 +222,8 @@ for vkey, ivar in vardir.items():
         draw(year, vkey, ['lp',  'sb'], 'data_obs', 'None', True, True, 'ks')
         print("sb-sr comparison")
         draw(year, vkey, ['sb',  'sr'], 'data_obs', 'None', True, True, 'ksratio')
-        print("sb-sr_xl comparison")
-        draw(year, vkey, ['sb',  'sr_xl'], 'data_obs', 'None', True, True, 'ksratio')
+#        print("sb-sr_xl comparison")
+#        draw(year, vkey, ['sb',  'sr_xl'], 'data_obs', 'None', True, True, 'ksratio')
         #print("sb-sr comparison hist preparation bkg ")
         hists4ddbkg_bgmc = draw(year, vkey, ['sb', 'sr'], 'bg_ul', 'None', False, True, 'ks')
         print("lp-sb comparison hist preparation data")
@@ -242,17 +253,29 @@ for vkey, ivar in vardir.items():
         # ratio = 0.110209/0.0967332
         #    ratio = 1.1393089446*
 
-        ratio_sf = 0.110209/0.0967332
+#        ratio_sf = 0.110209/0.0967332
+#        
+#        if year=='2016':
+#            ratio_sf = 0.096054/0.0819467
+#        elif year=='2017':
+#            ratio_sf = 0.123838/0.0996171
+#
+#        ratio = ratio_sf*float(hist_sr.GetSumOfWeights())/float(hist_sb.GetSumOfWeights())
+
+
+        ratio_file = TFile('correction/'+year + '.root')
+        ratio_graph = ratio_file.Get('Graph')
+
+        xgbs_sr = init.get('common', 'sr_low')
         
         if year=='2016':
-#            ratio_sf = 0.0748536/0.0624408
-            ratio_sf = 0.096054/0.0819467
-        elif year=='2017':
-            ratio_sf = 0.123838/0.0996171
+            xgbs_sr = init.get('common', 'sr_low_' + year)
 
-        ratio = ratio_sf*float(hist_sr.GetSumOfWeights())/float(hist_sb.GetSumOfWeights())
+        ratio = ratio_graph.Eval(float(xgbs_sr))
 
-        print 'ratio_sf=', ratio_sf, 'ratio=', ratio
+        print '-'*80
+        print year, ': BDT >', xgbs_sr, ', SR/SB extrapolation ratio =', ratio
+        print '-'*80
 
         bkgHist.Scale(ratio)
         setNameTitle(bkgHist, 'dd_bkg')
@@ -291,10 +314,10 @@ for vkey, ivar in vardir.items():
 
         Histo._ApplyPrefs()
         print(Histo)
-        comparisonPlots_wide(Histo, lumi, output + '/' + vkey + '_' + year +'.gif')
-        comparisonPlots_wide(Histo, lumi, output + '/' + vkey + '_log_' + year + '.gif', True)
-#        comparisonPlots(Histo, lumi, output + '/' + vkey + '_' + year +'.pdf')
-#        comparisonPlots(Histo, lumi, output + '/' + vkey + '_log_' + year + '.pdf', True)
+#        comparisonPlots_wide(Histo, lumi, output + '/' + vkey + '_' + year +'.gif')
+#        comparisonPlots_wide(Histo, lumi, output + '/' + vkey + '_log_' + year + '.gif', True)
+        comparisonPlots(Histo, lumi, output + '/' + vkey + '_' + year +'.pdf')
+        comparisonPlots(Histo, lumi, output + '/' + vkey + '_log_' + year + '.pdf', True)
 
 
         ### shape variation 
@@ -361,28 +384,28 @@ for vkey, ivar in vardir.items():
         
 
 
-        for sys in systs_bkg:
-            continue
-            if vkey == 'tau_rhomass_unrolled' : 
-                continue
-            name_sys = sys.replace('_up','Up').replace('_down', 'Down')
-            hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 'None')
-            bkgHist_sys = hists_sys[1]
-            bkgHist_sys.Scale(ratio)
-            #To be updated 
-            p0 = 0.871 if bkgHist_sys.GetNbinsX()< 40 else  0.850166  
-            p1 = 0.009 if bkgHist_sys.GetNbinsX()< 40 else  0.0018
-            for bin in range(0, bkgHist_sys.GetNbinsX()):
-                #To be updated          
-                file_ratio =  TFile("syst_bkg/"+vkey+"_"+year+"_ratio.root", 'open')
-                ratio_hist=file_ratio.Get("data_obs_sr")
-                if name_sys.find("Up")!=-1:   
-                    bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
-                else:
-                    bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(2-ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
-                file_ratio.Close()
-            setNameTitle(bkgHist_sys, 'dd_bkg_' + name_sys)
-            hists2write.append(bkgHist_sys)
+#        for sys in systs_bkg:
+#            continue
+#            if vkey == 'tau_rhomass_unrolled' : 
+#                continue
+#            name_sys = sys.replace('_up','Up').replace('_down', 'Down')
+#            hists_sys = draw(vkey, ['sr', 'sb'], 'data_obs', 'None', True, False, 'None')
+#            bkgHist_sys = hists_sys[1]
+#            bkgHist_sys.Scale(ratio)
+#            #To be updated 
+#            p0 = 0.871 if bkgHist_sys.GetNbinsX()< 40 else  0.850166  
+#            p1 = 0.009 if bkgHist_sys.GetNbinsX()< 40 else  0.0018
+#            for bin in range(0, bkgHist_sys.GetNbinsX()):
+#                #To be updated          
+#                file_ratio =  TFile("syst_bkg/"+vkey+"_"+year+"_ratio.root", 'open')
+#                ratio_hist=file_ratio.Get("data_obs_sr")
+#                if name_sys.find("Up")!=-1:   
+#                    bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
+#                else:
+#                    bkgHist_sys.SetBinContent(bin, bkgHist_sys.GetBinContent(bin) *(2-ratio_hist.GetBinContent(ratio_hist.GetXaxis().FindBin(bkgHist_sys.GetXaxis().GetBinCenter(bin)))))
+#                file_ratio.Close()
+#            setNameTitle(bkgHist_sys, 'dd_bkg_' + name_sys)
+#            hists2write.append(bkgHist_sys)
             
 
 
@@ -403,7 +426,7 @@ for vkey, ivar in vardir.items():
     print 'shape comparison!!'
     file = TFile(filename_new)
 
-    for year in ['2016', '2017', '2018']:
+    for year in eras:
 
         file.cd(prefix + '_' + year)
         

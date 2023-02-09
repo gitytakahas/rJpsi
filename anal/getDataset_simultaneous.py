@@ -32,7 +32,7 @@ print d_today
 
 
 jobdir = cdir + '/job_' + d_today
-outdir = '/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/results/'
+outdir = '/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/results_simultaneous/'
 ensureDir(outdir)
 
 if os.path.isdir(jobdir):
@@ -57,8 +57,8 @@ for ii in range(10):
     for ud in ['up', 'down']:
         syss.append('hammer_ebe_e' + str(ii) + '_' + ud)
         
-others=['puweight', 'trigger', 'muSFID', 'muSFReco', 'weight_ctau', 'br_BcJpsiDst', 'tauBr', 'tauReco', 'xgbsEff', 'BcPt']
-#others=['trigger']
+others=['puweight', 'weight_ctau',  'tauBr', 'BcPt']
+#others=['tauBr']
 
 for other in others:
     for ud in ['up', 'down']:

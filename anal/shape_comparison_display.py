@@ -102,7 +102,8 @@ file = TFile('/work/ytakahas/work/analysis/CMSSW_10_2_10/src/rJpsi/anal/combine_
 
 
 #for proc in ['bc_others', 'bc_jpsi_dst', 'bc_jpsi_tau', 'bg_ul']:
-for proc in ['bc_others', 'bc_jpsi_dst', 'bc_jpsi_tau', 'bg_ul', 'dd_bkg', 'data_obs']:
+#for proc in ['bc_others', 'bc_jpsi_dst', 'bc_jpsi_tau', 'bg_ul', 'dd_bkg', 'data_obs']:
+for proc in ['bc_others', 'bc_jpsi_dst', 'bc_jpsi_tau', 'dd_bkg']:
     hists = []
     titles = []
     

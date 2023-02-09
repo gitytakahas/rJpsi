@@ -209,7 +209,7 @@ for ibin in range(1, ratio.GetXaxis().GetNbins()+1):
         val_up = 1 - (val - 1)
     else:
         val_up = 1 + (1 - val)
-            
+#        if val_up < 0: val_up = 0
 
 #    print 'check', ibin, val, val_up
 
@@ -217,8 +217,8 @@ for ibin in range(1, ratio.GetXaxis().GetNbins()+1):
 
 
 
-ensureDir('datacard/tauola')
-datacards = TFile('datacard/tauola/correction.root','recreate')
+ensureDir('tauola')
+datacards = TFile('tauola/correction.root','recreate')
 
 for key, hist_ in hdict.items():
     hist_['hist'].Write()
