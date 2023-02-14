@@ -104,6 +104,7 @@ vardir["b_mass_high"] = {'tree':'tree',  'nbin':150, 'xmin':6.5, 'xmax':14, 'xti
 vardir["b_mass_low"] = {'tree':'tree',  'nbin':20, 'xmin':2., 'xmax':4, 'xtitle':'B mass low (GeV)', 'var':'b_mass'}
 vardir["b_mass_simple"] = {'tree':'tree',  'nbin':35, 'xmin':4., 'xmax':6, 'xtitle':'B mass simple (GeV)'}
 vardir["b_mass_sf"] = {'tree':'tree', 'nbin':50, 'xmin':3.5, 'xmax':8, 'xtitle':'B mass (GeV)', 'var':'b_mass'}
+vardir["reduced_b_mass"] = {'tree':'tree', 'nbin':55, 'xmin':6, 'xmax':6.55, 'xtitle':'B mass (GeV)', 'var':'b_mass - jpsi_mass + 3.1'}
 vardir["jpsi_kpipi"] = {'tree':'tree',  'nbin':50, 'xmin':5., 'xmax':5.5, 'xtitle':'J/#psi + K#pi#pi mass (GeV)'}
 vardir["jpsi_k"] = {'tree':'tree', 'nbin':50, 'xmin':5., 'xmax':5.5, 'xtitle':'J/#psi + K mass (GeV)', 'var':'b_mass'}
 

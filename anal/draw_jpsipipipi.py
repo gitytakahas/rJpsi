@@ -272,7 +272,9 @@ ddir['bc_jpsi_tau_N3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weig
 
 ddir['bc_jpsi_dst'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'(gen_sig_decay==10||gen_sig_decay==20)  && weight_ctau < 100.'}
 
-ddir['bc_others'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'(!((n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6) || (gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0) ||gen_sig_decay==10 ||gen_sig_decay==20 ))  && weight_ctau < 100.'}
+ddir['bc_pipipi'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'(gen_sig_decay==9)  && weight_ctau < 100.'}
+
+ddir['bc_others'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'(!((n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6) || (gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0) ||gen_sig_decay==10 ||gen_sig_decay==20 || gen_sig_decay==9))  && weight_ctau < 100.'}
 
 #ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
 #ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':7*0.64*1.3/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
@@ -327,7 +329,7 @@ xgbs_sb = 'xgbs > ' + init.get('common', 'sb_low') + ' && xgbs < ' + init.get('c
 xgbs_lp = 'xgbs > ' + init.get('common', 'lp_low') + ' && xgbs < ' + init.get('common', 'lp_high')
 xgbs_gap = 'xgbs > ' + init.get('common', 'sb_high') + ' && xgbs < ' + init.get('common', 'sr_low')
 
-#sel_jpsipipipi = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && b_vprob > 0.4 && pi1_pt > 1 && pi2_pt > 1 && pi3_pt > 1 && b_alpha > 0.99 && b_fls3d > 6. && gen_sig_decay==9'
+sel_jpsipipipi = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && b_vprob > 0.4 && pi1_pt > 1 && pi2_pt > 1 && pi3_pt > 1 && b_alpha > 0.99 && b_fls3d > 6.'
 
 if options.year=='2016':
     xgbs_sr = 'xgbs > ' + init.get('common', 'sr_low_' + options.year)
@@ -342,12 +344,12 @@ if options.year=='2016':
 
 channels = {
 
-    'inclusive':{'cut':'&&'.join([basic])},
-    'sr':{'cut':'&&'.join([basic, xgbs_sr])},
-    'sb':{'cut':'&&'.join([basic, xgbs_sb])},
-    'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
+#    'inclusive':{'cut':'&&'.join([basic])},
+#    'sr':{'cut':'&&'.join([basic, xgbs_sr])},
+#    'sb':{'cut':'&&'.join([basic, xgbs_sb])},
+#    'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
 #    'gap':{'cut':'&&'.join([basic, xgbs_gap])}, 
-#    'jpsi_pipipi':{'cut':'&&'.join([basic, sel_jpsipipipi])}, 
+    'jpsi_pipipi':{'cut':'&&'.join([basic, sel_jpsipipipi])}, 
 
 
 #    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  

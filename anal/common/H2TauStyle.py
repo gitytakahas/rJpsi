@@ -213,6 +213,7 @@ histPref['bc_jpsi_dst*'] = {'style':s_jpsi_3, 'layer':4, 'legend':'Bc#rightarrow
 histPref['bc_jpsi_5pi'] = {'style':s_jpsi_4, 'layer':4, 'legend':'Bc#rightarrowJ/#psi5#pi'}
 histPref['bc_jpsi_pions'] = {'style':s_lob_1, 'layer':4, 'legend':'Bc#rightarrowJ/#psi pions'}
 histPref['bc_others*'] = {'style':s_others, 'layer':4, 'legend':'Bc#rightarrow others'}
+histPref['bc_pipipi'] = {'style':sHTT_ZL, 'layer':5, 'legend':'Bc#rightarrowJ/#psi#pi#pi#pi'}
 
 histPref['sig_3pp*'] = {'style':sHTT_TTJets, 'layer':3, 'legend':'Signal (3prong + #pi^{0})'}
 histPref['sig_others*'] = {'style':sHTT_WJets, 'layer':2, 'legend':'Signal (others)'} 
