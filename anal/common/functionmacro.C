@@ -185,7 +185,7 @@ void ReadFileBcWeight(){
 
   std::cout << "Read Bc weight file";
 
-  fmap = new TFile("correction_complete_BcPt.root");
+  fmap = new TFile("bccorr/correction_complete_BcPt.root");
   Bcweight1D_up = (TH1F*) fmap->Get("mc_weight_up");   
   Bcweight1D_down = (TH1F*) fmap->Get("mc_weight_down");
 
