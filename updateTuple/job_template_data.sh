@@ -24,7 +24,10 @@ export TMPDIR=/scratch/$USER/${SLURM_JOB_ID}
 #    sh updateTuple.sh INFILE OUTFILE WFILE $TMPDIR IDJ
 #    mv $TMPDIR/transient_IDJ.root OUTFILE
 #    python application.py --file OUTFILE --prefix PNAME_IDJ --model OMODEL --outdir ODIR --name PNAME_IDJ
+#python application_Dbkg.py --file INFILE --prefix PNAME --model OMODEL --dmodel PMODEL --outdir $TMPDIR
+#python application_Dbkg.py --file INFILE --prefix PNAME --model OMODEL --dmodel PMODEL --outdir $TMPDIR
 python application.py --file INFILE --prefix PNAME --model OMODEL --outdir $TMPDIR
+
 #    let COUNTER=COUNTER+1 
 xrdcp -f $TMPDIR/Myroot_PNAME_*.root root://t3dcachedb03.psi.ch/ODIR
 #done

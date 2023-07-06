@@ -266,7 +266,7 @@ class DisplayManager_compare(object):
                 pad2YtoPixel = float(self.canvas.GetPad(2).YtoPixel(0))
                 pad2XaxisFactor = defaultYtoPixel / pad2YtoPixel
 
-#                print 'Pad size : ', self.histos[0].GetXaxis().GetLabelSize(), pad2XaxisFactor
+                print 'Pad size : ', self.histos[0].GetXaxis().GetLabelSize(), pad2XaxisFactor, self.histos[0].GetXaxis().GetTitleSize()
                 histPull.GetXaxis().SetLabelSize(self.histos[0].GetXaxis().GetLabelSize()*pad2XaxisFactor)
                 histPull.GetXaxis().SetLabelOffset(self.histos[0].GetXaxis().GetLabelOffset()*pad2XaxisFactor)
                 histPull.GetXaxis().SetTitleSize(self.histos[0].GetXaxis().GetTitleSize()*pad2XaxisFactor)
@@ -283,6 +283,7 @@ class DisplayManager_compare(object):
                 histPull.GetXaxis().SetTickLength(histPull.GetXaxis().GetTickLength()*pad2XaxisFactor)
                 histPull.GetYaxis().SetNdivisions(306)
 
+#                histPull.GetXaxis().SetTitle("Bin ID of the 2-dim. #rho_{1} vs #rho_{2}")
                 histPull.GetYaxis().SetTitle("Ratio")
                 histPull.SetTitle('')
                 if ihist == 1:

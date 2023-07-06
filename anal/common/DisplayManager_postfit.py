@@ -115,6 +115,7 @@ class DisplayManager(object):
         
 #        self.histos = []
         self.pullRange = 1.49
+#        self.pullRange = 0.5
 
         self.isLog = isLog
 
@@ -234,8 +235,8 @@ class DisplayManager(object):
             PullT.SetLineStyle(self.data.obj.GetLineStyle())
             PullT.SetLineWidth(self.data.obj.GetLineWidth())
             
-#            PullT.GetYaxis().SetRangeUser(-self.pullRange + 1., self.pullRange + 1.)
-            PullT.GetYaxis().SetRangeUser(0., self.pullRange + 1.)
+            PullT.GetYaxis().SetRangeUser(-self.pullRange + 1., self.pullRange + 1.)
+#            PullT.GetYaxis().SetRangeUser(0., self.pullRange + 1.)
             PullT.GetXaxis().SetRangeUser(histPull.GetXaxis().GetXmin(), histPull.GetXaxis().GetXmax())
 #            PullT.GetYaxis().SetRangeUser(0.7, 1.3)
 #            PullT.GetYaxis().SetRangeUser(-self.pullRange + 1., self.pullRange + 1.)
@@ -310,7 +311,7 @@ class DisplayManager(object):
 
             # This is a little bit ugly though ...
 
-#            for i, h in enumerate(self.histos):
+#            for i, h in enumerate(self.histo):
 #                h.GetXaxis().SetLabelSize(0)
 
             self.canvas.cd(1)

@@ -54,7 +54,7 @@ for hammer in range(0, 10):
 
 systs_mc = []
 #systs_name_mc=['puweight', 'trigger', 'muSFID', 'muSFReco', 'weight_ctau', 'br_BcJpsiDst', 'tauBr',  'tauReco', 'xgbsEff', 'BcPt']
-systs_name_mc=['puweight', 'weight_ctau', 'tauBr',  'BcPt']
+systs_name_mc=['puweight', 'weight_ctau', 'tauBr',  'BcPt', 'BcOthersShape']
 
 for syst in systs_name_mc:
     for ud in ['up', 'down']:
@@ -119,6 +119,12 @@ def applyHists(hists):
         hist.SetMarkerSize(0.5)
         hist.SetLineWidth(idx+1)
         hist.SetLineStyle(idx+1)
+        hist.GetXaxis().SetTitle('Bin ID of 2-dim. #rho_{1} vs #rho_{2}')
+        hist.GetXaxis().SetTitleSize(0.05)
+        hist.GetXaxis().SetTitleOffset(0.9)
+#        hist.GetXaxis().SetLabelSize(0.05)
+#        hist.GetXaxis().SetLabelSize(0.1)
+
 
 
 def comparisonPlots(hist, lumi, pname='sync.pdf', isLog=False, isRatio=True, clabel=''):
@@ -512,6 +518,7 @@ for vkey, ivar in vardir.items():
                 down = copy.deepcopy(file.Get(_down))
                 up = copy.deepcopy(file.Get(_up))
                 
+
                 hists = [cent, down, up]
                 titles = [procname, proc, proc.replace('Up','Down')]
                 

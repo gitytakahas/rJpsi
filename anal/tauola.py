@@ -53,7 +53,10 @@ hdict = {
     'evt1_set1':{'file':'BPH-RunIIFall18GS-00271_set1_new.root', 'hist':None, 'hist2d':None},
 }
 
+hists = []
+titles = []
 
+iii = 0
 for key, var in hdict.items():
     file = TFile(prefix + var['file'])
     
@@ -95,7 +98,17 @@ for key, var in hdict.items():
     hdict[key]['hist'] = copy.deepcopy(hist_unrolled)
     hdict[key]['hist2d'] = copy.deepcopy(hist_2d)
 
+    hist_unrolled.GetXaxis().SetLabelSize(0.04)
+    hist_unrolled.GetXaxis().SetTitle('unroolled #rho_{1} v.s. #rho_{2}')
+    hist_unrolled.SetLineColor(iii+1)
+    hist_unrolled.SetMarkerColor(iii+1)
+    hist_unrolled.SetLineStyle(iii+1)
 
+    hists.append(copy.deepcopy(hist_unrolled))
+    titles.append(key)
+    iii += 1
+
+comparisonPlots_alt(hists, titles, False, False, 'plots/tauola_compare.pdf', True, True, 'hpE')
     
 
 #prefix='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/Tauola/TauolaVariation/'

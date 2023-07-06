@@ -30,6 +30,8 @@ parser.add_option('-m', '--min', action="store_true", default=False, dest='min')
 parser.add_option('-b', '--blind', action="store_true", default=False, dest='blind')
 parser.add_option("-y", "--year", default="2018", type="string", dest="year")
 parser.add_option("-o", "--outdir", default=".", type="string", dest="outdir")
+parser.add_option('-i', '--inv', action="store_true", default=False, dest='inv')
+
 #parser.add_option('-c', '--create', action="store_true", default=False, dest='create')
 
 (options, args) = parser.parse_args() 
@@ -182,7 +184,16 @@ multihists = {}
 ##sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
 #bkgstr  = "BJpsiX_ul_2018/bkg.root"
 #=======
-prefix = init.get('common', 'filedir') + '/job_pt_' + options.year
+
+jobdir = 'job_pt' 
+
+if options.inv:
+    jobdir = 'job_inv_pt'
+
+prefix = init.get('common', 'filedir') + '/' + jobdir + '_' + options.year + '_approval'
+
+
+#prefix = init.get('common', 'filedir') + '/job_pt_' + options.year
 
 datastr = init.get('common', 'data_prefix') + '/data.root'
 sigstr  = init.get('common', 'sig_prefix') + '/sig.root'
@@ -193,19 +204,25 @@ file_hammer = TFile(prefix.replace('_inv','').replace('_bkup','') + '/BcJpsiTau_
 hist_hammer = file_hammer.Get('hammer')
 
 
-bc_sf =  float(init.get('common', 'bc_sf'))
-bc_sf_corr = 1. # 1 for 2018, where we have more signal events
+bc_sf =  1.03*float(init.get('common', 'bc_sf'))
+bc_sf_corr = 1 # 1 for 2018, where we have more signal events
 
 print '2018 bc_sf = ', bc_sf, 'corr=', bc_sf_corr
 
 if options.year=='2017':
 #    bc_sf_corr = float(0.120483/0.114853) # 0.093
     bc_sf_corr = float(0.16/0.1416)
+
 elif options.year=='2016':
 #    bc_sf_corr = float(0.147627/0.114853) # 0.114
     bc_sf_corr = float(0.161/0.146)
+
 elif options.year =='2018':
-    bc_sf_corr = float(1./0.8) # as we are using 80% of data 
+
+    if options.inv: 
+        bc_sf_corr = 1.
+    else:
+        bc_sf_corr = float(1./0.8) # as we are using 80% of data 
 
 
 print 'bc_sf_corr for ', options.year, '=', bc_sf_corr
@@ -213,6 +230,8 @@ print 'bc_sf_corr for ', options.year, '=', bc_sf_corr
 bc_sf *= bc_sf_corr
 
 print 'total bc_sf for', options.year, '=', bc_sf
+
+bc_sf_others = bc_sf*2.5 # from Camilla's study
 
 
 ddir = {}
@@ -245,12 +264,21 @@ mu_ID_weight =  "*mu1_SFID*mu2_SFID"
 mu_Reco_weight =  "*mu1_SFReco*mu2_SFReco"
 mu_weight =mu_ID_weight+mu_Reco_weight
 
-bkg_data_sf = 15499238/2589193.8
+bkg_data_sf = 1.00437207246*0.91*0.92555*15499238/2589193.8
 
 if options.year == '2016':
-    bkg_data_sf = 0.9142443245*7467872/2031220.4
+    bkg_data_sf = 1.10463316559*0.8838*0.9142443245*7467872/2031220.4
 elif options.year == '2017':
-    bkg_data_sf = 0.8794414225*7127790/1727038.5
+    bkg_data_sf = 0.994768442856*0.90264*0.8794414225*7127790/1727038.5
+
+if options.inv:
+    bkg_data_sf = 1.06225810815*0.91*0.92555*15499238/2589193.8
+
+    if options.year == '2016':
+        bkg_data_sf = 1.23293734348*0.8838*0.9142443245*7467872/2031220.4
+    elif options.year == '2017':
+        bkg_data_sf = 0.941241837484*0.90264*0.8794414225*7127790/1727038.5
+
 
 
 # root -l /pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/job_pt_2018/Data/data.root 
@@ -272,7 +300,7 @@ ddir['bc_jpsi_tau_N3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weig
 
 ddir['bc_jpsi_dst'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'(gen_sig_decay==10||gen_sig_decay==20)  && weight_ctau < 100.'}
 
-ddir['bc_others'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'(!((n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6) || (gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0) ||gen_sig_decay==10 ||gen_sig_decay==20 ))  && weight_ctau < 100.'}
+ddir['bc_others'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf_others, 'order':4, 'color':others, 'addcut':'(!((n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6) || (gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0) ||gen_sig_decay==10 ||gen_sig_decay==20 ))  && weight_ctau < 100.'}
 
 #ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
 #ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':7*0.64*1.3/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
@@ -321,9 +349,9 @@ ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightB
 
 basic = init.get('common', 'basic')
 
-xgbs_sr = 'xgbs > ' + init.get('common', 'sr_low')
+xgbs_sr = 'xgbs > ' + init.get('common', 'sr_low') #+ '&& b_mass > 5.5'
 #xgbs_sr_xl = 'xgbs > ' + init.get('common', 'sr_low_xl')
-xgbs_sb = 'xgbs > ' + init.get('common', 'sb_low') + ' && xgbs < ' + init.get('common', 'sb_high')
+xgbs_sb = 'xgbs > ' + init.get('common', 'sb_low') + ' && xgbs < ' + init.get('common', 'sb_high') #+ '&& b_mass > 5.5'
 xgbs_lp = 'xgbs > ' + init.get('common', 'lp_low') + ' && xgbs < ' + init.get('common', 'lp_high')
 xgbs_gap = 'xgbs > ' + init.get('common', 'sb_high') + ' && xgbs < ' + init.get('common', 'sr_low')
 
@@ -341,12 +369,12 @@ if options.year=='2016':
 
 
 channels = {
-
-    'inclusive':{'cut':'&&'.join([basic])},
+    
+#    'inclusive':{'cut':'&&'.join([basic])},
     'sr':{'cut':'&&'.join([basic, xgbs_sr])},
     'sb':{'cut':'&&'.join([basic, xgbs_sb])},
     'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
-#    'gap':{'cut':'&&'.join([basic, xgbs_gap])}, 
+    'gap':{'cut':'&&'.join([basic, xgbs_gap])}, 
 #    'jpsi_pipipi':{'cut':'&&'.join([basic, sel_jpsipipipi])}, 
 
 
@@ -415,7 +443,7 @@ channels = {
 #finaldiscriminant = ['xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
 
 #finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'jpsi_mass', 'xgbs_fit']
-finaldiscriminant = ['tau_rhomass_unrolled', 'q2_simple', 'b_mass', 'tau_rhomass1', 'tau_rhomass2']
+finaldiscriminant = ['tau_rhomass_unrolled', 'q2_simple', 'b_mass', 'tau_rhomass1', 'tau_rhomass2', 'b_mass', 'b_eta', 'xgbs', 'xgbs_zoom_extra']
 
 
 
@@ -442,6 +470,10 @@ for channel, dict in channels.iteritems():
 
 
     dirname = options.outdir + '/' + options.year + '_' + channel + '_' + options.sys
+    
+    if options.inv:
+        dirname = options.outdir + '/inv_' + options.year + '_' + channel + '_' + options.sys
+
     ensureDir(dirname + '/plots/')   
     shutil.copyfile('index.php', dirname + '/index.php')
     shutil.copyfile('index.php', dirname + '/plots/index.php') 
@@ -510,8 +542,14 @@ for channel, dict in channels.iteritems():
         elif options.sys.find('BcPt')!=-1 and type.find('bc')!=-1:
             wstr += '*getBcWeight(B_pt_gen,1)'if options.sys.find('up')!=-1 else '*getBcWeight(B_pt_gen,-1)'
 
+        elif options.sys.find('BcOthersShape')!=-1 and type.find('bc_others')!=-1:
+            wstr += '*getBcOthersVariation(tau_rhomass2, tau_rhomass1, 1)'if options.sys.find('up')!=-1 else '*getBcOthersVariation(tau_rhomass2, tau_rhomass1, -1)'
+
         if type.find('bg_ul')!=-1:
-            wstr += "*getCorrection(" + options.year + ", xgbs)"
+            if options.inv:
+                wstr += "*getCorrection_inv(" + options.year + ", xgbs)"
+            else:
+                wstr += "*getCorrection(" + options.year + ", xgbs)"
 
         cut = '(' + dict['cut'] + ' &&' + waddcut + ')*' + wstr
 #        print(type, cut)        

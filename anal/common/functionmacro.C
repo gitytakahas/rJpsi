@@ -36,6 +36,19 @@ TH1F *Bcweight1D_up;
 TH1F *Bcweight1D_down;
 TFile *fmap;
 
+TFile *ratio_bc_file;
+
+TFile *ratiof;
+TH1F *ratio_2016;
+TH1F *ratio_2017;
+TH1F *ratio_2018;
+TH1F *ratio_inv_2016;
+TH1F *ratio_inv_2017;
+TH1F *ratio_inv_2018;
+TH1F *ratio_bc;
+
+
+
 void ReadFile(){
 
   std::cout << "Read file";
@@ -57,33 +70,91 @@ void ReadFile(){
 }
 
 float getCorrection(int year, float xgbs){
-  float p0 = -1;
-  float p1 = -1;
-  float p2 = -1;
 
-  if(year==2016){
-    p0 = 0.922312;
-    p1 = 0.0165410;
-    p2 = 0.0166504;
-  }else if (year==2017){
-    p0 = 0.897591;
-    p1 = 0.0247323;
-    p2 = 0.0115164;
-  }else if (year==2018){
-    p0 = 0.986485;
-    p1 = 0.0545809;
-    p2 = 0.00711602;
+  if(xgbs < 0.){
+
+    float weight = -1;
+
+    if(year==2016) weight = ratio_2016->GetBinContent(ratio_2016->FindBin(xgbs));
+    if(year==2017) weight = ratio_2017->GetBinContent(ratio_2017->FindBin(xgbs));
+    if(year==2018) weight = ratio_2018->GetBinContent(ratio_2018->FindBin(xgbs));
+
+    if(weight==-1) std::cout << "ERROR !!!" << std::endl;
+
+    return weight; 
+
+  }else{
+
+    float p0 = -1;
+    float p1 = -1;
+    float p2 = -1;
+    
+    if(year==2016){
+      p0 = 9.23554e-01;
+      p1 = 2.59074e-02;
+      p2 = 2.28704e-02;
+    }else if (year==2017){
+      p0 = 9.17750e-01;
+      p1 = 2.35059e-02;
+      p2 = 1.19590e-02;
+    }else if (year==2018){
+      p0 = 9.86256e-01;
+      p1 = 7.97384e-02;
+      p2 = -3.56266e-04;
+    }
+
+    float weight = p0 + p1*xgbs + p2*xgbs*xgbs;
+    return weight;
+
   }
 
 
-  float weight = p0 + p1*xgbs + p2*xgbs*xgbs;
-
-  //  std::cout << year << " " << weight << std::endl;
-
-  return weight;
-
 
 }
+
+
+
+float getCorrection_inv(int year, float xgbs){
+
+  if(xgbs < -2.){
+
+    float weight = -1;
+
+    if(year==2016) weight = ratio_inv_2016->GetBinContent(ratio_inv_2016->FindBin(xgbs));
+    if(year==2017) weight = ratio_inv_2017->GetBinContent(ratio_inv_2017->FindBin(xgbs));
+    if(year==2018) weight = ratio_inv_2018->GetBinContent(ratio_inv_2018->FindBin(xgbs));
+
+    if(weight==-1) std::cout << "ERROR !!!" << std::endl;
+
+    return weight; 
+
+  }else{
+
+    float p0 = -1;
+    float p1 = -1;
+    float p2 = -1;
+
+    if(year==2016){
+      p0 = 9.24560e-01;
+      p1 = 5.36617e-02;
+      p2 = 2.18403e-02;
+    }else if (year==2017){
+      p0 = 9.37230e-01;
+      p1 = 2.10467e-02;
+      p2 = 1.09348e-02;
+    }else if (year==2018){
+      p0 = 1.04163e+00;
+      p1 = 3.91541e-02;
+      p2 = 7.85685e-03;
+    }
+
+    float weight = p0 + p1*xgbs + p2*xgbs*xgbs;
+    
+    return weight;
+  }
+
+}
+
 
 
 void ReadFileTau(){
@@ -109,6 +180,7 @@ void ReadFileTau(){
 
 }
 
+
 void ReadFileBcWeight(){
 
   std::cout << "Read Bc weight file";
@@ -119,6 +191,56 @@ void ReadFileBcWeight(){
 
   std::cout << ".... end" << std::endl;
 }
+
+void ReadFileRatio(){
+
+  std::cout << "Read ratio file";
+  
+  ratiof = new TFile("plots/ratio.root");
+
+  ratio_2016 = (TH1F*) ratiof->Get("ratio_2016");
+  ratio_2017 = (TH1F*) ratiof->Get("ratio_2017");
+  ratio_2018 = (TH1F*) ratiof->Get("ratio_2018");
+
+  ratio_inv_2016 = (TH1F*) ratiof->Get("ratio_inv_2016");
+  ratio_inv_2017 = (TH1F*) ratiof->Get("ratio_inv_2017");
+  ratio_inv_2018 = (TH1F*) ratiof->Get("ratio_inv_2018");
+
+  std::cout << ".... end" << std::endl;
+
+}
+
+
+void ReadBcOthersVariation(){
+
+  std::cout << "Read BcOthersVariation file";
+  
+  ratio_bc_file = new TFile("bccorr/tau_rhomass_unrolled_var_ratio_ratio.root");
+
+  ratio_bc = (TH1F*) ratio_bc_file->Get("jpsi_dp_pi0");
+
+  std::cout << ".... end" << std::endl;
+
+}
+
+Float_t getBcOthersVariation(float val1, float val2, float direction){
+
+  Int_t binid_x = taubr_ref->GetXaxis()->FindBin(val1);
+  Int_t binid_y = taubr_ref->GetYaxis()->FindBin(val2);
+  Int_t binid = taubr_ref->GetXaxis()->GetNbins()*(binid_y - 1) + binid_x; 
+  Float_t binval = ratio_bc->GetBinContent(binid);
+
+  Float_t Bcw = -1; 
+  
+  if (direction > 0.5 ) Bcw = binval; 
+  else if (direction < -0.5 ){
+    Bcw = 2-binval;
+  }
+
+  return Bcw;				       
+}
+
+
 
 Float_t getBcWeight(float pt, float direction){
   Float_t Bcw = 1; 
@@ -220,4 +342,6 @@ void functionmacro(){
   //  ReadFile();
   ReadFileTau();
   ReadFileBcWeight();
+  ReadFileRatio();
+  ReadBcOthersVariation();
 }

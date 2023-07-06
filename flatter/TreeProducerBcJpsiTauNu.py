@@ -108,6 +108,10 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
         self.addBranch('pi1_dnn_pu',                  'f')
         self.addBranch('pi1_trigMatch',                  '?')
         self.addBranch('pi1_trigMatch_dr',                  'f')
+        self.addBranch('pi1_d0sig',                  'f')
+        self.addBranch('pi1_mumuTrk_vprob',                  'f')
+        self.addBranch('pi1_mumuTrk_chi2',                  'f')
+        self.addBranch('pi1_mumuTrk_ndof',                  'f')
 
         self.addBranch('pi2_pt',                  'f')
         self.addBranch('pi2_eta',                  'f')
@@ -118,6 +122,10 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
         self.addBranch('pi2_dnn_pu',                  'f')
         self.addBranch('pi2_trigMatch',                  '?')
         self.addBranch('pi2_trigMatch_dr',                  'f')
+        self.addBranch('pi2_d0sig',                  'f')
+        self.addBranch('pi2_mumuTrk_vprob',                  'f')
+        self.addBranch('pi2_mumuTrk_chi2',                  'f')
+        self.addBranch('pi2_mumuTrk_ndof',                  'f')
 
         self.addBranch('pi3_pt',                  'f')
         self.addBranch('pi3_eta',                  'f')
@@ -128,6 +136,12 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
         self.addBranch('pi3_dnn_pu',                  'f')
         self.addBranch('pi3_trigMatch',                  '?')
         self.addBranch('pi3_trigMatch_dr',                  'f')
+        self.addBranch('pi3_d0sig',                  'f')
+        self.addBranch('pi3_mumuTrk_vprob',                  'f')
+        self.addBranch('pi3_mumuTrk_chi2',                  'f')
+        self.addBranch('pi3_mumuTrk_ndof',                  'f')
+
+        self.addBranch('pi_forwardest_eta',                  'f')
 
         self.addBranch('jpsi_kpipi',                  'f')
 #        self.addBranch('jpsi_pikpi',                  'f')
@@ -159,6 +173,9 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
         self.addBranch('tau_rhomass1_kk',                  'f')
         self.addBranch('tau_rhomass2_kk',                  'f')
 
+        self.addBranch('tau_lambda1',                  'f')
+        self.addBranch('tau_lambda2',                  'f')
+
         self.addBranch('tau_isRight_3prong',                  '?')
         self.addBranch('tau_isRight_3prong_pi0',                  '?')
 
@@ -184,6 +201,11 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
         self.addBranch('jpsi_vprob',                  'f')
         self.addBranch('jpsi_fls3d',                  'f')
         self.addBranch('jpsi_fl3d',                  'f')
+        self.addBranch('jpsi_alpha2d',                  'f')
+        self.addBranch('jpsi_fls2d',                  'f')
+        self.addBranch('jpsi_dr',                  'f')
+        self.addBranch('jpsi_maxdoca',                  'f')
+        self.addBranch('jpsi_mindoca',                  'f')
 
         self.addBranch('estar',                  'f')
         self.addBranch('q2',                  'f')
@@ -203,6 +225,7 @@ class TreeProducerBcJpsiTauNu(TreeProducerCommon):
         self.addBranch('vweight',                  'f')
         self.addBranch('tau_fl3d_wjpsi',                  'f')
         self.addBranch('tau_fls3d_wjpsi',                  'f')
+        self.addBranch('tau_alpha_wjpsi',                  'f')
 
         self.addBranch('tau_refit_chi2',                  'f')
         self.addBranch('tau_refit_ndof',                  'f')

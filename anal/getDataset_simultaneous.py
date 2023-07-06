@@ -57,14 +57,15 @@ for ii in range(10):
     for ud in ['up', 'down']:
         syss.append('hammer_ebe_e' + str(ii) + '_' + ud)
         
-others=['puweight', 'weight_ctau',  'tauBr', 'BcPt']
-#others=['tauBr']
+others=['puweight', 'weight_ctau',  'tauBr', 'BcPt', 'BcOthersShape']
 
 for other in others:
     for ud in ['up', 'down']:
         syss.append(other + '_' + ud)
 
 #print others
+
+syss = ['BcOthersShape_up']
 
 ########################
 
@@ -83,7 +84,7 @@ for year in eras:
         with open(jobscript, mode="w") as f:
             f.write(data_lines)
 
-        command = 'sbatch -p short --account=t3 --error=' + jobdir + '/err_' + year + '_' + sys + '.' + str(ijob) + ' --output=' + jobdir + '/out_' + year + '_' + sys + '.' + str(ijob) + ' ' + jobscript
+        command = 'sbatch -p standard --account=t3 --error=' + jobdir + '/err_' + year + '_' + sys + '.' + str(ijob) + ' --output=' + jobdir + '/out_' + year + '_' + sys + '.' + str(ijob) + ' ' + jobscript
 
         print year, sys
 #        print(command)

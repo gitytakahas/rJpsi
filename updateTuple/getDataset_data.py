@@ -39,6 +39,8 @@ parser.add_option("-n", "--name", default="None", type="string", help="name", de
 
 parser.add_option("-m", "--model", default="None", type="string", help="model", dest="model")
 
+parser.add_option("-d", "--dmodel", default="None", type="string", help="dmodel", dest="dmodel")
+
 parser.add_option("-j", "--jdir", default="None", type="string", help="jdir", dest="jdir")
 
 parser.add_option('-s', '--signal', action="store_true", default=False, dest='signal')
@@ -85,7 +87,7 @@ for _jlist in jlist:
     
     print(ijob, _jlist)
 
-#    if ijob == 1: break
+#    if ijob == 2: break
 
 #    import pdb; pdb.set_trace()
     jobscript = jobdir + '/job_' + str(ijob) + '.sh'
@@ -98,7 +100,7 @@ for _jlist in jlist:
         data_lines = f.read()
         
 #    data_lines = data_lines.replace('LOOP', ' '.join(options.path + '/' + str(x) for x in _jlist)).replace('ODIR', options.odir).replace('PNAME', options.name).replace('OMODEL', options.model).replace('IDJ', str(ijob))
-    data_lines = data_lines.replace('INFILE', options.path + '/' + _jlist).replace('ODIR', options.odir).replace('PNAME', options.name + '_' + str(ijob)).replace('OMODEL', options.model).replace('OUTFILE','tmp_' + str(ijob) + '.root')
+    data_lines = data_lines.replace('INFILE', options.path + '/' + _jlist).replace('ODIR', options.odir).replace('PNAME', options.name + '_' + str(ijob)).replace('OMODEL', options.model).replace('PMODEL', options.dmodel).replace('OUTFILE','tmp_' + str(ijob) + '.root')
         
     with open(jobscript, mode="w") as f:
         f.write(data_lines)

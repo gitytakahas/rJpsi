@@ -26,7 +26,19 @@ source $PWD/setup.sh
 ls -lart ${sig_inclusive_all}
 ls -lart ${bkg_new}
 
-python TrainModel_XGB.py -s ${sig_inclusive_all} -b ${bkg_new} --dir ${name}_${year}_val -o
+python TrainModel_XGB.py -s ${sig_inclusive_all} -b ${bkg_new} --dir ${name}_${year}_ref
+
+
+#python TrainModel_XGB.py -s ${sig_inclusive_all} -b ${bkg_new} --dir ${name}_${year}_val -o
+#python TrainModel_XGB_Dbkg.py -s ${sig_inclusive_all} -b ${bkg_new} --dir ${name}_${year}_test1
+
+
+
+
+
+
+
+
 
 
 #python TrainModel_XGB.py -s ${sig_inclusive_ul_all_2018} -b ${bkg_ul_2018} --dir ${name}

@@ -1,8 +1,8 @@
 #!/bin/bash
 # 
-#SBATCH -p short
+#SBATCH -p standard
 #SBATCH --account=t3
-#SBATCH --time 01:00:00
+#SBATCH --time 02:00:00
 #SBATCH -e cn-test.err  # replace default slurm-SLURM_JOB_ID.err
 #SBATCH -o cn-test.out  # replace default slurm-SLURM_JOB_ID.out
 
@@ -17,6 +17,7 @@ export TMPDIR=/scratch/$USER/${SLURM_JOB_ID}
 
 
 python draw.py --year YEARTOBEFILLED --min --sys SYSTEMATIC --outdir $TMPDIR/
+#python draw.py --year YEARTOBEFILLED --sys SYSTEMATIC --outdir $TMPDIR/
 
 ls -lart $TMPDIR
 

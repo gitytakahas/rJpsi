@@ -278,7 +278,11 @@ if __name__ == '__main__':
 
 
 #    features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7',  'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'tau_fls3d', 'tau_vprob', 'tau_fls3d_wjpsi',  'tau_sumofdnn', 'ncand', 'estar']
-    features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7',  'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'tau_fls3d', 'tau_vprob', 'tau_fls3d_wjpsi',  'tau_sumofdnn','tau_sumofdnn_1prong', 'tau_sumofdnn_otherB', 'tau_sumofdnn_pu', 'ncand', 'estar']
+
+
+#    features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7',  'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'tau_fls3d', 'tau_vprob', 'tau_fls3d_wjpsi',  'tau_sumofdnn','tau_sumofdnn_1prong', 'tau_sumofdnn_otherB', 'tau_sumofdnn_pu', 'ncand', 'estar']
+    features = ['b_pt', 'b_eta', 'b_alpha', 'b_vprob', 'tau_iso_0p7',  'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'tau_fls3d', 'tau_vprob', 'tau_fls3d_wjpsi',  'tau_sumofdnn','tau_sumofdnn_otherB', 'ncand', 'estar']
+
 
 
 
@@ -302,8 +306,11 @@ if __name__ == '__main__':
     ddf['sig'] = get_df(args.signal, branches_sig)
     ddf['bkg'] = get_df(args.background, branches_bg)
 
-    ddf['sig'].replace([np.inf, -np.inf], 0.0, inplace=True)
-    ddf['bkg'].replace([np.inf, -np.inf], 0.0, inplace=True)
+    ddf['sig'].replace([np.nan, np.inf, -np.inf], 0.0, inplace=True)
+    ddf['bkg'].replace([np.nan, np.inf, -np.inf], 0.0, inplace=True)
+
+    print('check', np.isnan(ddf['sig'].any()), np.isfinite(ddf['sig'].all()))
+
 
     # only allow 3prong
 #    print(ddf['sig'])
@@ -331,9 +338,11 @@ if __name__ == '__main__':
 
 
     df = pd.concat([ddf['sig'],ddf['bkg']]).sort_index(axis=1).sample(frac=1).reset_index(drop=True)
-#    df['weights'] = np.where(df['isSignal'], 1.0/df['BToKEE_fit_massErr'].replace(np.nan, 1.0), 1.0)
-    df['weights'] = np.where(df['isSignal']==0, df['weight']*df['puweight']*df['mu1_SFID']*df['mu2_SFID']*df['mu1_SFReco']*df['mu2_SFReco']*df['genWeightBkgB'], df['puweight']*df['mu1_SFID']*df['mu2_SFID']*df['mu1_SFReco']*df['mu2_SFReco']*df['weight_ctau']*df['hammer_ebe'])
-#    df['weights'] = np.where(df['isSignal']==0, 1.0, 1.0)
+
+#    df['weights'] = np.where(df['isSignal']==0, df['weight']*df['puweight']*df['mu1_SFID']*df['mu2_SFID']*df['mu1_SFReco']*df['mu2_SFReco']*df['genWeightBkgB'], df['puweight']*df['mu1_SFID']*df['mu2_SFID']*df['mu1_SFReco']*df['mu2_SFReco']*df['weight_ctau']*df['hammer_ebe'])
+
+
+    df['weights'] = np.where(df['isSignal']==0, 1.0, 1.0)
 #    df['weights'] = df['weight']
 #    df['weights'] = 1.0
 

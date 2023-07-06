@@ -251,6 +251,7 @@ chain.SetBranchStatus('JpsiTau_tau_rhomass_ss', 1)
 chain.SetBranchStatus('JpsiTau_tau_vprob', 1)
 chain.SetBranchStatus('JpsiTau_tau_fls3d*', 1)
 chain.SetBranchStatus('JpsiTau_tau_fl3d*', 1)
+chain.SetBranchStatus('JpsiTau_tau_alpha*', 1)
 chain.SetBranchStatus('JpsiTau_tau_sumofdnn*', 1)
 
 chain.SetBranchStatus('JpsiTau_tau_max_dr_3prong', 1)
@@ -394,6 +395,7 @@ evtid = 0
 
 mk = 0.493677
 mp = 0.139571
+mproton = 0.938272
 
 dicts = {}
 dict_counter = 0
@@ -407,6 +409,7 @@ for evt in xrange(Nevt):
 #    import pdb; pdb.set_trace()
 #    if bool(chain.JpsiTau_isJpsiMu)==True:
 #        print(type(chain.JpsiTau_isJpsiMu), bool(chain.JpsiTau_isJpsiMu))
+
 
     out.multi.Fill(len(chain.JpsiTau_tau_pt))
     out.filt.Fill(0)
@@ -439,20 +442,43 @@ for evt in xrange(Nevt):
     ## below is an example of filtering vertex prob. > 10% and the flgith sig. > 3 sigma
     ## 
     ########################################################
+
+    ntaucand = 0
     
     if options.priority=='pt':
-            
+           
         for itau in range(len(chain.JpsiTau_tau_pt)):
-#            if chain.JpsiTau_tau_vprob[itau] < 0.1: continue
-#            if chain.JpsiTau_tau_fls3d[itau] < 3.: continue
-            if  chain.JpsiTau_tau_fls3d[itau] > 3. and chain.JpsiTau_tau_vprob[itau] > 0.1: continue
+            if chain.JpsiTau_tau_vprob[itau] < 0.1: continue
+            if chain.JpsiTau_tau_fls3d[itau] < 3.: continue
+#            if  chain.JpsiTau_tau_fls3d[itau] > 3. and chain.JpsiTau_tau_vprob[itau] > 0.1: continue
             if chain.JpsiTau_tau_mass[itau] > 1.7: continue
 #            if abs(chain.JpsiTau_tau_q[itau])!=1: continue
-            if bool(chain.JpsiTau_tau_pi1_trigMatch[itau])==False and bool(chain.JpsiTau_tau_pi2_trigMatch[itau])==False and bool(chain.JpsiTau_tau_pi3_trigMatch[itau])==False: 
+#            if bool(chain.JpsiTau_tau_pi1_trigMatch[itau])==False and bool(chain.JpsiTau_tau_pi2_trigMatch[itau])==False and bool(chain.JpsiTau_tau_pi3_trigMatch[itau])==False: 
 #                print 'trigger matching was not satisifed ...'
+#                continue
+
+            dr_pi1_mu1 = deltaR(chain.JpsiTau_tau_pi1_eta[itau], chain.JpsiTau_tau_pi1_phi[itau], chain.JpsiTau_mu1_eta, chain.JpsiTau_mu1_phi)
+            dr_pi1_mu2 = deltaR(chain.JpsiTau_tau_pi1_eta[itau], chain.JpsiTau_tau_pi1_phi[itau], chain.JpsiTau_mu2_eta, chain.JpsiTau_mu2_phi)
+
+            dr_pi2_mu1 = deltaR(chain.JpsiTau_tau_pi2_eta[itau], chain.JpsiTau_tau_pi2_phi[itau], chain.JpsiTau_mu1_eta, chain.JpsiTau_mu1_phi)
+            dr_pi2_mu2 = deltaR(chain.JpsiTau_tau_pi2_eta[itau], chain.JpsiTau_tau_pi2_phi[itau], chain.JpsiTau_mu2_eta, chain.JpsiTau_mu2_phi)
+
+            dr_pi3_mu1 = deltaR(chain.JpsiTau_tau_pi3_eta[itau], chain.JpsiTau_tau_pi3_phi[itau], chain.JpsiTau_mu1_eta, chain.JpsiTau_mu1_phi)
+            dr_pi3_mu2 = deltaR(chain.JpsiTau_tau_pi3_eta[itau], chain.JpsiTau_tau_pi3_phi[itau], chain.JpsiTau_mu2_eta, chain.JpsiTau_mu2_phi)
+
+#            print(dr_pi1_mu1, dr_pi1_mu2, dr_pi2_mu1, dr_pi2_mu2, dr_pi3_mu1, dr_pi3_mu2)
+
+
+            if not (    (bool(chain.JpsiTau_tau_pi1_trigMatch[itau])==True and chain.JpsiTau_tau_pi1_pt[itau] > 1.2 and chain.JpsiTau_tau_pi1_d0sig[itau] > 2. and float(chain.JpsiTau_tau_pi1_mumuTrk_chi2[itau])/float(chain.JpsiTau_tau_pi1_mumuTrk_ndof[itau]) < 10. and dr_pi1_mu1 > 0.005 and dr_pi1_mu2 > 0.005) 
+                        or
+                        (bool(chain.JpsiTau_tau_pi2_trigMatch[itau])==True and chain.JpsiTau_tau_pi2_pt[itau] > 1.2 and chain.JpsiTau_tau_pi2_d0sig[itau] > 2. and float(chain.JpsiTau_tau_pi2_mumuTrk_chi2[itau])/float(chain.JpsiTau_tau_pi2_mumuTrk_ndof[itau]) < 10. and dr_pi2_mu1 > 0.005 and dr_pi2_mu2 > 0.005) 
+                        or
+                        (bool(chain.JpsiTau_tau_pi3_trigMatch[itau])==True and chain.JpsiTau_tau_pi3_pt[itau] > 1.2 and chain.JpsiTau_tau_pi3_d0sig[itau] > 2. and float(chain.JpsiTau_tau_pi3_mumuTrk_chi2[itau])/float(chain.JpsiTau_tau_pi3_mumuTrk_ndof[itau]) < 10. and dr_pi3_mu1 > 0.005 and dr_pi3_mu2 > 0.005) 
+            ): 
+                print 'trigger matching was not satisfied ...'
                 continue
-            
-            # you can add tau mass cuts here
+
+            ntaucand += 1
 
             tindex_ = itau
             break
@@ -460,6 +486,10 @@ for evt in xrange(Nevt):
 #    if options.priority=='pt':
 #        tindex_ = 0
             
+#    print evt, 'tindex = ', tindex_ 
+
+    out.multi_tau.Fill(ntaucand)
+
     if options.priority!='multiple' and tindex_ == -1: continue
 
     out.filt.Fill(2)
@@ -714,6 +744,7 @@ for evt in xrange(Nevt):
         out.vweight[0] = chain.JpsiTau_tau_vweight[tindex]
         out.tau_fl3d_wjpsi[0] = chain.JpsiTau_tau_fl3d_wjpsi[tindex]
         out.tau_fls3d_wjpsi[0] = chain.JpsiTau_tau_fls3d_wjpsi[tindex]
+        out.tau_alpha_wjpsi[0] = chain.JpsiTau_tau_alpha_wjpsi[tindex]
 
 #        out.tau_refit_vx[0] = chain.JpsiTau_tau_refit_vx[tindex]
 #        out.tau_refit_vy[0] = chain.JpsiTau_tau_refit_vy[tindex]
@@ -784,6 +815,11 @@ for evt in xrange(Nevt):
         pi1_dnn_pu = chain.JpsiTau_tau_pi1_dnn_pu[tindex]
         pi1_trigMatch = bool(chain.JpsiTau_tau_pi1_trigMatch[tindex])
         pi1_trigMatch_dr = chain.JpsiTau_tau_pi1_trigMatch_dr[tindex]
+        pi1_d0sig = chain.JpsiTau_tau_pi1_d0sig[tindex]
+        pi1_mumuTrk_vprob = chain.JpsiTau_tau_pi1_mumuTrk_vprob[tindex]
+        pi1_mumuTrk_chi2 = chain.JpsiTau_tau_pi1_mumuTrk_chi2[tindex]
+        pi1_mumuTrk_ndof = chain.JpsiTau_tau_pi1_mumuTrk_ndof[tindex]
+
 
         pi2_pt = chain.JpsiTau_tau_pi2_pt[tindex]
         pi2_eta = chain.JpsiTau_tau_pi2_eta[tindex]
@@ -796,6 +832,11 @@ for evt in xrange(Nevt):
         pi2_dnn_pu = chain.JpsiTau_tau_pi2_dnn_pu[tindex]
         pi2_trigMatch = bool(chain.JpsiTau_tau_pi2_trigMatch[tindex])
         pi2_trigMatch_dr = chain.JpsiTau_tau_pi2_trigMatch_dr[tindex]
+        pi2_d0sig = chain.JpsiTau_tau_pi2_d0sig[tindex]
+        pi2_mumuTrk_vprob = chain.JpsiTau_tau_pi2_mumuTrk_vprob[tindex]
+        pi2_mumuTrk_chi2 = chain.JpsiTau_tau_pi2_mumuTrk_chi2[tindex]
+        pi2_mumuTrk_ndof = chain.JpsiTau_tau_pi2_mumuTrk_ndof[tindex]
+
 
         pi3_pt = chain.JpsiTau_tau_pi3_pt[tindex]
         pi3_eta = chain.JpsiTau_tau_pi3_eta[tindex]
@@ -808,6 +849,12 @@ for evt in xrange(Nevt):
         pi3_dnn_pu = chain.JpsiTau_tau_pi3_dnn_pu[tindex]
         pi3_trigMatch = bool(chain.JpsiTau_tau_pi3_trigMatch[tindex])
         pi3_trigMatch_dr = chain.JpsiTau_tau_pi3_trigMatch_dr[tindex]
+        pi3_d0sig = chain.JpsiTau_tau_pi3_d0sig[tindex]
+        pi3_mumuTrk_vprob = chain.JpsiTau_tau_pi3_mumuTrk_vprob[tindex]
+        pi3_mumuTrk_chi2 = chain.JpsiTau_tau_pi3_mumuTrk_chi2[tindex]
+        pi3_mumuTrk_ndof = chain.JpsiTau_tau_pi3_mumuTrk_ndof[tindex]
+
+        out.pi_forwardest_eta[0] = max(abs(pi1_eta), abs(pi2_eta), abs(pi3_eta))
 
 
         out.pi1_pt[0] = pi1_pt
@@ -819,6 +866,10 @@ for evt in xrange(Nevt):
         out.pi1_dnn_pu[0] = pi1_dnn_pu
         out.pi1_trigMatch[0] = pi1_trigMatch
         out.pi1_trigMatch_dr[0] = pi1_trigMatch_dr
+        out.pi1_d0sig[0] = pi1_d0sig
+        out.pi1_mumuTrk_vprob[0] = pi1_mumuTrk_vprob
+        out.pi1_mumuTrk_chi2[0] = pi1_mumuTrk_chi2
+        out.pi1_mumuTrk_ndof[0] = pi1_mumuTrk_ndof
 
         out.pi2_pt[0] = pi2_pt
         out.pi2_eta[0] = pi2_eta
@@ -829,6 +880,11 @@ for evt in xrange(Nevt):
         out.pi2_dnn_pu[0] = pi2_dnn_pu
         out.pi2_trigMatch[0] = pi2_trigMatch
         out.pi2_trigMatch_dr[0] = pi2_trigMatch_dr
+        out.pi2_d0sig[0] = pi2_d0sig
+        out.pi2_mumuTrk_vprob[0] = pi2_mumuTrk_vprob
+        out.pi2_mumuTrk_chi2[0] = pi2_mumuTrk_chi2
+        out.pi2_mumuTrk_ndof[0] = pi2_mumuTrk_ndof
+
 
         out.pi3_pt[0] = pi3_pt
         out.pi3_eta[0] = pi3_eta
@@ -839,6 +895,10 @@ for evt in xrange(Nevt):
         out.pi3_dnn_pu[0] = pi3_dnn_pu
         out.pi3_trigMatch[0] = pi3_trigMatch
         out.pi3_trigMatch_dr[0] = pi3_trigMatch_dr
+        out.pi3_d0sig[0] = pi3_d0sig
+        out.pi3_mumuTrk_vprob[0] = pi3_mumuTrk_vprob
+        out.pi3_mumuTrk_chi2[0] = pi3_mumuTrk_chi2
+        out.pi3_mumuTrk_ndof[0] = pi3_mumuTrk_ndof
 
 
         tlv1 = ROOT.TLorentzVector()
@@ -908,6 +968,7 @@ for evt in xrange(Nevt):
         m_kp = []
         m_pk = []
         m_kk = []
+        m_lambda = []
 
        
         tlvs_psi = []
@@ -922,6 +983,7 @@ for evt in xrange(Nevt):
             m_kp.append(returnMass2(tlvs_12, mk, mp))
             m_pk.append(returnMass2(tlvs_12, mp, mk))
             m_kk.append(returnMass2(tlvs_12, mk, mk))
+            m_lambda.append(returnMass2(tlvs_12, mproton, mp))
             tlvs_psi.append((tlv_jpsi + tlv1 + tlv2).M())
             tlvs_psi_pk.append((tlv_jpsi + tlv1 + tlv2_k).M())
             tlvs_psi_kp.append((tlv_jpsi + tlv1_k + tlv2).M())
@@ -933,6 +995,7 @@ for evt in xrange(Nevt):
             m_kp.append(returnMass2(tlvs_13, mk, mp))
             m_pk.append(returnMass2(tlvs_13, mp, mk))
             m_kk.append(returnMass2(tlvs_13, mk, mk))
+            m_lambda.append(returnMass2(tlvs_13, mproton, mp))
             tlvs_psi.append((tlv_jpsi + tlv1 + tlv3).M())
             tlvs_psi_pk.append((tlv_jpsi + tlv1 + tlv3_k).M())
             tlvs_psi_kp.append((tlv_jpsi + tlv1_k + tlv3).M())
@@ -944,6 +1007,7 @@ for evt in xrange(Nevt):
             m_kp.append(returnMass2(tlvs_23, mk, mp))
             m_pk.append(returnMass2(tlvs_23, mp, mk))
             m_kk.append(returnMass2(tlvs_23, mk, mk))
+            m_lambda.append(returnMass2(tlvs_23, mproton, mp))
             tlvs_psi.append((tlv_jpsi + tlv2 + tlv3).M())        
             tlvs_psi_pk.append((tlv_jpsi + tlv2 + tlv3_k).M())
             tlvs_psi_kp.append((tlv_jpsi + tlv2_k + tlv3).M())
@@ -967,7 +1031,7 @@ for evt in xrange(Nevt):
         out.tau_rhomass[0] = random.choice([out.tau_rhomass1[0], out.tau_rhomass2[0]])
 
 
-        if not (len(m_kp)!=2 or len(m_pk)!=2 or len(m_kk)!=2):
+        if not (len(m_kp)!=2 or len(m_pk)!=2 or len(m_kk)!=2 or len(m_lambda)!=2):
 
             out.tau_rhomass1_kp[0] = m_kp[0]
             out.tau_rhomass2_kp[0] = m_kp[1]
@@ -977,6 +1041,9 @@ for evt in xrange(Nevt):
             
             out.tau_rhomass1_kk[0] = m_kk[0]
             out.tau_rhomass2_kk[0] = m_kk[1]
+
+            out.tau_lambda1[0] = m_lambda[0]
+            out.tau_lambda2[0] = m_lambda[1]
 
             out.tau_psimass1[0] = tlvs_psi[0]
             out.tau_psimass2[0] = tlvs_psi[1]
@@ -1024,6 +1091,11 @@ for evt in xrange(Nevt):
         out.jpsi_vprob[0] = chain.JpsiTau_Jpsi_vprob
         out.jpsi_fls3d[0] = chain.JpsiTau_Jpsi_fls3d
         out.jpsi_fl3d[0] = chain.JpsiTau_Jpsi_fl3d
+        out.jpsi_alpha2d[0] = chain.JpsiTau_Jpsi_alpha2d
+        out.jpsi_fls2d[0] = chain.JpsiTau_Jpsi_fls2d
+        out.jpsi_dr[0] = chain.JpsiTau_Jpsi_dr
+        out.jpsi_maxdoca[0] = chain.JpsiTau_Jpsi_maxdoca
+        out.jpsi_mindoca[0] = chain.JpsiTau_Jpsi_mindoca
         
         out.npv[0] = chain.PV_N
 
@@ -1172,14 +1244,14 @@ for evt in xrange(Nevt):
                 if not (flag_mu1 and flag_mu2): continue
 
 
-                print '-'*80
-                print 'gen = ', igen
-                print '-'*80
+#                print '-'*80
+#                print 'gen = ', igen
+#                print '-'*80
 
 
-                for ipdg in range(len(chain.genParticle_pdgs[igen])):
+#                for ipdg in range(len(chain.genParticle_pdgs[igen])):
             
-                    print '  '*2*int(chain.genParticle_layers[igen][ipdg]), 'pdg  = ', chain.genParticle_pdgs[igen][ipdg], '(',  returnName(chain.genParticle_pdgs[igen][ipdg]) , '), (pt, eta, phi) = ', '({0:.2f}'.format(chain.genParticle_ppt[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_peta[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_pphi[igen][ipdg]), '), isfinal=',  chain.genParticle_isfinal[igen][ipdg]
+#                    print '  '*2*int(chain.genParticle_layers[igen][ipdg]), 'pdg  = ', chain.genParticle_pdgs[igen][ipdg], '(',  returnName(chain.genParticle_pdgs[igen][ipdg]) , '), (pt, eta, phi) = ', '({0:.2f}'.format(chain.genParticle_ppt[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_peta[igen][ipdg]), '{0:.2f}'.format(chain.genParticle_pphi[igen][ipdg]), '), isfinal=',  chain.genParticle_isfinal[igen][ipdg]
 
 
 
@@ -1201,7 +1273,7 @@ for evt in xrange(Nevt):
                         addstr += '_' + returnName(chain.genParticle_pdgs[igen][ipdg])
 
 
-                print '\t EVENT', chain.EVENT_event, ' ==========>', addstr
+#                print '\t EVENT', chain.EVENT_event, ' ==========>', addstr
                 decayTable.append(addstr)
 
 
@@ -1503,7 +1575,9 @@ for evt in xrange(Nevt):
                 out.puweight_up[0] = 1
                 out.puweight_down[0] = 1
                 
-#            print('pubin=', pubin, out.puweight[0],out.puweight_up[0],out.puweight_down[0])
+
+
+#            print(evt, 'pubin=', pubin, out.puweight[0],out.puweight_up[0],out.puweight_down[0])
 
 
 

@@ -96,35 +96,41 @@ def add_Preliminary():
 
 hists = []
 
-file = TFile('/work/ytakahas/work/analysis/CMSSW_10_2_10/src/rJpsi/anal/combine_sb3p5_sr4/tau_rhomass_unrolled_var.root')
+file = TFile('/work/ytakahas/work/analysis/CMSSW_10_2_10/src/rJpsi/anal/combine_sb3p5_sr4_simultaneous/tau_rhomass_unrolled_var.root')
 
 
+
+#KEY: TH1Dbc_others;1bc_others
+#KEY: TH1Djpsi_hc;1jpsi_hc
+#KEY: TH1Djpsi_tau;1jpsi_tau
+#KEY: TH1Dbg_ul;1bg_ul
+#KEY: TH1Ddata_obs;1
 
 
 #for proc in ['bc_others', 'bc_jpsi_dst', 'bc_jpsi_tau', 'bg_ul']:
 #for proc in ['bc_others', 'bc_jpsi_dst', 'bc_jpsi_tau', 'bg_ul', 'dd_bkg', 'data_obs']:
-for proc in ['bc_others', 'bc_jpsi_dst', 'bc_jpsi_tau', 'dd_bkg']:
-    hists = []
-    titles = []
+for region in ['sr', 'sb']:
+    for proc in ['bc_others', 'jpsi_hc', 'jpsi_tau', 'bg_ul', 'data_obs']:
+        hists = []
+        titles = []
     
-    hist = file.Get('tauhad_2018/' + proc)
+        hist = file.Get('tauhad_' + region + '_2018/' + proc)
 
     
-    hist_ = TH1F(hist.GetName(), hist.GetName(), hist.GetXaxis().GetNbins(), hist.GetXaxis().GetXmin(), hist.GetXaxis().GetXmax())
-    for ibin in range(1, hist.GetXaxis().GetNbins()+1):
-#        hist_.SetBinContent(ibin, float(hist.GetBinContent(ibin)/hist.GetSumOfWeights()))
-#        hist_.SetBinError(ibin, float(hist.GetBinError(ibin)/hist.GetSumOfWeights()))
-        hist_.SetBinContent(ibin, float(hist.GetBinContent(ibin)))
-        hist_.SetBinError(ibin, float(hist.GetBinError(ibin)))
+        hist_ = TH1F(hist.GetName(), hist.GetName(), hist.GetXaxis().GetNbins(), hist.GetXaxis().GetXmin(), hist.GetXaxis().GetXmax())
+        for ibin in range(1, hist.GetXaxis().GetNbins()+1):
+        #        hist_.SetBinContent(ibin, float(hist.GetBinContent(ibin)/hist.GetSumOfWeights()))
+            #        hist_.SetBinError(ibin, float(hist.GetBinError(ibin)/hist.GetSumOfWeights()))
+            hist_.SetBinContent(ibin, float(hist.GetBinContent(ibin)))
+            hist_.SetBinError(ibin, float(hist.GetBinError(ibin)))
+        
 
+        hist_.GetXaxis().SetTitle('Bin ID of the 2-dim. #rho_{1} vs #rho_{2}')
+        hist_.SetFillColor(0)
+        hist_.SetLineColor(hist.GetMarkerColor())
+        hist_.SetMarkerColor(hist.GetMarkerColor())
+        #    hist_.Scale(1./hist_.GetSumOfWeights())
+        hists.append(copy.deepcopy(hist_))
+        titles.append(proc)
 
-    hist_.GetXaxis().SetTitle('Bin ID of the 2-dim. #rho_{1} vs #rho_{2}')
-    hist_.SetFillColor(0)
-    hist_.SetLineColor(hist.GetMarkerColor())
-    hist_.SetMarkerColor(hist.GetMarkerColor())
-#    hist_.Scale(1./hist_.GetSumOfWeights())
-    hists.append(copy.deepcopy(hist_))
-    titles.append(proc)
-
-
-    comparisonPlots_alt(hists, titles, False, False, 'display_' + proc + '.pdf', False, False, 'hpe')
+        comparisonPlots_alt(hists, titles, False, False, 'display/' + proc + '_' + region + '.pdf', False, False, 'hpe')

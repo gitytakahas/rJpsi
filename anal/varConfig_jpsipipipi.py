@@ -45,7 +45,7 @@ vardir["tau_index"] = {'tree':'tree',  'nbin':10, 'xmin':0., 'xmax':10., 'xtitle
 #vardir["reg_taueta"] = {'tree':'tree',  'nbin':20, 'xmin':-2.5, 'xmax':2.5, 'xtitle':'reg. tau eta'}
 vardir["tau_mass"] = {'tree':'tree',  'nbin':30, 'xmin':0.4, 'xmax':1.8, 'xtitle':'Tau mass (GeV)'}
 vardir["tau_mass_coarse"] = {'tree':'tree',  'nbin':10, 'xmin':0.4, 'xmax':1.8, 'xtitle':'Tau mass (GeV)', 'var':'tau_mass'}
-#vardir["tau_max_dr"] = {'tree':'tree',  'nbin':20, 'xmin':0., 'xmax':2*math.pi, 'xtitle':'Tau max dr'}
+vardir["tau_max_dr"] = {'tree':'tree',  'nbin':20, 'xmin':0., 'xmax':1., 'xtitle':'Tau max dr'}
 vardir["tau_mass_zoom"] = {'tree':'tree',  'nbin':40, 'xmin':0.7, 'xmax':1.7, 'xtitle':'Tau mass wide (GeV)', 'var':'tau_mass'}
 vardir["tau_rhomass1"] = {'tree':'tree',  'nbin':25, 'xmin':0.2, 'xmax':1.4, 'xtitle':'Tau rhomass1 (GeV)'}
 vardir["tau_rhomass2"] = {'tree':'tree',  'nbin':25, 'xmin':0.2, 'xmax':1.4, 'xtitle':'Tau rhomass2 (GeV)'}
@@ -130,11 +130,11 @@ vardir["b_lips_coarse"] = {'tree':'tree',  'nbin':10, 'xmin':-10., 'xmax':10., '
 
 vardir["b_mcorr"] = {'tree':'tree',  'nbin':30, 'xmin':4, 'xmax':12, 'xtitle':'B corrected mass (GeV)'}
 #vardir["m_corr_bd"] = {'tree':'tree',  'nbin':30, 'xmin':3, 'xmax':15, 'xtitle':'B corrected mass bd (GeV)'}
-vardir["b_mass"] = {'tree':'tree',  'nbin':35, 'xmin':4., 'xmax':6, 'xtitle':'B mass (GeV)'}
-vardir["b_mass_coarse"] = {'tree':'tree',  'nbin':10, 'xmin':4., 'xmax':6, 'xtitle':'B mass (GeV)', 'var':'b_mass'}
+vardir["b_mass"] = {'tree':'tree',  'nbin':35, 'xmin':6., 'xmax':6.5, 'xtitle':'B mass (GeV)'}
+vardir["b_mass_coarse"] = {'tree':'tree',  'nbin':10, 'xmin':6., 'xmax':6.6, 'xtitle':'B mass (GeV)', 'var':'b_mass'}
 vardir["b_mass_high"] = {'tree':'tree',  'nbin':150, 'xmin':6.5, 'xmax':14, 'xtitle':'B mass high (GeV)', 'var':'b_mass'}
 vardir["b_mass_low"] = {'tree':'tree',  'nbin':20, 'xmin':2., 'xmax':4, 'xtitle':'B mass low (GeV)', 'var':'b_mass'}
-vardir["b_mass_simple"] = {'tree':'tree',  'nbin':35, 'xmin':4., 'xmax':6, 'xtitle':'B mass simple (GeV)'}
+vardir["b_mass_simple"] = {'tree':'tree',  'nbin':35, 'xmin':6., 'xmax':6.6, 'xtitle':'B mass simple (GeV)'}
 vardir["b_mass_sf"] = {'tree':'tree', 'nbin':50, 'xmin':3.5, 'xmax':8, 'xtitle':'B mass (GeV)', 'var':'b_mass'}
 vardir["reduced_b_mass"] = {'tree':'tree', 'nbin':55, 'xmin':6, 'xmax':6.55, 'xtitle':'B mass (GeV)', 'var':'b_mass - jpsi_mass + 3.1'}
 vardir["jpsi_kpipi"] = {'tree':'tree',  'nbin':50, 'xmin':5., 'xmax':5.5, 'xtitle':'J/#psi + K#pi#pi mass (GeV)'}
@@ -196,19 +196,17 @@ vardir["B_ptback_simple"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':70., '
 
 vardir["delta_chi2"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':25., 'xtitle':'delta chi2'}
 vardir["vweight"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1.5, 'xtitle':'vweight'}
-vardir["tau_fls3d_wjpsi"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':15, 'xtitle':'tau fls3d w.r.t j/psi'}
+vardir["tau_fls3d_wjpsi"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':5, 'xtitle':'tau fls3d w.r.t j/psi'}
 vardir["tau_fls3d_wjpsi_coarse"] = {'tree':'tree',  'nbin':10, 'xmin':0., 'xmax':15, 'xtitle':'tau fls3d w.r.t j/psi', 'var':'tau_fls3d_wjpsi'}
 vardir["tau_fl3d_wjpsi"] = {'tree':'tree',  'nbin':30, 'xmin':-0.3, 'xmax':0.7, 'xtitle':'tau fl3d w.r.t j/psi'}
-#vardir["tau_alpha_wjpsi"] = {'tree':'tree',  'nbin':30, 'xmin':0.97, 'xmax':1., 'xtitle':'tau alpha w.r.t j/psi'}
 
 vardir["tau_refit_chi2"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':200., 'xtitle':'refitted PV chi2'}
 vardir["tau_refit_ndof"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':200., 'xtitle':'refitted PV ndof'}
 vardir["tau_refit_rho"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':2, 'xtitle':'refitted PV rho'}
 
-#vardir["pi_forwardest_eta"] = {'tree':'tree',  'nbin':30, 'xmin':0, 'xmax':2.5, 'xtitle':'pi forwardest eta'}
-
 vardir["pi1_pt"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':15, 'xtitle':'pi1 pt'}
 vardir["pi1_eta"] = {'tree':'tree',  'nbin':30, 'xmin':-2.5, 'xmax':2.5, 'xtitle':'pi1 eta'}
+vardir["pi1_phi"] = {'tree':'tree',  'nbin':30, 'xmin':-math.pi, 'xmax':math.pi, 'xtitle':'pi1 phi'}
 vardir["pi1_dnn"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1, 'xtitle':'pi1 DNN'}
 vardir["pi1_dnn_1prong"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1., 'xtitle':'pi1 DNN 1prong'}
 vardir["pi1_dnn_otherB"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1., 'xtitle':'pi1 DNN otherB'}
@@ -221,6 +219,7 @@ vardir["pi1_mumuTrk_red_chi2"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1
 
 vardir["pi2_pt"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':15, 'xtitle':'pi2 pt'}
 vardir["pi2_eta"] = {'tree':'tree',  'nbin':30, 'xmin':-2.5, 'xmax':2.5, 'xtitle':'pi2 eta'}
+vardir["pi2_phi"] = {'tree':'tree',  'nbin':30, 'xmin':-math.pi, 'xmax':math.pi, 'xtitle':'pi2 phi'}
 vardir["pi2_dnn"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1, 'xtitle':'pi2 DNN'}
 vardir["pi2_dnn_1prong"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1., 'xtitle':'pi2 DNN 1prong'}
 vardir["pi2_dnn_otherB"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1., 'xtitle':'pi2 DNN otherB'}
@@ -233,6 +232,7 @@ vardir["pi2_mumuTrk_red_chi2"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1
 
 vardir["pi3_pt"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':15, 'xtitle':'pi3 pt'}
 vardir["pi3_eta"] = {'tree':'tree',  'nbin':30, 'xmin':-2.5, 'xmax':2.5, 'xtitle':'pi3 eta'}
+vardir["pi3_phi"] = {'tree':'tree',  'nbin':30, 'xmin':-math.pi, 'xmax':math.pi, 'xtitle':'pi3 phi'}
 vardir["pi3_dnn"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1, 'xtitle':'pi3 DNN'}
 vardir["pi3_dnn_1prong"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1., 'xtitle':'pi3 DNN 1prong'}
 vardir["pi3_dnn_otherB"] = {'tree':'tree',  'nbin':30, 'xmin':0., 'xmax':1., 'xtitle':'pi3 DNN otherB'}

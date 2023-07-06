@@ -17,6 +17,7 @@ usage = "usage: python compare.py"
 parser = OptionParser(usage) 
 #parser.add_option('-m', '--min', action="store_true", default=False, dest='min')
 parser.add_option("-y", "--year", default="all", type="string", dest="year")
+parser.add_option('-i', '--inv', action="store_true", default=False, dest='inv')
 (options, args) = parser.parse_args() 
 
 
@@ -29,9 +30,9 @@ gStyle.SetOptTitle(0)
 prefix='tauhad'
 systs_hammer = []
 
-for hammer in range(0, 10):
-    systs_hammer.append('hammer_ebe_e' + str(hammer) + '_up')
-    systs_hammer.append('hammer_ebe_e' + str(hammer) + '_down')
+#for hammer in range(0, 10):
+#    systs_hammer.append('hammer_ebe_e' + str(hammer) + '_up')
+#    systs_hammer.append('hammer_ebe_e' + str(hammer) + '_down')
 
 systs_mc = []
 #systs_name_mc=['puweight', 'trigger', 'muSFID', 'muSFReco', 'weight_ctau', 'br_BcJpsiDst', 'tauBr',  'tauReco', 'xgbsEff', 'BcPt']
@@ -49,7 +50,8 @@ for syst in systs_name_mc:
 #    for ud in ['up', 'down']:
 #        systs_bkg.append(syst + '_' + ud)
 
-datacardpath = '/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/results_simultaneous'
+#datacardpath = '/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/results_simultaneous'
+datacardpath = '.'
 #datacardpath = '/work/cgalloni/Rjpsi_analysis/CMSSW_10_2_10/src/rJpsi/anal/plots_inv_dir_Yuta/'
 
 #finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse']
@@ -75,6 +77,10 @@ print '-'*80
 #ratio = 0.092
 fitCat = 'sr'
 output='combine_sb3p5_sr4'
+
+if options.inv:
+    output='combine_sb3p5_sr4_inv'
+
 ensureDir(output)
 
 
@@ -101,6 +107,8 @@ def applyHists(hists):
         hist.SetMarkerSize(0.5)
         hist.SetLineWidth(idx+1)
         hist.SetLineStyle(idx+1)
+        hist.GetXaxis().SetTitleSize(0.1)
+
 
 
 def comparisonPlots(hist, lumi, pname='sync.pdf', isLog=False, isRatio=True, clabel=''):
@@ -124,6 +132,9 @@ def comparisonPlots_alt(hists, titles, norm=False, isLog=False, pname='sync.pdf'
 def getHist(year, vkey, channel, target, sys='None'):
 
     filename = datacardpath + '/' + year + '_' + channel + '_' + sys + '/datacard/' + vkey + '.root'
+
+    if options.inv:
+        filename = datacardpath + '/inv_' + year + '_' + channel + '_' + sys + '/datacard/' + vkey + '.root'
 
     if not os.path.isfile(filename):
         print 'This file is corrupted!!!'
@@ -229,7 +240,12 @@ for vkey, ivar in vardir.items():
         print("lp-sb comparison hist preparation data")
         hists4ddbkg_vr = draw(year, vkey, ['lp', 'sb'], 'data_obs', 'None', True, True, 'ks')
         
-        file = TFile(datacardpath + '/' + year + '_' + fitCat + '_None/datacard/' + vkey + '.root')
+        filename2read = datacardpath + '/' + year + '_' + fitCat + '_None/datacard/' + vkey + '.root'
+        
+        if options.inv:
+            filename2read = datacardpath + '/inv_' + year + '_' + fitCat + '_None/datacard/' + vkey + '.root'
+        
+        file = TFile(filename2read)
         file.cd(fitCat)
         
         listofprocs = [key.GetName() for key in gDirectory.GetListOfKeys()]

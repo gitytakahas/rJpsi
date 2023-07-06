@@ -6,7 +6,7 @@ today=`date "+%Y%m%d%H%M"`
 name="pt"
 year="2018"
 
-prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/job_inv_${name}_${year}"
+prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/job_inv_${name}_${year}_MuonPhys"
 
 sig_inclusive_all="${prefix}/BcJpsiTau_inclusive"
 bkg="${prefix}/BJpsiX"
@@ -31,7 +31,7 @@ function hadding (){
 ##############################################
 
 for dir in $sig_inclusive_all $bkg $data
-#for dir in $data
+#for dir in $sig_inclusive_all
 do
 
     echo "hadding ...", $dir
@@ -54,15 +54,17 @@ done
 ##############################################
 
 if [ $year = "2018" ]; then
+    
+    echo $year
 
-    hadding $bkg_new Myroot.root Myroot_*.root
-
+#    hadding $bkg_new Myroot.root Myroot_*.root
+#
 #    for dir in $sig_inclusive_all
 #    do
 #	echo "splitting into two ...", $dir
 #	sh updateTuple_pick.sh ${dir}/Myroot.root ${dir}/Myroot_analysis.root ${dir}/Myroot_training.root 0.2
 #    done
-#
+
 #
 #    ##############################################
 #    #

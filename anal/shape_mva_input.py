@@ -4,7 +4,7 @@ from common.officialStyle import officialStyle
 from array import array
 import common.MultiDraw
 import numpy as np
-from varConfig_jpsipipipi import vardir
+from varConfig_old import vardir
 from common.DataMCPlot import *
 from common.DisplayManager_postfit import DisplayManager
 from common.DisplayManager_compare import DisplayManager_compare
@@ -182,11 +182,11 @@ multihists = {}
 ##sigstr  = "BcJpsiTau_inclusive_ul_all_2018/Myroot_training_weightAdded.root"
 #bkgstr  = "BJpsiX_ul_2018/bkg.root"
 #=======
-prefix = init.get('common', 'filedir') + '/job_pt_' + options.year + '_approval'
+prefix = init.get('common', 'filedir') + '/job_pt_' + options.year #+ '_approval'
 
 datastr = init.get('common', 'data_prefix') + '/data.root'
 sigstr  = init.get('common', 'sig_prefix') + '/sig.root'
-bkgstr  = init.get('common', 'bkg_prefix') + '/bkg.root'
+bkgstr  = init.get('common', 'bkg_prefix') + '_inclusive/Myroot_weightAdded.root'
 
 # preventing problems with hammer for inverted tau selection files.
 file_hammer = TFile(prefix.replace('_inv','').replace('_bkup','') + '/BcJpsiTau_inclusive/Myroot_0.root')
@@ -205,7 +205,7 @@ elif options.year=='2016':
 #    bc_sf_corr = float(0.147627/0.114853) # 0.114
     bc_sf_corr = float(0.161/0.146)
 elif options.year =='2018':
-    bc_sf_corr = 1.521*float(1./0.8) # as we are using 80% of data 
+    bc_sf_corr = float(1./0.8) # as we are using 80% of data 
 
 
 print 'bc_sf_corr for ', options.year, '=', bc_sf_corr
@@ -214,8 +214,9 @@ bc_sf *= bc_sf_corr
 
 print 'total bc_sf for', options.year, '=', bc_sf
 
+from collections import OrderedDict
 
-ddir = {}
+ddir = OrderedDict()
 
 binid = 2
 
@@ -245,7 +246,7 @@ mu_ID_weight =  "*mu1_SFID*mu2_SFID"
 mu_Reco_weight =  "*mu1_SFReco*mu2_SFReco"
 mu_weight =mu_ID_weight+mu_Reco_weight
 
-bkg_data_sf = 1.71*15499238/2589193.8
+bkg_data_sf = 15499238/2589193.8
 
 if options.year == '2016':
     bkg_data_sf = 0.9142443245*7467872/2031220.4
@@ -264,22 +265,22 @@ elif options.year == '2017':
 
 
 
-ddir['data_obs'] =  {'file':datastr, 'weight':'1', 'scale':1, 'order':2999, 'color':1, 'addcut':'1'}
 
-ddir['bc_jpsi_tau_3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight +'*weight_ctau', 'scale':bc_sf, 'order':1, 'color':taucol_1, 'addcut':'n_occurance==1 && isJpsiTau2Mu!=1 && tau_isRight_3prong==1 && gen_sig_decay==6 && weight_ctau < 100.'}
+ddir['bgMC'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB*weight', 'scale':bkg_data_sf, 'order':5, 'color':dycol, 'addcut':'1'}
 
-ddir['bc_jpsi_tau_N3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':1, 'color':lob_1, 'addcut':'n_occurance==1 && gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0 && weight_ctau < 100.'}
+ddir['signal'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight +'*weight_ctau', 'scale':bc_sf, 'order':1, 'color':taucol_1, 'addcut':'n_occurance==1 && isJpsiTau2Mu!=1 && gen_sig_decay==6 && weight_ctau < 100. && tau_isRight_3prong==1'}
 
-ddir['bc_jpsi_dst'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'(gen_sig_decay==10||gen_sig_decay==20)  && weight_ctau < 100.'}
+#ddir['bc_jpsi_tau_N3p'] =     {'file':sigstr, 'weight':'puweight*' + hammer_weight + mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':1, 'color':lob_1, 'addcut':'n_occurance==1 && gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0 && weight_ctau < 100.'}
 
-ddir['bc_pipipi'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'(gen_sig_decay==9)  && weight_ctau < 100.'}
+#ddir['bc_jpsi_dst'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':jpsi_3, 'addcut':'(gen_sig_decay==10||gen_sig_decay==20)  && weight_ctau < 100.'}
 
-ddir['bc_others'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'(!((n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6) || (gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0) ||gen_sig_decay==10 ||gen_sig_decay==20 || gen_sig_decay==9))  && weight_ctau < 100.'}
+#ddir['bc_others'] = {'file':sigstr, 'weight':'puweight'+ mu_weight+'*weight_ctau', 'scale':bc_sf, 'order':4, 'color':others, 'addcut':'(!((n_occurance==1 && tau_isRight_3prong==1 && gen_sig_decay==6) || (gen_sig_decay==6 && isJpsiTau2Mu!=1 &&  tau_isRight_3prong==0) ||gen_sig_decay==10 ||gen_sig_decay==20 ))  && weight_ctau < 100.'}
 
 #ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':7*0.64/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
 #ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':7*0.64*1.3/0.8, 'order':5, 'color':dycol, 'addcut':'1'}
-ddir['bg_ul'] =      {'file':bkgstr, 'weight':'puweight'+ mu_weight+'*genWeightBkgB', 'scale':bkg_data_sf, 'order':5, 'color':dycol, 'addcut':'1'}
 
+
+ddir['data_obs'] =  {'file':datastr, 'weight':'1', 'scale':1, 'order':2999, 'color':1, 'addcut':'1'}
 
 
 
@@ -329,10 +330,7 @@ xgbs_sb = 'xgbs > ' + init.get('common', 'sb_low') + ' && xgbs < ' + init.get('c
 xgbs_lp = 'xgbs > ' + init.get('common', 'lp_low') + ' && xgbs < ' + init.get('common', 'lp_high')
 xgbs_gap = 'xgbs > ' + init.get('common', 'sb_high') + ' && xgbs < ' + init.get('common', 'sr_low')
 
-#sel_jpsipipipi = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && b_vprob > 0.4 && pi1_pt > 1 && pi2_pt > 1 && pi3_pt > 1 && b_alpha > 0.99 && b_fls3d > 6. && (b_mass - jpsi_mass + 3.1) > 6.225 &&  (b_mass - jpsi_mass + 3.1) < 6.325'
-#sel_jpsipipipi = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && b_vprob > 0.4 && pi1_pt > 1 && pi2_pt > 1 && pi3_pt > 1 && b_alpha > 0.99 && b_fls3d > 6. && (b_mass - jpsi_mass + 3.1) > 6.25 &&  (b_mass - jpsi_mass + 3.1) < 6.3 && tau_fls3d > 5. && tau_mass < 1.5 && tau_sumofdnn_pu < 0.2 && tau_sumofdnn > 2. && tau_max_dr > 0.2'
-sel_jpsipipipi = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && b_vprob > 0.4 && pi1_pt > 1 && pi2_pt > 1 && pi3_pt > 1 && b_alpha > 0.99 && b_fls3d > 6. && (b_mass - jpsi_mass + 3.1) > 6.25 &&  (b_mass - jpsi_mass + 3.1) < 6.3'
-
+#sel_jpsipipipi = 'tau_pt > 3. && mu1_isLoose==1 && mu2_isLoose==1 && b_vprob > 0.4 && pi1_pt > 1 && pi2_pt > 1 && pi3_pt > 1 && b_alpha > 0.99 && b_fls3d > 6. && gen_sig_decay==9'
 
 if options.year=='2016':
     xgbs_sr = 'xgbs > ' + init.get('common', 'sr_low_' + options.year)
@@ -347,12 +345,12 @@ if options.year=='2016':
 
 channels = {
 
-#    'inclusive':{'cut':'&&'.join([basic])},
+    'inclusive':{'cut':'&&'.join([basic])},
 #    'sr':{'cut':'&&'.join([basic, xgbs_sr])},
 #    'sb':{'cut':'&&'.join([basic, xgbs_sb])},
 #    'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
 #    'gap':{'cut':'&&'.join([basic, xgbs_gap])}, 
-    'jpsi_pipipi':{'cut':'&&'.join([basic, sel_jpsipipipi])}, 
+#    'jpsi_pipipi':{'cut':'&&'.join([basic, sel_jpsipipipi])}, 
 
 
 #    'sr_xl':{'cut':'&&'.join([basic, xgbs_sr_xl])},  
@@ -620,21 +618,11 @@ for channel, dict in channels.iteritems():
         Histo._ApplyPrefs()
         print(Histo)
        
-        comparisonPlots(Histo, dirname + '/plots/' + vkey + '.gif')
+#        comparisonPlots(Histo, dirname + '/plots/' + vkey + '.gif')
 
-        comparisonPlots(Histo, dirname + '/plots/' + vkey + '_log.gif', True)
-            
-
-        if vkey in finaldiscriminant:
-
-            Histo.Group('bc_jpsi_tau', ['bc_jpsi_tau_3p', 'bc_jpsi_tau_N3p'])
-            Histo.WriteDataCard(dirname + '/datacard/' + vkey + '.root', True, 'RECREATE', channel)
-
-        if options.sys=='None' and vkey.find('xgbs')!=-1:
-            drawSignificance(hists, channel, vkey, dirname + '/plots/', True)
+#        comparisonPlots(Histo, dirname + '/plots/' + vkey + '_log.gif', True)            
         
-        comparisonPlots_alt(hists, titles, True, False, dirname + '/plots/' + vkey + '_compare.pdf', False, True, 'pE')
-
+        comparisonPlots_alt(hists, titles, True, False, dirname + '/plots/' + vkey + '_compare.pdf', True, True, 'pE')
 
         if vardir.has_key('tau_rhomass_unrolled_var'):
             vardir.pop('tau_rhomass_unrolled_var')

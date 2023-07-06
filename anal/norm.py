@@ -1,19 +1,21 @@
-from ROOT import TFile, TH2D, TH1D, gROOT, gStyle, TCanvas, TPaveText, TLatex, TH2F, TH1F, TF1
+from ROOT import TFile, TH2D, TH1D, gROOT, gStyle, TCanvas, TPaveText, TLatex, TH2F, TH1F, TF1, TGraphErrors, kRed, TVirtualFitter
 from array import array
 import copy
 
 from common.officialStyle import officialStyle
 
 gROOT.SetBatch(True)
+#gROOT.SetBatch(False)
 officialStyle(gStyle)
 gStyle.SetOptTitle(0)
 
 #gStyle.SetPadRightMargin (0.14)
 
-year = '2017'
+
+#pnfs_prefix='/pnfs/psi.ch/cms/trivcat/store/user/ytakahas/RJpsi/results_simultaneous/'
  
 def add_lumi(year):
-    lowX=0.8
+    lowX=0.7
     lowY=0.842
     lumi  = TPaveText(lowX, lowY+0.06, lowX+0.65, lowY+0.16, "NDC")
     lumi.SetBorderSize(   0 )
@@ -73,9 +75,10 @@ def add_Preliminary():
     return lumi
 
 
+hist2save = []
 
+#for year in ['2016', '2017', '2018', 'inv_2016', 'inv_2017', 'inv_2018']:
 for year in ['2016', '2017', '2018']:
-#for year in ['inv_2016', 'inv_2017', 'inv_2018']:
 
     hists = []
 
@@ -96,6 +99,8 @@ for year in ['2016', '2017', '2018']:
 
     hist2draw = []
     for ii, hist in enumerate(hists):
+
+        print hist.GetName()
 
         hist_ = TH1F(hist.GetName(), hist.GetName(), hist.GetXaxis().GetNbins(), hist.GetXaxis().GetXmin(), hist.GetXaxis().GetXmax())
         for ibin in range(1, hist.GetXaxis().GetNbins()+1):
@@ -118,8 +123,8 @@ for year in ['2016', '2017', '2018']:
     l4=add_lumi(year)
     l4.Draw("same")
 
-    canvas.SaveAs('compare_' + year +'.pdf')
-    canvas.SaveAs('compare_' + year + '.gif')
+    canvas.SaveAs('plots/compare_' + year +'.pdf')
+    canvas.SaveAs('plots/compare_' + year + '.gif')
 
     upper_boundary = 3.5
     lower_boundary = 0.
@@ -132,15 +137,22 @@ for year in ['2016', '2017', '2018']:
 
     rcanvas = TCanvas('can_ratio_' + year)
 
-    rframe = TH2F('ratio', 'ratio', 100, -10,7, 100,0.5,2.5)
+    miny = 0
+    maxy = 3
+    rframe = TH2F('ratio', 'ratio', 100, -10,7, 100,miny, maxy)
     rframe.GetXaxis().SetTitle('BDT score')
     rframe.GetYaxis().SetTitle('Data / Bkg. MC')
     rframe.GetYaxis().SetNdivisions(504)
     
     rframe.Draw()
     
-    ratio = copy.deepcopy(data)
-    ratio.Divide(copy.deepcopy(bg))
+#    ratio = copy.deepcopy(data)
+    print 'CHECK ====>', hist2draw[0].GetName(), hist2draw[1].GetName()
+    ratio = copy.deepcopy(hist2draw[0])
+    ratio.SetTitle('ratio_' + year)
+    ratio.SetName('ratio_' + year)
+#    ratio.Divide(copy.deepcopy(bg))
+    ratio.Divide(copy.deepcopy(hist2draw[1]))
     ratio.Draw('same')
     
     func = TF1('func', '[0]+[1]*x+[2]*x*x', lower_boundary, upper_boundary)
@@ -150,6 +162,52 @@ for year in ['2016', '2017', '2018']:
     fitline.SetLineColor(2)
     fitline.SetLineWidth(4)
     fitline.Draw('same')
+
+    ratio.GetYaxis().SetRangeUser(miny, maxy)
+    hist2save.append(copy.deepcopy(ratio))
+    
+    ### add 95% line 
+
+#    graph = TGraphErrors(ratio.GetNbinsX())
+
+
+
+#    result = ratio.Fit('func', 'RNS', '', lower_boundary, upper_boundary)
+
+#    lower_index = -1 
+#    lower_index_flag = False
+
+#    for ii in range(1, ratio.GetNbinsX()+1):
+#        graph.SetPoint(ii-1, ratio.GetBinCenter(ii), ratio.GetBinContent(ii))
+        
+#        if ratio.GetBinCenter(ii) > lower_index and lower_index_flag==False:
+#            lower_index = ii-1
+#            lower_index_flag=True
+
+#    result = graph.Fit('func', 'RN S', '', lower_boundary, upper_boundary)
+#    import pdb; pdb.set_trace()
+
+#    result.GetConfidenceIntervals(graph)
+
+
+#    interval = TGraphErrors(len(values))
+#
+#    print 'values=', len(values), graph.GetN()
+#    
+#    for i in range(len(values)):
+#        interval.SetPoint(i, graph.GetX()[lower_index + i], func.Eval(graph.GetX()[lower_index+i] ))
+#        interval.SetPointError(i, 0, values[i] )
+
+
+    ###
+
+
+#    result.GetConfidenceIntervals(0.95, False)
+    #interval = TGraphErrors()
+
+    #interval.SetFillColor(r.kRed-7)
+    #interval.Draw("3same")
+
     
 
     p1 = fitline.GetParameter(0)
@@ -160,9 +218,9 @@ for year in ['2016', '2017', '2018']:
     fitted_all.SetLineStyle(2)
     fitted_all.SetLineColor(2)
     fitted_all.SetLineWidth(2)
-    
+
     fitted_all.Draw('same')
-    
+    #result.Draw("3same")
 
     l2=add_CMS()
     l2.Draw("same")
@@ -170,8 +228,19 @@ for year in ['2016', '2017', '2018']:
     l3.Draw("same")
     l4=add_lumi(year)
     l4.Draw("same")
+
     
-    rcanvas.SaveAs('ratio_compare_' + year +'.pdf')
-    rcanvas.SaveAs('ratio_compare_' + year + '.gif')
+#    result.SetFillColor(kRed-7)
+#    graph.Draw("3same")
+    
+    rcanvas.SaveAs('plots/ratio_compare_' + year +'.pdf')
+    rcanvas.SaveAs('plots/ratio_compare_' + year + '.gif')
 
 
+
+ofile = TFile('plots/ratio.root', 'recreate')
+for hist in hist2save:
+    hist.Write()
+
+ofile.Write()
+ofile.Close()
