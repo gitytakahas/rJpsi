@@ -65,7 +65,7 @@ for other in others:
 
 #print others
 
-syss = ['BcOthersShape_up']
+#syss = ['BcOthersShape_up']
 
 ########################
 

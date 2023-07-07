@@ -77,8 +77,8 @@ def add_Preliminary():
 
 hist2save = []
 
-#for year in ['2016', '2017', '2018', 'inv_2016', 'inv_2017', 'inv_2018']:
-for year in ['2016', '2017', '2018']:
+for year in ['2016', '2017', '2018', 'inv_2016', 'inv_2017', 'inv_2018']:
+#for year in ['2016', '2017', '2018']:
 
     hists = []
 
@@ -146,13 +146,17 @@ for year in ['2016', '2017', '2018']:
     
     rframe.Draw()
     
-#    ratio = copy.deepcopy(data)
-    print 'CHECK ====>', hist2draw[0].GetName(), hist2draw[1].GetName()
-    ratio = copy.deepcopy(hist2draw[0])
+#    print 'CHECK ====>', hist2draw[0].GetName(), hist2draw[1].GetName()
+#    ratio = copy.deepcopy(hist2draw[0])
+#    ratio.Divide(copy.deepcopy(hist2draw[1]))
+
+
+# Don't normalize it as we already normalize properly !! 
+    ratio = copy.deepcopy(data)
+    ratio.Divide(copy.deepcopy(bg))
+
     ratio.SetTitle('ratio_' + year)
     ratio.SetName('ratio_' + year)
-#    ratio.Divide(copy.deepcopy(bg))
-    ratio.Divide(copy.deepcopy(hist2draw[1]))
     ratio.Draw('same')
     
     func = TF1('func', '[0]+[1]*x+[2]*x*x', lower_boundary, upper_boundary)

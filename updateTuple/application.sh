@@ -5,7 +5,7 @@ year="2018"
 
 
 # input files
-prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/job_${name}_${year}_MuonPhys"
+prefix="/pnfs/psi.ch/cms/trivcat/store/user/${USER}/RJpsi/job_inv_${name}_${year}_MuonPhys"
 
 sig_inclusive="${prefix}/BcJpsiTau_inclusive"
 bkg="${prefix}/BJpsiX"
@@ -22,15 +22,18 @@ data="${prefix}/Data"
 model_name="${name}_2018_val"
 
 #python application.py --file ${bkg}/Myroot.root --prefix bkg_xgbs --model ${model_name} --outdir ${bkg}
-#
+
 #if [ $year = "2018" ]
 #then
 #    python application.py --file ${sig_inclusive}/Myroot_analysis.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive}
 #else
 #python application.py --file ${sig_inclusive}/Myroot.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive}
 #fi
-#
-#
+
+
+# in case of inverted region do this instead!! 
+#python application.py --file ${sig_inclusive}/Myroot.root --prefix sig_xgbs --model ${model_name} --outdir ${sig_inclusive}
+
 #python getDataset_data.py --path ${data} --odir ${data} --jdir data_application_${today}_${year} --name data_xgbs_${year} --chunk 1 --model $model_name
 
 

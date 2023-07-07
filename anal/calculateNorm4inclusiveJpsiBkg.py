@@ -13,6 +13,7 @@ gStyle.SetOptTitle(0)
 hist2save = []
 
 for year in ['2016', '2017', '2018', 'inv_2016', 'inv_2017', 'inv_2018']:
+#for year in ['2016', '2017', '2018']:
 
     file = TFile(year + '_inclusive_None/datacard/xgbs.root')
     bg = copy.deepcopy(file.Get('inclusive/bg_ul'))

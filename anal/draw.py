@@ -31,6 +31,8 @@ parser.add_option('-b', '--blind', action="store_true", default=False, dest='bli
 parser.add_option("-y", "--year", default="2018", type="string", dest="year")
 parser.add_option("-o", "--outdir", default=".", type="string", dest="outdir")
 parser.add_option('-i', '--inv', action="store_true", default=False, dest='inv')
+parser.add_option('-w', '--bkgweight', action="store_true", default=False, dest='bkgweight')
+
 
 #parser.add_option('-c', '--create', action="store_true", default=False, dest='create')
 
@@ -41,6 +43,7 @@ print 'sys=', options.sys
 print 'min=', options.min
 print 'blind=', options.blind
 print 'year=', options.year
+print 'bkgweight=', options.bkgweight
 print '-'*80
 
 
@@ -190,7 +193,7 @@ jobdir = 'job_pt'
 if options.inv:
     jobdir = 'job_inv_pt'
 
-prefix = init.get('common', 'filedir') + '/' + jobdir + '_' + options.year + '_approval'
+prefix = init.get('common', 'filedir') + '/' + jobdir + '_' + options.year + '_MuonPhys'
 
 
 #prefix = init.get('common', 'filedir') + '/job_pt_' + options.year
@@ -211,11 +214,13 @@ print '2018 bc_sf = ', bc_sf, 'corr=', bc_sf_corr
 
 if options.year=='2017':
 #    bc_sf_corr = float(0.120483/0.114853) # 0.093
-    bc_sf_corr = float(0.16/0.1416)
+#    bc_sf_corr = float(0.16/0.1416)
+    bc_sf_corr = float(0.142/0.155) # new from Stefanos 
 
 elif options.year=='2016':
 #    bc_sf_corr = float(0.147627/0.114853) # 0.114
-    bc_sf_corr = float(0.161/0.146)
+#    bc_sf_corr = float(0.161/0.146)
+    bc_sf_corr = float(0.130/0.155) # new from Stefanos 
 
 elif options.year =='2018':
 
@@ -264,20 +269,22 @@ mu_ID_weight =  "*mu1_SFID*mu2_SFID"
 mu_Reco_weight =  "*mu1_SFReco*mu2_SFReco"
 mu_weight =mu_ID_weight+mu_Reco_weight
 
-bkg_data_sf = 1.00437207246*0.91*0.92555*15499238/2589193.8
+bkg_data_sf = 4.983
 
 if options.year == '2016':
-    bkg_data_sf = 1.10463316559*0.8838*0.9142443245*7467872/2031220.4
+    bkg_data_sf = 3.293
 elif options.year == '2017':
-    bkg_data_sf = 0.994768442856*0.90264*0.8794414225*7127790/1727038.5
+    bkg_data_sf = 3.502
 
 if options.inv:
-    bkg_data_sf = 1.06225810815*0.91*0.92555*15499238/2589193.8
+    bkg_data_sf = 5.268
 
     if options.year == '2016':
-        bkg_data_sf = 1.23293734348*0.8838*0.9142443245*7467872/2031220.4
+        bkg_data_sf = 3.671
     elif options.year == '2017':
-        bkg_data_sf = 0.941241837484*0.90264*0.8794414225*7127790/1727038.5
+        bkg_data_sf = 3.271
+
+
 
 
 
@@ -370,11 +377,11 @@ if options.year=='2016':
 
 channels = {
     
-#    'inclusive':{'cut':'&&'.join([basic])},
-    'sr':{'cut':'&&'.join([basic, xgbs_sr])},
-    'sb':{'cut':'&&'.join([basic, xgbs_sb])},
-    'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
-    'gap':{'cut':'&&'.join([basic, xgbs_gap])}, 
+    'inclusive':{'cut':'&&'.join([basic])},
+#    'sr':{'cut':'&&'.join([basic, xgbs_sr])},
+#    'sb':{'cut':'&&'.join([basic, xgbs_sb])},
+#    'lp':{'cut':'&&'.join([basic, xgbs_lp])}, 
+#    'gap':{'cut':'&&'.join([basic, xgbs_gap])}, 
 #    'jpsi_pipipi':{'cut':'&&'.join([basic, sel_jpsipipipi])}, 
 
 
@@ -443,7 +450,9 @@ channels = {
 #finaldiscriminant = ['xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'b_mass_sf', 'tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'jpsi_kpipi']
 
 #finaldiscriminant = ['tau_rhomass_unrolled', 'tau_rhomass_unrolled_coarse', 'q2_simple', 'xgbs', 'xgbs_zoom', 'xgbs_sigscan', 'b_mass', 'jpsi_mass', 'xgbs_fit']
+
 finaldiscriminant = ['tau_rhomass_unrolled', 'q2_simple', 'b_mass', 'tau_rhomass1', 'tau_rhomass2', 'b_mass', 'b_eta', 'xgbs', 'xgbs_zoom_extra']
+finaldiscriminant = ['tau_rhomass_unrolled', 'q2_simple', 'b_mass', 'tau_rhomass1', 'tau_rhomass2', 'b_mass', 'b_eta', 'xgbs', 'xgbs_zoom_extra', 'tau_pt', 'tau_eta', 'tau_fl3d', 'tau_fls3d_wjpsi', 'tau_vprob', 'tau_mass', 'tau_rhomass1', 'tau_rhomass2', 'tau_sumofdnn', 'tau_sumofdnn_1prong', 'tau_sumofdnn_otherB', 'tau_sumofdnn_pu', 'jpsi_pt', 'jpsi_eta', 'jpsi_mass', 'jpsi_fl3d', 'jpsi_fls3d', 'dr_jpsi_tau', 'b_pt', 'b_eta', 'b_mass', 'b_alpha', 'b_vprob', 'b_lips', 'b_pvips', 'b_mindoca', 'dr_b_pv', 'b_fls3d', 'xgbs', 'xgbs_compare', 'sig_xgbs_zoom']
 
 
 
@@ -545,7 +554,10 @@ for channel, dict in channels.iteritems():
         elif options.sys.find('BcOthersShape')!=-1 and type.find('bc_others')!=-1:
             wstr += '*getBcOthersVariation(tau_rhomass2, tau_rhomass1, 1)'if options.sys.find('up')!=-1 else '*getBcOthersVariation(tau_rhomass2, tau_rhomass1, -1)'
 
-        if type.find('bg_ul')!=-1:
+        if type.find('bg_ul')!=-1 and options.bkgweight:
+
+            print 'bkg weight applied!'
+
             if options.inv:
                 wstr += "*getCorrection_inv(" + options.year + ", xgbs)"
             else:

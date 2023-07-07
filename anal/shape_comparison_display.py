@@ -96,7 +96,7 @@ def add_Preliminary():
 
 hists = []
 
-file = TFile('/work/ytakahas/work/analysis/CMSSW_10_2_10/src/rJpsi/anal/combine_sb3p5_sr4_simultaneous/tau_rhomass_unrolled_var.root')
+file = TFile('/work/ytakahas/work/analysis/CMSSW_10_2_10/src/rJpsi/anal/combine_simultaneous/tau_rhomass_unrolled_var.root')
 
 
 

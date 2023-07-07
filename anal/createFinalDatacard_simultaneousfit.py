@@ -94,7 +94,7 @@ print '-'*80
 
 #ratio = 0.092
 #fitCat = 'sr'
-output='combine_sb3p5_sr4_simultaneous'
+output='combine_simultaneous'
 ensureDir(output)
 
 

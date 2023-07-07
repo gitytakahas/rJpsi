@@ -16,7 +16,7 @@ mkdir -p /scratch/$USER/${SLURM_JOB_ID}
 export TMPDIR=/scratch/$USER/${SLURM_JOB_ID}
 
 
-python draw.py --year YEARTOBEFILLED --min --sys SYSTEMATIC --outdir $TMPDIR/
+python draw.py --year YEARTOBEFILLED --min -w --sys SYSTEMATIC --outdir $TMPDIR/
 #python draw.py --year YEARTOBEFILLED --sys SYSTEMATIC --outdir $TMPDIR/
 
 ls -lart $TMPDIR
